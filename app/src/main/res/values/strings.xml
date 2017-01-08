@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">iListen</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="make_a_call">Call</string>
+    <string name="email">Email Id</string>
+    <string name="passowrd">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="show_pwd">Show Password</string>
+    <string name="hide_pwd">Hide Password</string>
+    <string name="forgot">Forgot password?</string>
+    <string name="closebutton">Close Button for Activity</string>
+    <string name="newUser">Not a Member yet? Sign Up here.</string>
+    <string name="nickName">Nick Name</string>
+    <string name="mobileNumber">Mobile Number</string>
+    <string name="location">Location</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="terms_conditions">By clicking SignUp you agree all the Terms and Conditions.</string>
+    <string name="signUp">SIGN UP</string>
+    <string name="already_user">Already have Account? Login here.</string>
+    <string name="registered_emailid">Please enter your Registered Email Id below:</string>
+    <string name="submit">SUBMIT</string>
+    <string name="back">BACK</string>
+    <string name="name">Nick Name</string>
+    <string name="bd">Birth Year</string>
+    <string name="zcode">Zip Code</string>
+    <string name="gender">Gender</string>
+    <string name="prof">Proffession</string>
+    <string name="expert">Expertise</string>
+    <string name="pass">Password</string>
+    <string name="blank"> </string>
+    <string name="cpass">Conform Password</string>
+    <string name="term"><u>Terms and Conditions</u></string>
+    <string name="info">We do not collect to your personal information. You only provide some demographical information</string>
+    <string name="t1">1. User must accept T&amp;C any time the app is updated or T&amp;C is updated</string>
+    <string name="t2">2. Failed to accept T&amp;C, app must close immediately. User is not allowed to use the app till T&amp;C is accepted.</string>
+    <string name="t3">3. Users are limited to 50 participations, 10 requests a month.</string>
+</resources>

@@ -1,0 +1,16 @@
+mzelon sinch
+time, name, 
+db about the conference
+users in the db should be notified
+join or leave
+join the user when the time comes
+
+
+User , 
+meeting = presenter,
+
+Users can also presenter.
+
+User  = User name (nickname suggested by us ), username, passsword , create date.
+Meeting = Meeting name(unique + user), time, duration(min 5 - 30 max), creation time, meeting end time(meeting time), meeting ID(3 digit unique)=>key, participants(10 max)
+

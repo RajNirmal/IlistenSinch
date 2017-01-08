@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:tag="cards main container">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        card_view:cardElevation="1dp"
+        card_view:cardUseCompatPadding="true">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="@drawable/card"
+            android:padding="20dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/nickname"
+                android:text="Nickname         :"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="sans-sarif"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:textSize="10dp"
+                />
+            <TextView
+                android:id="@+id/nick"
+                android:text="Nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-sarif"
+                android:layout_toRightOf="@+id/nickname"
+                android:textSize="10dp"
+                />
+            <TextView
+                android:text="Online"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-sarif"
+                android:textColor="@color/white"
+                android:id="@+id/stat"
+                android:textSize="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:text="Title                   :"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-sarif"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:id="@+id/title"
+                android:textSize="10dp"
+                android:layout_below="@+id/stat" />
+            <TextView
+                android:text="Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-sarif"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tit"
+                android:textSize="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/title"
+                android:layout_below="@+id/nick"/>
+            <TextView
+                android:text="Category           :"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-sarif"
+                android:id="@+id/category"
+                android:layout_below="@+id/title"
+                android:textSize="10dp"/>
+
+            <TextView
+                android:text="Category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="sans-sarif"
+                android:layout_below="@+id/tit"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/cat"
+                android:layout_toRightOf="@+id/category"
+                android:textSize="10dp"/>
+
+            <TextView
+                android:text="Description       :"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/description"
+                android:layout_below="@+id/cat"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-sarif"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <TextView
+                android:text="Desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/desc"
+                android:layout_marginLeft="5dp"
+                android:layout_below="@+id/cat"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/description"
+                android:fontFamily="sans-sarif"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <TextView
+                android:text="Participate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/part"
+                android:textColor="@color/white"
+                android:fontFamily="sans-sarif"
+                android:textSize="10dp"
+                android:layout_above="@+id/dt"
+                />
+
+            <ImageView
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:layout_above="@+id/leave"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="#ffffff"/>
+
+            <TextView
+                android:text="Date&amp;time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dt"
+                android:layout_marginTop="10dp"
+                android:layout_above="@+id/line"
+                android:textColor="@color/white"
+                android:fontFamily="sans-sarif"
+                android:textSize="10dp"
+               />
+
+
+            <TextView
+                android:id="@+id/leave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:drawableLeft="@drawable/ic3"
+                android:textAllCaps="true"
+                android:drawablePadding="5dp"
+                android:text="leave"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="participate"
+                android:drawableLeft="@drawable/ic2"
+                android:textAllCaps="true"
+                android:drawablePadding="5dp"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                android:id="@+id/textView6"
+                android:layout_alignTop="@+id/textView7"
+                android:layout_alignLeft="@+id/line"
+                android:layout_alignStart="@+id/line" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="notnow"
+                android:textAllCaps="true"
+                android:textSize="12dp"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic1"
+                android:textColor="@color/white"
+                android:id="@+id/textView7"
+                android:layout_marginLeft="45dp"
+                android:layout_marginStart="45dp"
+                android:layout_alignTop="@+id/leave"
+                android:layout_toRightOf="@+id/nick"
+                android:layout_toEndOf="@+id/nick" />
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>
+
+

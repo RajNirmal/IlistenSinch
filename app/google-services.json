@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "151107406815",
+    "firebase_url": "https://ilistensinch.firebaseio.com",
+    "project_id": "ilistensinch",
+    "storage_bucket": "ilistensinch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151107406815:android:003b4cfce3aae248",
+        "android_client_info": {
+          "package_name": "com.example.nirmal.ilistensinch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151107406815-1l5b790p4bdmno322rmbaengvv4u0eb8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nirmal.ilistensinch",
+            "certificate_hash": "C3B00EB4AF113DD52BB6A8746C497DF6CDDBE5F1"
+          }
+        },
+        {
+          "client_id": "151107406815-pjd4578cba57qctl9nlmpuln8idehnof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE0yV8GZIx8LnWbV7vhtAmORw58ELOnWs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151107406815-pjd4578cba57qctl9nlmpuln8idehnof.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

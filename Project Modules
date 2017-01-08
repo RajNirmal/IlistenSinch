@@ -1,0 +1,10 @@
+Project Modules
+
+1. DB structure
+2. Write code to send push
+	2.1. Update DB based on User Choice
+3. when the time for a meeting comes
+	3.1 Create a conference room
+	3.2 Send a push to the users asking them to join
+
+	
