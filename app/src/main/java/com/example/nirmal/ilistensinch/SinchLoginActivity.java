@@ -9,6 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -17,6 +24,13 @@ import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
 import com.sinch.android.rtc.SinchClientListener;
 import com.sinch.android.rtc.SinchError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
@@ -30,6 +44,7 @@ import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
  */
 
 public class SinchLoginActivity extends Activity {
+    final String URL = "https://sfbpush.herokuapp.com/hello";
     Button logButton;
     EditText userName;
     String uNameString;
@@ -50,7 +65,7 @@ public class SinchLoginActivity extends Activity {
             public void onClick(View view) {
                 //myClient.getCallClient().callUser("Nirmal");
                 uNameString = userName.getText().toString().trim();
-
+                sendDatatoHeroku(uNameString);
                 if(!uNameString.isEmpty()) {
                     buildClient(uNameString);
                     updateDatainFirebase();
@@ -59,6 +74,53 @@ public class SinchLoginActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"Please Enter a UserName",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void sendDatatoHeroku(final String names){
+        //Toast.makeText(getApplicationContext(),"Sending Data",Toast.LENGTH_SHORT).show();
+        JSONObject jsonObj = new JSONObject();
+        try{
+            jsonObj.put("test",names);
+        }catch (JSONException e){
+            Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
+        }
+        final String JSONString = jsonObj.toString();
+        StringRequest str = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return JSONString == null ? null : JSONString.getBytes("utf-8");
+                }catch (UnsupportedEncodingException x){
+                    Toast.makeText(getApplicationContext(),x.toString(),Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("test",names);
+                return params;
+            }
+        };
+        RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
+        rq.add(str);
     }
     private void updateDatainFirebase(){
         SinchUserData myUser = new SinchUserData(uNameString);
@@ -77,8 +139,8 @@ public class SinchLoginActivity extends Activity {
             public void onClientStarted(SinchClient sinchClient) {
                 Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
                 spinnerLog.dismiss();
-                Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
-                startActivity(i);
+                /*Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
+                startActivity(i);*/
             }
 
             @Override
