@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.android.volley.toolbox.StringRequest;
 import com.sinch.android.rtc.SinchClient;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
@@ -22,6 +23,10 @@ public class SinchHolders extends Service{
     public static final String ENVIRONMENT = "sandbox.sinch.com";
     public static final String CALL_ID = "CALL_ID";
     public static String FirebaseToken;
+    public static final String SharedPrefName = "SinchListen";
+    public static final String phpUserName = "UserName";
+    public static final String phpUserNickName = "NickName";
+    public static final String phpUserPassword = "UserPassword";
     static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
         myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());

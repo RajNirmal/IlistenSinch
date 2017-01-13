@@ -14,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
@@ -75,16 +76,8 @@ public class SinchLoginActivity extends Activity {
             }
         });
     }
-    private void sendDatatoHeroku(final String names){
-        //Toast.makeText(getApplicationContext(),"Sending Data",Toast.LENGTH_SHORT).show();
-        JSONObject jsonObj = new JSONObject();
-        try{
-            jsonObj.put("test",names);
-        }catch (JSONException e){
-            Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
-        }
-        final String JSONString = jsonObj.toString();
-        StringRequest str = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+    private void sendDatatoHeroku(final String name){
+        StringRequest sr = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
@@ -92,7 +85,38 @@ public class SinchLoginActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),error.toString()+"The Server returned error",Toast.LENGTH_SHORT).show();
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put("test",name);
+                return map;
+            }
+        };
+        RequestQueue r = Volley.newRequestQueue(getApplicationContext());
+        r.add(sr);
+    }
+    private void sendJSONDatatoHeroku(final String names){
+        //Toast.makeText(getApplicationContext(),"Sending Data",Toast.LENGTH_SHORT).show();
+        JSONObject jsonObj = new JSONObject();
+        try{
+            jsonObj.put("test",names);
+        }catch (JSONException e){
+            Toast.makeText(getApplicationContext(),e.toString()+"error parsing json",Toast.LENGTH_SHORT).show();
+        }
+        final String JSONString = jsonObj.toString();
+        JsonObjectRequest str = new JsonObjectRequest(Request.Method.POST, URL, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),error.toString()+"error returned",Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -103,21 +127,21 @@ public class SinchLoginActivity extends Activity {
             }
 
             @Override
-            public byte[] getBody() throws AuthFailureError {
+            public byte[] getBody() {
                 try {
                     return JSONString == null ? null : JSONString.getBytes("utf-8");
                 }catch (UnsupportedEncodingException x){
-                    Toast.makeText(getApplicationContext(),x.toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),x.toString()+"error in JSONVolley",Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }
-
+/*
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> params = new HashMap<String,String>();
                 params.put("test",names);
                 return params;
-            }
+            }*/
         };
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         rq.add(str);

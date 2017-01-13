@@ -1,6 +1,7 @@
 package com.example.nirmal.ilistensinch;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.toolbox.StringRequest;
+import com.sinch.android.rtc.Sinch;
 
 public class Login extends AppCompatActivity {
 	private static View view;
@@ -35,10 +40,25 @@ public class Login extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_layout);
+        checkIfDataAlreadyexists();
 		initViews();
 		setListeners();
 	}
-
+    private void checkIfDataAlreadyexists(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
+        try{
+            String name = prefs.getString(SinchHolders.phpUserName,"1");
+            String nick = prefs.getString(SinchHolders.phpUserNickName,"2");
+            if((name.equals("1"))&&(nick.equals("2"))){
+                Toast.makeText(getApplicationContext(),"No user data found",Toast.LENGTH_SHORT).show();
+            }else {
+                Intent i = new Intent(Login.this,MainActivity.class);
+                startActivity(i);
+            }
+        }catch (NullPointerException e){
+            Toast.makeText(getApplicationContext(),"No user data found",Toast.LENGTH_SHORT).show();
+        }
+    }
 	// Initiate Views
 	private void initViews() {
 
@@ -70,8 +90,14 @@ public class Login extends AppCompatActivity {
 		loginButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
-				String email = emailid.getText().toString();
-				String pass = password.getText().toString();
+				String email = emailid.getText().toString().trim();
+				String pass = password.getText().toString().trim();
+                if(email.isEmpty())
+                    Toast.makeText(getApplicationContext(),"Enter valid details",Toast.LENGTH_SHORT).show();
+                else if(pass.isEmpty())
+                    Toast.makeText(getApplicationContext(),"Password is Blank",Toast.LENGTH_SHORT).show();
+                else
+				    Toast.makeText(getApplicationContext(),"User Details not found, Please Sign up",Toast.LENGTH_SHORT).show();
 
 			}
 		});
@@ -87,8 +113,7 @@ public class Login extends AppCompatActivity {
 		signUp.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
-
-				Intent intent1 = new Intent(getApplicationContext(), SignUp.class);
+				Intent intent1 = new Intent(getApplicationContext(), dummy_signup.class);
 				startActivity(intent1);
 			}
 		});
