@@ -3,6 +3,7 @@ package com.example.nirmal.ilistensinch;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
@@ -45,7 +48,7 @@ import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
  */
 
 public class SinchLoginActivity extends Activity {
-    final String URL = "https://sfbpush.herokuapp.com/hello";
+    final String URL = "https://sfbpush.herokuapp.com/hello/:test";
     Button logButton;
     EditText userName;
     String uNameString;
@@ -55,12 +58,14 @@ public class SinchLoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.sinch_login_screen);
         logButton = (Button)findViewById(R.id.sinch_login);
         userName = (EditText)findViewById(R.id.user_name_sinch);
         FirebaseApp.initializeApp(getApplicationContext());
         fireDatabase = FirebaseDatabase.getInstance();
         fireReference = fireDatabase.getReference("MyApp");
+       // LoginToSinch();
         logButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,18 +74,31 @@ public class SinchLoginActivity extends Activity {
                 sendDatatoHeroku(uNameString);
                 if(!uNameString.isEmpty()) {
                     buildClient(uNameString);
-                    updateDatainFirebase();
+                    updateDatainFirebase(uNameString);
                 }
                 else
                     Toast.makeText(getApplicationContext(),"Please Enter a UserName",Toast.LENGTH_SHORT).show();
             }
         });
     }
+    private void LoginToSinch(){
+        try{
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
+            String nickName = prefs.getString(SinchHolders.phpUserName,"1");
+            //userName.setText(nickName);
+            updateDatainFirebase(nickName);
+            buildClient(nickName);
+            //Toast.makeText(getApplicationContext(),nickName,Toast.LENGTH_SHORT).show();
+        }catch (NullPointerException e){
+            Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
+        }
+
+    }
     private void sendDatatoHeroku(final String name){
         StringRequest sr = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -146,9 +164,10 @@ public class SinchLoginActivity extends Activity {
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         rq.add(str);
     }
-    private void updateDatainFirebase(){
-        SinchUserData myUser = new SinchUserData(uNameString);
+    private void updateDatainFirebase(final String LoginId){
+        SinchUserData myUser = new SinchUserData(LoginId);
         fireReference.child(SinchUserData.getCanonicalClassName()).child(SinchUserData.UserBaseName()).setValue(myUser.ReturnUserName());
+        FirebaseMessaging.getInstance().subscribeToTopic("ilisten");
     }
     private void buildClient(String x){
         showSpinner();
@@ -161,9 +180,9 @@ public class SinchLoginActivity extends Activity {
         myClient.addSinchClientListener(new SinchClientListener() {
             @Override
             public void onClientStarted(SinchClient sinchClient) {
-                Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
                 spinnerLog.dismiss();
-                /*Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
+               /* Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
                 startActivity(i);*/
             }
 

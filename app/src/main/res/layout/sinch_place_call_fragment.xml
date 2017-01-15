@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
 
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:id="@+id/call_name_sinch"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="25dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:padding="2dp"
@@ -17,21 +21,91 @@
         android:gravity="center"
         android:textColorHint="@color/cardview_dark_background"
         android:hint="Conference Name"/>
-    <Button
+    <TimePicker
+        android:id="@+id/call_time"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!--<EditText
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/call_time"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:padding="2dp"
+        android:background="@drawable/rectangle_border"
+        android:gravity="center"
+        android:textColorHint="@color/cardview_dark_background"
+        android:hint="Conference Time"/>-->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/call_duration"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:padding="2dp"
+        android:background="@drawable/rectangle_border"
+        android:gravity="center"
+        android:textColorHint="@color/cardview_dark_background"
+        android:hint="Conference Duration (in minutes)"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/call_participants"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:padding="2dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColorHint="@color/cardview_dark_background"
+        android:text="Participants : 5(Max)"/>
+
+    <!--<Button
         android:id="@+id/sinch_calling"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:layout_gravity="center"
         android:background="@drawable/button_call"
-        android:textColor="@color/cardview_light_background"/>
+        android:textColor="@color/cardview_light_background"/>-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sinch_setup_meeting"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:background="@drawable/rectangle_border_purple"
+        android:text="    Setup Conference     "
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/call_status"
-
+        android:layout_marginTop="20dp"
+        android:text="or"
         android:textSize="20sp"
         android:layout_gravity="center"
         android:textColor="@color/cardview_dark_background"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sinch_start_meeting"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:background="@drawable/rectangle_border_purple"
+            android:text="    Join Conference     "
+            />
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

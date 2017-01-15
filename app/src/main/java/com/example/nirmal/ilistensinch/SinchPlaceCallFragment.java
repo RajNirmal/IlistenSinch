@@ -14,31 +14,44 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.sinch.android.rtc.MissingPermissionException;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nirmal on 24/12/16.
  */
 
 public class SinchPlaceCallFragment extends Fragment {
-    EditText callerName;
+    EditText ConferenceName,ConferenceDuration;
+    TimePicker ConferenceStartTime;
     static TextView statusOfCall;
+    TextView someRandomData;
     private AudioPlayer mAudioPlayer;
-    Button callButton;
+    Button setUpConference,joinConference;
     String callingUsersName;
     FirebaseDatabase FireDB;
     DatabaseReference FBReference;
@@ -46,9 +59,13 @@ public class SinchPlaceCallFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View subView = inflater.inflate(R.layout.sinch_place_call_fragment, container, false);
-        callButton = (Button) subView.findViewById(R.id.sinch_calling);
+        setUpConference = (Button) subView.findViewById(R.id.sinch_setup_meeting);
         statusOfCall = (TextView) subView.findViewById(R.id.call_status);
-        callerName = (EditText) subView.findViewById(R.id.call_name_sinch);
+        ConferenceName = (EditText) subView.findViewById(R.id.call_name_sinch);
+        joinConference = (Button) subView.findViewById(R.id.sinch_start_meeting);
+        ConferenceStartTime = (TimePicker) subView.findViewById(R.id.call_time);
+        ConferenceDuration = (EditText) subView.findViewById(R.id.call_duration);
+        someRandomData = (TextView)subView.findViewById(R.id.call_participants);
         mAudioPlayer = new AudioPlayer(getActivity());
         FireDB = FirebaseDatabase.getInstance();
         FBReference = FireDB.getReference("MyApp");
@@ -57,8 +74,9 @@ public class SinchPlaceCallFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.child("UserData").child("name").getValue(String.class);
-                Toast.makeText(getActivity(),value,Toast.LENGTH_SHORT).show();
-                callerName.setText(SinchHolders.FirebaseToken);
+                FirebaseMessaging.getInstance().subscribeToTopic("ilisten");
+             //   Toast.makeText(getActivity(),value,Toast.LENGTH_SHORT).show();
+              //  callerName.setText(SinchHolders.FirebaseToken);
             }
 
             @Override
@@ -66,22 +84,88 @@ public class SinchPlaceCallFragment extends Fragment {
                 Toast.makeText(getActivity(),databaseError.toString(),Toast.LENGTH_SHORT).show();
             }
         });
-        callButton.setOnClickListener(new View.OnClickListener() {
+        joinConference.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callingUsersName = callerName.getText().toString().trim();
-
-                /*if (!callingUsersName.isEmpty())
+                callingUsersName = ConferenceName.getText().toString().trim();
+                if (!callingUsersName.isEmpty()) {
+                    ((SinchMainActivity) getActivity()).setTheUsertoCall(callingUsersName);
                     //callTheUser();
-                    ((SinchMainActivity)getActivity()).setTheUsertoCall(callingUsersName);
+                }else
+                    Toast.makeText(getActivity(), "Please Enter a User Name", Toast.LENGTH_SHORT).show();
+            }
+        });
+        setUpConference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callingUsersName = ConferenceName.getText().toString().trim();
+                Integer hour = ConferenceStartTime.getCurrentHour();
+                Integer mins = ConferenceStartTime.getCurrentMinute();
+                String confTime = hour.toString() + mins.toString()+"00";
+                String confDuration = ConferenceDuration.getText().toString().trim();
+                if((!callingUsersName.isEmpty())&&(!confTime.isEmpty())&&(!confDuration.isEmpty())){
+                  //  sendTheDataToHostinger(callingUsersName,confTime,confDuration);
+                    sendPushToAllUsers(callingUsersName,confTime,confDuration);
+                }else{
+                    Toast.makeText(getActivity(),"Enter Valid Details",Toast.LENGTH_SHORT).show();
+                }
 
-                else
-                    Toast.makeText(getActivity(), "Please Enter a User Name", Toast.LENGTH_SHORT).show();*/
             }
         });
         return subView;
     }
-/*
+    private void sendPushToAllUsers(final String Name , final String confTime, final String confdur){
+        final String URL = "http://sfbpush.herokuapp.com/push";
+        StringRequest str = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
+                someRandomData.setText(error.toString());
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put("title",Name);
+                map.put("body",confdur+"  "+confTime+"  This is a conference");
+                return map;
+            }
+        };
+        RequestQueue rq = Volley.newRequestQueue(getActivity());
+        rq.add(str);
+    }
+    private void sendTheDataToHostinger(final String confName, final String confTime, final String confDuration){
+        final String URL = "http://gocode.esy.es/Save_Meeting.php";
+        StringRequest stringreqs = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put(SinchHolders.phpMeetingName,confName);
+                map.put(SinchHolders.phpMeetingTime,confTime);
+                map.put(SinchHolders.phpMeetingDuration,confDuration);
+                return map;
+            }
+        };
+        RequestQueue rq = Volley.newRequestQueue(getActivity());
+        rq.add(stringreqs);
+    }
+
     private void callTheUser() {
         try {
             //Call call = SinchHolders.myClient.getCallClient().callUser(callingUsersName);
@@ -90,7 +174,7 @@ public class SinchPlaceCallFragment extends Fragment {
         }catch (MissingPermissionException e){
             ActivityCompat.requestPermissions(getActivity(), new String[]{e.getRequiredPermission()}, 0);
         }
-    }*/
+    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

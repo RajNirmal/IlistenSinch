@@ -52,6 +52,7 @@ public class Login extends AppCompatActivity {
             if((name.equals("1"))&&(nick.equals("2"))){
                 Toast.makeText(getApplicationContext(),"No user data found",Toast.LENGTH_SHORT).show();
             }else {
+				//Toast.makeText(getApplicationContext(),"Came here from login" + name,Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(Login.this,MainActivity.class);
                 startActivity(i);
             }

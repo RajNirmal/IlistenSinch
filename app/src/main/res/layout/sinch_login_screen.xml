@@ -13,6 +13,7 @@
         android:hint="UserName"
         android:background="@drawable/rectangle_border"
         android:gravity="center"
+
         android:textColorHint="@color/primary_dark"/>
     <Button
         android:id="@+id/sinch_login"
@@ -20,6 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="100dp"
        android:layout_gravity="center"
+
         android:background="@drawable/button_login"
         android:textColor="@color/cardview_light_background"/>
 
