@@ -2,6 +2,7 @@ package com.example.nirmal.ilistensinch;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.FragmentManager;
@@ -63,6 +64,12 @@ public class SinchMainActivity extends Activity {
         whatToDo = true;
         FragmentTransaction makeaCall = fragmentManager.beginTransaction();
         makeaCall.replace(mainFragmentHolder,new SinchOnGoingCallFragment()).commit();
+    }
+    public void goBackToMain(){
+        Intent i = new Intent(SinchMainActivity.this,MainActivity.class);
+        Toast.makeText(getApplicationContext(),"Conference Successfully setup",Toast.LENGTH_SHORT).show();
+        startActivity(i);
+
     }
     public String getTheUsertoCall(){return theUsertoCall;}
 

@@ -48,9 +48,9 @@ import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
  */
 
 public class SinchLoginActivity extends Activity {
-    final String URL = "https://sfbpush.herokuapp.com/hello/:test";
+    final String URL = "https://sfbpush.herokuapp.com/push";
     Button logButton;
-    EditText userName;
+    EditText userName,pushBody;
     String uNameString;
     ProgressDialog spinnerLog;
     FirebaseDatabase fireDatabase;
@@ -58,14 +58,14 @@ public class SinchLoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.sinch_login_screen);
         logButton = (Button)findViewById(R.id.sinch_login);
         userName = (EditText)findViewById(R.id.user_name_sinch);
+        pushBody = (EditText)findViewById(R.id.push_body_sinch);
         FirebaseApp.initializeApp(getApplicationContext());
         fireDatabase = FirebaseDatabase.getInstance();
         fireReference = fireDatabase.getReference("MyApp");
-       // LoginToSinch();
+        LoginToSinch();
         logButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +95,7 @@ public class SinchLoginActivity extends Activity {
 
     }
     private void sendDatatoHeroku(final String name){
-        StringRequest sr = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+        StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getApplicationContext(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
@@ -108,16 +108,18 @@ public class SinchLoginActivity extends Activity {
             }
         }){
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
-                map.put("test",name);
+                map.put("body",pushBody.getText().toString().trim());
+                map.put("title",name);
                 return map;
             }
+
         };
         RequestQueue r = Volley.newRequestQueue(getApplicationContext());
         r.add(sr);
     }
-    private void sendJSONDatatoHeroku(final String names){
+    /*private void sendJSONDatatoHeroku(final String names){
         //Toast.makeText(getApplicationContext(),"Sending Data",Toast.LENGTH_SHORT).show();
         JSONObject jsonObj = new JSONObject();
         try{
@@ -153,17 +155,17 @@ public class SinchLoginActivity extends Activity {
                     return null;
                 }
             }
-/*
+
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> params = new HashMap<String,String>();
                 params.put("test",names);
                 return params;
-            }*/
+            }
         };
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         rq.add(str);
-    }
+    }*/
     private void updateDatainFirebase(final String LoginId){
         SinchUserData myUser = new SinchUserData(LoginId);
         fireReference.child(SinchUserData.getCanonicalClassName()).child(SinchUserData.UserBaseName()).setValue(myUser.ReturnUserName());
@@ -182,8 +184,8 @@ public class SinchLoginActivity extends Activity {
             public void onClientStarted(SinchClient sinchClient) {
                // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
                 spinnerLog.dismiss();
-               /* Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
-                startActivity(i);*/
+                Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
+                startActivity(i);
             }
 
             @Override

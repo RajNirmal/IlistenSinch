@@ -18,6 +18,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +32,11 @@ import java.util.Map;
 
 public class dummy_signup extends Activity {
     EditText uName, nName, uPass;
-    String sName, snName, sPass;
+    String sName, snName, sPass, sFireBaseToken;
     Button signUpButton;
     TextView dummyToast;
+    FirebaseDatabase fireDatabase;
+    DatabaseReference fireReference;
     public final String HeloUrl = "http://gocode.esy.es/Save_User.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,11 @@ public class dummy_signup extends Activity {
         uPass = (EditText)findViewById(R.id.dummy_password);
         signUpButton = (Button)findViewById(R.id.dummy_signUpBtn);
         dummyToast = (TextView)findViewById(R.id.dummy_toast);
+        FirebaseApp.initializeApp(getApplicationContext());
+        fireDatabase = FirebaseDatabase.getInstance();
+        fireReference = fireDatabase.getReference("MyApp");
+        SinchHolders.FirebaseToken = FirebaseInstanceId.getInstance().getToken();
+        sFireBaseToken = SinchHolders.FirebaseToken;
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,6 +78,7 @@ public class dummy_signup extends Activity {
         edit.putString(SinchHolders.phpUserName,sName);
         edit.putString(SinchHolders.phpUserNickName,snName);
         edit.putString(SinchHolders.phpUserName,sPass);
+        edit.putString(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
         edit.commit();
     }
     private void ChangeActivity(){
@@ -79,9 +91,9 @@ public class dummy_signup extends Activity {
             public void onResponse(String response) {
                 if(response.toString().equals("Failure"))
                     Toast.makeText(getApplicationContext(), "NickName already taken", Toast.LENGTH_SHORT).show();
-                else
+                else;
                     ChangeActivity();
-                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -95,6 +107,7 @@ public class dummy_signup extends Activity {
                 myMap.put(SinchHolders.phpUserName,sName);
                 myMap.put(SinchHolders.phpUserNickName,snName);
                 myMap.put(SinchHolders.phpUserPassword,sPass);
+                myMap.put(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
                 return myMap;
             }
         };

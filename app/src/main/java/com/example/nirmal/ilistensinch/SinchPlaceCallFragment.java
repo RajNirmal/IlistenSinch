@@ -46,6 +46,7 @@ import java.util.Map;
  */
 
 public class SinchPlaceCallFragment extends Fragment {
+    final String URL = "https://sfbpush.herokuapp.com/push";
     EditText ConferenceName,ConferenceDuration;
     TimePicker ConferenceStartTime;
     static TextView statusOfCall;
@@ -75,8 +76,8 @@ public class SinchPlaceCallFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.child("UserData").child("name").getValue(String.class);
                 FirebaseMessaging.getInstance().subscribeToTopic("ilisten");
-             //   Toast.makeText(getActivity(),value,Toast.LENGTH_SHORT).show();
-              //  callerName.setText(SinchHolders.FirebaseToken);
+                /*Toast.makeText(getActivity(),value,Toast.LENGTH_SHORT).show();
+                callerName.setText(SinchHolders.FirebaseToken);*/
             }
 
             @Override
@@ -101,7 +102,7 @@ public class SinchPlaceCallFragment extends Fragment {
                 callingUsersName = ConferenceName.getText().toString().trim();
                 Integer hour = ConferenceStartTime.getCurrentHour();
                 Integer mins = ConferenceStartTime.getCurrentMinute();
-                String confTime = hour.toString() + mins.toString()+"00";
+                String confTime = hour.toString() +" : "+ mins.toString()+" : "+"00";
                 String confDuration = ConferenceDuration.getText().toString().trim();
                 if((!callingUsersName.isEmpty())&&(!confTime.isEmpty())&&(!confDuration.isEmpty())){
                   //  sendTheDataToHostinger(callingUsersName,confTime,confDuration);
@@ -114,31 +115,33 @@ public class SinchPlaceCallFragment extends Fragment {
         });
         return subView;
     }
-    private void sendPushToAllUsers(final String Name , final String confTime, final String confdur){
-        final String URL = "http://sfbpush.herokuapp.com/push";
-        StringRequest str = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
-                someRandomData.setText(error.toString());
+    private void sendPushToAllUsers(final String ConfName , final String confTime, final String confdur){
+        final String Body = "The Conference is being held on " + confTime + " for " + confdur + " minutes ";
+        StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            Toast.makeText(getActivity(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
+            ((SinchMainActivity)getActivity()).goBackToMain();
+        }
+    }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Toast.makeText(getActivity(),error.toString()+"The Server returned error",Toast.LENGTH_SHORT).show();
+            ((SinchMainActivity)getActivity()).goBackToMain();
 
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> map = new HashMap<>();
-                map.put("title",Name);
-                map.put("body",confdur+"  "+confTime+"  This is a conference");
-                return map;
-            }
-        };
-        RequestQueue rq = Volley.newRequestQueue(getActivity());
-        rq.add(str);
+        }
+    }){
+        @Override
+        public Map<String, String> getParams() throws AuthFailureError {
+            HashMap<String,String> map = new HashMap<>();
+            map.put("body",Body);
+            map.put("title",ConfName);
+            return map;
+        }
+
+    };
+        RequestQueue r = Volley.newRequestQueue(getActivity());
+        r.add(sr);
     }
     private void sendTheDataToHostinger(final String confName, final String confTime, final String confDuration){
         final String URL = "http://gocode.esy.es/Save_Meeting.php";

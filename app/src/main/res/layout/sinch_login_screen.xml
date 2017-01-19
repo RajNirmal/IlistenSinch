@@ -13,15 +13,28 @@
         android:hint="UserName"
         android:background="@drawable/rectangle_border"
         android:gravity="center"
-
+        android:visibility="invisible"
         android:textColorHint="@color/primary_dark"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/push_body_sinch"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:hint="Sinch Body"
+        android:visibility="invisible"
+        android:background="@drawable/rectangle_border"
+        android:gravity="center"
+        android:textColorHint="@color/primary_dark"/>
+
     <Button
         android:id="@+id/sinch_login"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginTop="100dp"
-       android:layout_gravity="center"
-
+        android:layout_gravity="center"
+        android:visibility="invisible"
         android:background="@drawable/button_login"
         android:textColor="@color/cardview_light_background"/>
 
