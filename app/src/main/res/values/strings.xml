@@ -31,10 +31,16 @@
     <string name="pass">Password</string>
     <string name="blank"> </string>
     <string name="cpass">Conform Password</string>
-
     <string name="term"><u>Terms and Conditions</u></string>
     <string name="info">We do not collect to your personal information. You only provide some demographical information</string>
     <string name="t1">1. User must accept T&amp;C any time the app is updated or T&amp;C is updated</string>
     <string name="t2">2. Failed to accept T&amp;C, app must close immediately. User is not allowed to use the app till T&amp;C is accepted.</string>
     <string name="t3">3. Users are limited to 50 participations, 10 requests a month.</string>
+    <string-array name="userchoices">
+        <item>Technology</item>
+        <item>Politics</item>
+        <item>Fashion</item>
+        <item>Social Networks</item>
+        <item>Education</item>
+    </string-array>
 </resources>

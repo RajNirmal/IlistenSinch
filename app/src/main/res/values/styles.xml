@@ -57,7 +57,13 @@
         <item name="android:textColor">@color/accent</item>
         <item name="textAllCaps">false</item>
     </style>
-
+    <style name="ThemeSpinner">
+        <item name="android:bottom">@color/whitelight</item>
+        <!-- Color when pressed -->
+        <item name="colorAccent">@color/off_white</item>
+        <!-- Default color for the dropdown arrow and line -->
+        <item name="colorControlNormal">@color/off_white</item>
+    </style>
     <style name="AppTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorHeight">0dp</item>
         <item name="tabPaddingStart">0dp</item>

@@ -6,8 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +25,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.sinch.android.rtc.Sinch;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +35,12 @@ import java.util.Map;
  * Created by nirmal on 13/1/17.
  */
 
-public class dummy_signup extends Activity {
-    EditText uName, nName, uPass;
-    String sName, snName, sPass, sFireBaseToken;
+public class dummy_signup extends Activity implements AdapterView.OnItemSelectedListener{
+    EditText uName, nName, uPass, uProfession;
+    String sName, snName, sPass, sFireBaseToken, sUserExpert, sUserProf;
     Button signUpButton;
     TextView dummyToast;
+    Spinner Category;
     FirebaseDatabase fireDatabase;
     DatabaseReference fireReference;
     public final String HeloUrl = "http://gocode.esy.es/Save_User.php";
@@ -45,8 +51,10 @@ public class dummy_signup extends Activity {
         uName = (EditText)findViewById(R.id.dummy_fullName);
         nName = (EditText)findViewById(R.id.dummy_nickname);
         uPass = (EditText)findViewById(R.id.dummy_password);
+        uProfession = (EditText)findViewById(R.id.dummy_userprofession);
         signUpButton = (Button)findViewById(R.id.dummy_signUpBtn);
         dummyToast = (TextView)findViewById(R.id.dummy_toast);
+        Category = (Spinner)findViewById(R.id.spinner);
         FirebaseApp.initializeApp(getApplicationContext());
         fireDatabase = FirebaseDatabase.getInstance();
         fireReference = fireDatabase.getReference("MyApp");
@@ -59,6 +67,7 @@ public class dummy_signup extends Activity {
                 sName = uName.getText().toString().trim();
                 snName = nName.getText().toString().trim();
                 sPass = uPass.getText().toString().trim();
+                sUserProf = uProfession.getText().toString().trim();
                 if((sName.isEmpty())||(snName.isEmpty())||(sPass.isEmpty())){
                     dummyToast.setVisibility(View.VISIBLE);
                     dummyToast.setText("Enter Valid Details");
@@ -71,6 +80,9 @@ public class dummy_signup extends Activity {
 
             }
         });
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.userchoices,R.layout.spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Category.setAdapter(adapter);
     }
     private void writeDataInSharedPrefs(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
@@ -79,6 +91,8 @@ public class dummy_signup extends Activity {
         edit.putString(SinchHolders.phpUserNickName,snName);
         edit.putString(SinchHolders.phpUserName,sPass);
         edit.putString(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
+        edit.putString(SinchHolders.phpUserexpertise,sUserExpert);
+        edit.putString(SinchHolders.phpUserProfession,sUserProf);
         edit.commit();
     }
     private void ChangeActivity(){
@@ -113,7 +127,15 @@ public class dummy_signup extends Activity {
         };
         RequestQueue rs = Volley.newRequestQueue(getApplicationContext());
         rs.add(rq);
-
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        sUserExpert = (String)adapterView.getItemAtPosition(i);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        sUserExpert = "User did not select";
+    }
 }

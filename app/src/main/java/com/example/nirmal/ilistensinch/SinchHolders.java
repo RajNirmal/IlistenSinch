@@ -31,6 +31,8 @@ public class SinchHolders extends Service{
     public static final String phpMeetingTime = "MeetingStartTime";
     public static final String phpMeetingDuration = "MeetingDuration";
     public static final String phpUserFirebaseToken = "FireBaseId";
+    public static final String phpUserProfession = "userprofession";
+    public static final String phpUserexpertise = "userexpertise";
     static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
         myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
