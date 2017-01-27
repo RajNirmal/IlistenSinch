@@ -121,12 +121,18 @@
         android:drawablePadding="8dp"
         android:gravity="center_vertical"
         android:hint="Profession"
-        android:inputType="textPassword"
+        android:inputType="text"
         android:padding="10dp"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="16sp" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="@color/white_greyish"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
     <Button
         android:id="@+id/dummy_signUpBtn"
         android:layout_width="fill_parent"

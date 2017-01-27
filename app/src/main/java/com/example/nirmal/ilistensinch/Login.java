@@ -40,7 +40,7 @@ public class Login extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_layout);
-        checkIfDataAlreadyexists();
+        //checkIfDataAlreadyexists();
 		initViews();
 		setListeners();
 	}

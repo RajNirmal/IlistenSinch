@@ -73,9 +73,11 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
                     dummyToast.setText("Enter Valid Details");
                 }
                 else{
-                    sendDataToServer();
+                   //sendDataToServer();
                     writeDataInSharedPrefs();
                    // Toast.makeText(getApplicationContext(),"All Details are correct",Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(dummy_signup.this,dummy_signup_2.class);
+                    startActivity(i);
                 }
 
             }
@@ -83,13 +85,14 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.userchoices,R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Category.setAdapter(adapter);
+        Category.setOnItemSelectedListener(this);
     }
     private void writeDataInSharedPrefs(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserName,sName);
         edit.putString(SinchHolders.phpUserNickName,snName);
-        edit.putString(SinchHolders.phpUserName,sPass);
+        edit.putString(SinchHolders.phpUserPassword,sPass);
         edit.putString(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
         edit.putString(SinchHolders.phpUserexpertise,sUserExpert);
         edit.putString(SinchHolders.phpUserProfession,sUserProf);

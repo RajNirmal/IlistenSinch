@@ -33,6 +33,9 @@ public class SinchHolders extends Service{
     public static final String phpUserFirebaseToken = "FireBaseId";
     public static final String phpUserProfession = "userprofession";
     public static final String phpUserexpertise = "userexpertise";
+    public static final String phpUserBirthYear = "birthdate";
+    public static final String phpUserZip = "zipcode";
+    public static final String phpUserGender = "sex";
     static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
         myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
