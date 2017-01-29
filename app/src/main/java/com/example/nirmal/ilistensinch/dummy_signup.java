@@ -25,6 +25,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.sinch.android.rtc.Sinch;
 
 import java.util.Collection;
@@ -43,7 +44,8 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
     Spinner Category;
     FirebaseDatabase fireDatabase;
     DatabaseReference fireReference;
-    public final String HeloUrl = "http://gocode.esy.es/Save_User.php";
+    String Fields[] = {"Technology","Politics","Fashion","SocialNetworks","Education"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +60,6 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         FirebaseApp.initializeApp(getApplicationContext());
         fireDatabase = FirebaseDatabase.getInstance();
         fireReference = fireDatabase.getReference("MyApp");
-        SinchHolders.FirebaseToken = FirebaseInstanceId.getInstance().getToken();
-        sFireBaseToken = SinchHolders.FirebaseToken;
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +75,7 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
                 else{
                    //sendDataToServer();
                     writeDataInSharedPrefs();
+                    updateDatainFirebase(sName);
                    // Toast.makeText(getApplicationContext(),"All Details are correct",Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(dummy_signup.this,dummy_signup_2.class);
                     startActivity(i);
@@ -82,12 +83,16 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
 
             }
         });
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.userchoices,R.layout.spinner_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this,R.layout.spinner_item,Fields);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Category.setAdapter(adapter);
         Category.setOnItemSelectedListener(this);
     }
+
     private void writeDataInSharedPrefs(){
+        SinchHolders.FirebaseToken = FirebaseInstanceId.getInstance().getToken();
+        sFireBaseToken = FirebaseInstanceId.getInstance().getToken();
+        Toast.makeText(getApplicationContext(),sFireBaseToken,Toast.LENGTH_SHORT).show();
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserName,sName);
@@ -102,39 +107,15 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         Intent i = new Intent(dummy_signup.this,MainActivity.class);
         startActivity(i);
     }
-    private void sendDataToServer(){
-        StringRequest rq = new StringRequest(Request.Method.POST, HeloUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if(response.toString().equals("Failure"))
-                    Toast.makeText(getApplicationContext(), "NickName already taken", Toast.LENGTH_SHORT).show();
-                else;
-                    ChangeActivity();
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> myMap = new HashMap<String,String>();
-                myMap.put(SinchHolders.phpUserName,sName);
-                myMap.put(SinchHolders.phpUserNickName,snName);
-                myMap.put(SinchHolders.phpUserPassword,sPass);
-                myMap.put(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
-                return myMap;
-            }
-        };
-        RequestQueue rs = Volley.newRequestQueue(getApplicationContext());
-        rs.add(rq);
-    }
 
+    private void updateDatainFirebase(final String LoginId){
+        SinchUserData myUser = new SinchUserData(LoginId);
+        fireReference.child(SinchUserData.getCanonicalClassName()).child(SinchUserData.UserBaseName()).setValue(myUser.ReturnUserName());
+        FirebaseMessaging.getInstance().subscribeToTopic(sUserExpert);
+    }
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        sUserExpert = (String)adapterView.getItemAtPosition(i);
+        sUserExpert = (String)adapterView.getItemAtPosition(i).toString();
     }
 
     @Override

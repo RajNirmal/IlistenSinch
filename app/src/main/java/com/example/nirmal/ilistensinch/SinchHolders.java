@@ -27,15 +27,20 @@ public class SinchHolders extends Service{
     public static final String phpUserName = "UserName";
     public static final String phpUserNickName = "NickName";
     public static final String phpUserPassword = "UserPassword";
-    public static final String phpMeetingName = "MeetingName";
-    public static final String phpMeetingTime = "MeetingStartTime";
-    public static final String phpMeetingDuration = "MeetingDuration";
     public static final String phpUserFirebaseToken = "FireBaseId";
     public static final String phpUserProfession = "userprofession";
     public static final String phpUserexpertise = "userexpertise";
     public static final String phpUserBirthYear = "birthdate";
     public static final String phpUserZip = "zipcode";
     public static final String phpUserGender = "sex";
+
+    public static final String phpMeetingName = "MeetingName";
+    public static final String phpMeetingTime = "MeetingStartTime";
+    public static final String phpMeetingDuration = "MeetingDuration";
+    public static final String phpMeetingParticipants = "Participant";
+    public static final String phpMeetingCreator = "CreatorId";
+    public static final String phpMeetingCategory = "concategory";
+    public static final String phpMeetingDesc = "condesc";
     static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
         myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());

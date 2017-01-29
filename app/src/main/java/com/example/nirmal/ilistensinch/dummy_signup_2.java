@@ -1,6 +1,7 @@
 package com.example.nirmal.ilistensinch;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
     RadioGroup userSex;
     Button finish;
     TextView testing;
+    String years[] = {"1970","1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991",
+            "1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002"," 2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013"};
     public final String URL = "http://www.mazelon.com/iListen/ilisten_Save_User.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,8 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         userSex = (RadioGroup)findViewById(R.id.radioGroup);
         finish = (Button)findViewById(R.id.dummy_finishBtn);
         testing = (TextView)findViewById(R.id.NullText);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.useryear,R.layout.spinner_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, R.layout.spinner_item,years);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.useryear,R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         BirthYear.setAdapter(adapter);
         BirthYear.setOnItemSelectedListener(this);
@@ -67,11 +71,16 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
                 if(flag){
                     writeDatatoSharedPrefs();
                     getDatafromSharedPrefs();
-                    ToastData();
+                    //ToastData();
                     writeDatatoDB();
+                    changActivity();
                 }
             }
         });
+    }
+    private void changActivity(){
+        Intent i = new Intent(dummy_signup_2.this,MainActivity.class);
+        startActivity(i);
     }
     private void getDatafromSharedPrefs(){
         SharedPreferences prefs = getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
@@ -152,7 +161,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        uBirth = (String)adapterView.getItemAtPosition(i);
+        uBirth = (String)adapterView.getItemAtPosition(i).toString();
     }
 
     @Override

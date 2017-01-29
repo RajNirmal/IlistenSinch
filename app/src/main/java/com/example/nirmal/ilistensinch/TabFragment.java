@@ -74,7 +74,7 @@ public class TabFragment extends Fragment {
         {
             switch (position){
                 case 0 : return new Fragment1();
-                case 1 : return new Fragment2();
+                case 1 : return new SinchPlaceCallFragment();
                 case 2 : return new Fragment3();
                 case 3 : return new Fragment4();
             }

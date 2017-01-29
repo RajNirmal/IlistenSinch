@@ -40,9 +40,13 @@ public class Login extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_layout);
-        //checkIfDataAlreadyexists();
+		updateToken();
+        checkIfDataAlreadyexists();
 		initViews();
 		setListeners();
+	}
+	private void updateToken(){
+
 	}
     private void checkIfDataAlreadyexists(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
@@ -53,7 +57,7 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"No user data found",Toast.LENGTH_SHORT).show();
             }else {
 				//Toast.makeText(getApplicationContext(),"Came here from login" + name,Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(Login.this,MainActivity.class);
+                Intent i = new Intent(Login.this,SinchLoginActivity.class);
                 startActivity(i);
             }
         }catch (NullPointerException e){

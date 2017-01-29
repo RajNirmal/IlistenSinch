@@ -1,8 +1,8 @@
 package com.example.nirmal.ilistensinch;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -68,14 +68,14 @@ public class SinchOnGoingCallFragment extends Fragment {
         /*Intent i = gUsetIntent();
         String CallerIdentifier = i.getStringExtra(SinchHolders.CALL_ID);*/
         if (!((SinchMainActivity) getActivity()).whatToDo) {
-            String CallerIdentifier = ((SinchMainActivity) getActivity()).mainCall.getCallId();
+            String CallerIdentifier = ((MainActivity) getActivity()).mainCall.getCallId();
             call = SinchHolders.myClient.getCallClient().getCall(CallerIdentifier);
             CallingUsersName = call.getRemoteUserId();
             UserNameinTextView.setText(CallingUsersName);
             mAudioPlayer.playRingtone();
             updateTheView(false);
         } else {
-            CallingUsersName = (((SinchMainActivity) getActivity()).getTheUsertoCall());
+            CallingUsersName = (((MainActivity) getActivity()).getTheUsertoCall());
             try {
                 call = SinchHolders.myClient.getCallClient().callConference(CallingUsersName);
                 call.addCallListener(new SinchCallListener());
@@ -120,7 +120,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         mAudioPlayer.stopProgressTone();
                 /*Intent i = new Intent(In.this,SinchMainActivity.class);
                 startActivity(i);*/
-        FragmentManager fm = getActivity().getFragmentManager();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.detach(SinchOnGoingCallFragment.this);
         ft.replace(R.id.mainholderforsinchcalling, new SinchPlaceCallFragment());

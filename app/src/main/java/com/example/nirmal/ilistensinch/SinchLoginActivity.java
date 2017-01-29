@@ -184,7 +184,7 @@ public class SinchLoginActivity extends Activity {
             public void onClientStarted(SinchClient sinchClient) {
                // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
                 spinnerLog.dismiss();
-                Intent i = new Intent(SinchLoginActivity.this,SinchMainActivity.class);
+                Intent i = new Intent(SinchLoginActivity.this,MainActivity.class);
                 startActivity(i);
             }
 

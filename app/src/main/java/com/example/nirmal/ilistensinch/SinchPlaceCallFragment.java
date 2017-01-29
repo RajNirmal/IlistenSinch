@@ -1,7 +1,9 @@
 package com.example.nirmal.ilistensinch;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -46,11 +48,13 @@ import java.util.Map;
  */
 
 public class SinchPlaceCallFragment extends Fragment {
+    String Category,Desc,userFCM;
     final String URL = "https://sfbpush.herokuapp.com/push";
+    final String HostingerURL = "http://www.mazelon.com/iListen/ilisten_Save_Meeting.php";
     EditText ConferenceName,ConferenceDuration;
     TimePicker ConferenceStartTime;
     static TextView statusOfCall;
-    TextView someRandomData;
+    TextView someRandomData,TestingMeeting;
     private AudioPlayer mAudioPlayer;
     Button setUpConference,joinConference;
     String callingUsersName;
@@ -67,6 +71,7 @@ public class SinchPlaceCallFragment extends Fragment {
         ConferenceStartTime = (TimePicker) subView.findViewById(R.id.call_time);
         ConferenceDuration = (EditText) subView.findViewById(R.id.call_duration);
         someRandomData = (TextView)subView.findViewById(R.id.call_participants);
+        TestingMeeting = (TextView)subView.findViewById(R.id.testingmeeting);
         mAudioPlayer = new AudioPlayer(getActivity());
         FireDB = FirebaseDatabase.getInstance();
         FBReference = FireDB.getReference("MyApp");
@@ -105,7 +110,8 @@ public class SinchPlaceCallFragment extends Fragment {
                 String confTime = hour.toString() +" : "+ mins.toString()+" : "+"00";
                 String confDuration = ConferenceDuration.getText().toString().trim();
                 if((!callingUsersName.isEmpty())&&(!confTime.isEmpty())&&(!confDuration.isEmpty())){
-                  //  sendTheDataToHostinger(callingUsersName,confTime,confDuration);
+                    getSharedPrefsData();
+                    sendTheDataToHostinger(callingUsersName,confTime,confDuration);
                     sendPushToAllUsers(callingUsersName,confTime,confDuration);
                 }else{
                     Toast.makeText(getActivity(),"Enter Valid Details",Toast.LENGTH_SHORT).show();
@@ -115,6 +121,17 @@ public class SinchPlaceCallFragment extends Fragment {
         });
         return subView;
     }
+    private void getSharedPrefsData(){
+        SharedPreferences prefs = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
+        try{
+            userFCM = prefs.getString(SinchHolders.phpUserFirebaseToken,"NoData");
+            Category = prefs.getString(SinchHolders.phpUserexpertise,"NoData");
+            Desc = "Lets add this field later on";
+        }catch (NullPointerException e){
+            Toast.makeText(getActivity(),"Please wait until token initialisation",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void sendPushToAllUsers(final String ConfName , final String confTime, final String confdur){
         final String Body = "The Conference is being held on " + confTime + " for " + confdur + " minutes ";
         StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -143,9 +160,12 @@ public class SinchPlaceCallFragment extends Fragment {
         RequestQueue r = Volley.newRequestQueue(getActivity());
         r.add(sr);
     }
+
     private void sendTheDataToHostinger(final String confName, final String confTime, final String confDuration){
-        final String URL = "http://gocode.esy.es/Save_Meeting.php";
-        StringRequest stringreqs = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+        String putotText = SinchHolders.phpMeetingName+"="+confName +SinchHolders.phpMeetingTime+"="+confTime+SinchHolders.phpMeetingDuration+"="+confDuration+SinchHolders.phpMeetingCategory+"="+Category+
+                SinchHolders.phpMeetingCreator+"="+userFCM+SinchHolders.phpMeetingDesc+"="+Desc;
+        TestingMeeting.setText(putotText);
+        StringRequest stringreqs = new StringRequest(Request.Method.POST, HostingerURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
@@ -162,6 +182,10 @@ public class SinchPlaceCallFragment extends Fragment {
                 map.put(SinchHolders.phpMeetingName,confName);
                 map.put(SinchHolders.phpMeetingTime,confTime);
                 map.put(SinchHolders.phpMeetingDuration,confDuration);
+                map.put(SinchHolders.phpMeetingCategory,Category);
+                map.put(SinchHolders.phpMeetingCreator,userFCM);
+                map.put(SinchHolders.phpMeetingDesc,Desc);
+                map.put(SinchHolders.phpMeetingParticipants,"10");
                 return map;
             }
         };

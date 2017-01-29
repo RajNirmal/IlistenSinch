@@ -1,11 +1,14 @@
 package com.example.nirmal.ilistensinch;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.app.FragmentManager;
+
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,7 +27,7 @@ import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
  * Created by nirmal on 24/12/16.
  */
 
-public class SinchMainActivity extends Activity {
+public class SinchMainActivity extends FragmentActivity {
     FragmentManager fragmentManager;
     int mainFragmentHolder;
     public Call mainCall;
@@ -35,7 +38,7 @@ public class SinchMainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sinch_call_activity);
-        fragmentManager = getFragmentManager();
+        fragmentManager = this.getSupportFragmentManager();
         mainFragmentHolder = R.id.mainholderforsinchcalling;
         mAudioPlayer = new AudioPlayer(this);
         FragmentTransaction fr = fragmentManager.beginTransaction();
