@@ -51,12 +51,12 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_signup_dummy);
         uName = (EditText)findViewById(R.id.dummy_fullName);
-        nName = (EditText)findViewById(R.id.dummy_nickname);
+      //  nName = (EditText)findViewById(R.id.dummy_nickname);
         uPass = (EditText)findViewById(R.id.dummy_password);
-        uProfession = (EditText)findViewById(R.id.dummy_userprofession);
+        //uProfession = (EditText)findViewById(R.id.dummy_userprofession);
         signUpButton = (Button)findViewById(R.id.dummy_signUpBtn);
         dummyToast = (TextView)findViewById(R.id.dummy_toast);
-        Category = (Spinner)findViewById(R.id.spinner);
+    //    Category = (Spinner)findViewById(R.id.spinner);
         FirebaseApp.initializeApp(getApplicationContext());
         fireDatabase = FirebaseDatabase.getInstance();
         fireReference = fireDatabase.getReference("MyApp");
@@ -65,10 +65,10 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
             public void onClick(View view) {
                 dummyToast.setVisibility(View.GONE);
                 sName = uName.getText().toString().trim();
-                snName = nName.getText().toString().trim();
+               // snName = nName.getText().toString().trim();
                 sPass = uPass.getText().toString().trim();
-                sUserProf = uProfession.getText().toString().trim();
-                if((sName.isEmpty())||(snName.isEmpty())||(sPass.isEmpty())){
+             //   sUserProf = uProfession.getText().toString().trim();
+                if((sName.isEmpty())||(sPass.isEmpty())){
                     dummyToast.setVisibility(View.VISIBLE);
                     dummyToast.setText("Enter Valid Details");
                 }
@@ -83,10 +83,10 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
 
             }
         });
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this,R.layout.spinner_item,Fields);
+      /*  ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this,R.layout.spinner_item,Fields);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Category.setAdapter(adapter);
-        Category.setOnItemSelectedListener(this);
+        Category.setOnItemSelectedListener(this);*/
     }
 
     private void writeDataInSharedPrefs(){
@@ -96,11 +96,11 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserName,sName);
-        edit.putString(SinchHolders.phpUserNickName,snName);
+        edit.putString(SinchHolders.phpUserNickName,"snName");
         edit.putString(SinchHolders.phpUserPassword,sPass);
         edit.putString(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
-        edit.putString(SinchHolders.phpUserexpertise,sUserExpert);
-        edit.putString(SinchHolders.phpUserProfession,sUserProf);
+        edit.putString(SinchHolders.phpUserexpertise,"sUserExpert");
+        edit.putString(SinchHolders.phpUserProfession,"sUserProf");
         edit.commit();
     }
     private void ChangeActivity(){
@@ -111,7 +111,7 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
     private void updateDatainFirebase(final String LoginId){
         SinchUserData myUser = new SinchUserData(LoginId);
         fireReference.child(SinchUserData.getCanonicalClassName()).child(SinchUserData.UserBaseName()).setValue(myUser.ReturnUserName());
-        FirebaseMessaging.getInstance().subscribeToTopic(sUserExpert);
+        FirebaseMessaging.getInstance().subscribeToTopic("Technology");
     }
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

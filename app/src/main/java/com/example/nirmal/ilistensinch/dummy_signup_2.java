@@ -48,15 +48,15 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_layout_2);
         zipCode = (EditText)findViewById(R.id.dummy_zipcode);
-        BirthYear = (Spinner)findViewById(R.id.spinnerbirthyear);
+      //  BirthYear = (Spinner)findViewById(R.id.spinnerbirthyear);
         userSex = (RadioGroup)findViewById(R.id.radioGroup);
         finish = (Button)findViewById(R.id.dummy_finishBtn);
         testing = (TextView)findViewById(R.id.NullText);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, R.layout.spinner_item,years);
         //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.useryear,R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        BirthYear.setAdapter(adapter);
-        BirthYear.setOnItemSelectedListener(this);
+      /*  BirthYear.setAdapter(adapter);
+        BirthYear.setOnItemSelectedListener(this);*/
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +71,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
                 if(flag){
                     writeDatatoSharedPrefs();
                     getDatafromSharedPrefs();
-                    ToastData();
+                  //  ToastData();
                     writeDatatoDB();
                     changActivity();
                 }
@@ -102,7 +102,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserGender,ugender);
         edit.putString(SinchHolders.phpUserZip,uZip);
-        edit.putString(SinchHolders.phpUserBirthYear,uBirth);
+        edit.putString(SinchHolders.phpUserBirthYear,"uBirth");
         edit.commit();
     }
     private void ToastData(){
@@ -147,16 +147,18 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         if(uZip.isEmpty()){
             Toast.makeText(getApplicationContext(),"Enter Zip Code",Toast.LENGTH_SHORT).show();
             return false;
-        }else if(uZip.length() != 6){
+        }else
+
+        {
             Toast.makeText(getApplicationContext(),"Enter valid Zip Code",Toast.LENGTH_SHORT).show();
-            return false;
+            return true;
         }
-        if(BirthYear.equals("2017")){
+      /*  if(BirthYear.equals("2017")){
             Toast.makeText(getApplicationContext(),"Enter valid year",Toast.LENGTH_SHORT).show();
             return false;
         }else{
             return true;
-        }
+        }*/
     }
 
     @Override

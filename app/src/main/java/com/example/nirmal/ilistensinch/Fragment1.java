@@ -3,6 +3,7 @@ package com.example.nirmal.ilistensinch;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,7 +41,8 @@ public class Fragment1 extends Fragment {
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
     DBHandler db;
-
+    private final static int INTERVAL = 1000 * 60 * 2; //2 minutes
+    RequestQueue requestQueue;
     public Fragment1() {
         // TODO Auto-generated constructor stub
     }
@@ -52,7 +54,7 @@ public class Fragment1 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
     }
 
 
@@ -61,7 +63,7 @@ public class Fragment1 extends Fragment {
         getHostingerData();
         mRootView = inflater.inflate(R.layout.listfrag1, container, false);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(false);
         db = new DBHandler(getActivity());
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -71,7 +73,13 @@ public class Fragment1 extends Fragment {
         /*for (int i = 0; i < MyData.nick.length; i++) {
             data.add(new DataModel1(MyData.nick[i], MyData.stat[i], MyData.tit[i], MyData.cat[i], MyData.desc[i], MyData.dt[i]));
         }*/
-
+       final  Handler mhandler = new Handler();
+        mhandler.postDelayed(new Runnable() {
+            public void run() {
+                getHostingerData();
+                mhandler.postDelayed(this, 120000); //now is every 2 minutes
+            }
+        }, 120000); //Every 120000 ms (2 minutes)
         try{
             SharedPreferences sp = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
             uName = sp.getString(SinchHolders.phpUserName,"-1");
@@ -79,7 +87,7 @@ public class Fragment1 extends Fragment {
             Toast.makeText(getActivity().getApplicationContext(),"User data not found",Toast.LENGTH_SHORT).show();
             uName = "UserName";
         }
-        writeinLocalDB();
+      //  writeinLocalDB();
         return mRootView;
     }
     private void writeinLocalDB(){
@@ -89,6 +97,13 @@ public class Fragment1 extends Fragment {
 
 
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+//        getHostingerData();
+    }
+
     private void getHostingerData(){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_users.php";
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -130,7 +145,7 @@ public class Fragment1 extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
         requestQueue.add(sr);
     }
 
