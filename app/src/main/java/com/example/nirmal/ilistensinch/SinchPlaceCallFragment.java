@@ -95,7 +95,7 @@ public class SinchPlaceCallFragment extends Fragment {
             public void onClick(View view) {
                 callingUsersName = ConferenceName.getText().toString().trim();
                 if (!callingUsersName.isEmpty()) {
-                    ((SinchMainActivity) getActivity()).setTheUsertoCall(callingUsersName);
+                    ((MainActivity) getActivity()).setTheUsertoCall(callingUsersName);
                     //callTheUser();
                 }else
                     Toast.makeText(getActivity(), "Please Enter a User Name", Toast.LENGTH_SHORT).show();
@@ -138,13 +138,13 @@ public class SinchPlaceCallFragment extends Fragment {
         @Override
         public void onResponse(String response) {
             Toast.makeText(getActivity(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
-            ((SinchMainActivity)getActivity()).goBackToMain();
+          //  ((SinchMainActivity)getActivity()).goBackToMain();
         }
     }, new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             Toast.makeText(getActivity(),error.toString()+"The Server returned error",Toast.LENGTH_SHORT).show();
-            ((SinchMainActivity)getActivity()).goBackToMain();
+           // ((MainActivity)getActivity()).goBackToMain();
 
         }
     }){
@@ -164,7 +164,7 @@ public class SinchPlaceCallFragment extends Fragment {
     private void sendTheDataToHostinger(final String confName, final String confTime, final String confDuration){
         String putotText = SinchHolders.phpMeetingName+"="+confName +SinchHolders.phpMeetingTime+"="+confTime+SinchHolders.phpMeetingDuration+"="+confDuration+SinchHolders.phpMeetingCategory+"="+Category+
                 SinchHolders.phpMeetingCreator+"="+userFCM+SinchHolders.phpMeetingDesc+"="+Desc;
-        TestingMeeting.setText(putotText);
+       // TestingMeeting.setText(putotText);
         StringRequest stringreqs = new StringRequest(Request.Method.POST, HostingerURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

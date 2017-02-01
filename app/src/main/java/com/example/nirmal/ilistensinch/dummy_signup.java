@@ -92,7 +92,7 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
     private void writeDataInSharedPrefs(){
         SinchHolders.FirebaseToken = FirebaseInstanceId.getInstance().getToken();
         sFireBaseToken = FirebaseInstanceId.getInstance().getToken();
-        Toast.makeText(getApplicationContext(),sFireBaseToken,Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getApplicationContext(),sFireBaseToken,Toast.LENGTH_SHORT).show();
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserName,sName);

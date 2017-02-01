@@ -61,13 +61,14 @@ public class SinchOnGoingCallFragment extends Fragment {
         acceptButton = (Button) subView.findViewById(R.id.answerthecall);
         rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
         mCallDuration = (TextView) subView.findViewById(R.id.calling_time);
+
        // String whatUserToCall = (((SinchMainActivity) getActivity()).getTheUsertoCall());
         mAudioPlayer = new AudioPlayer(getActivity());
         setTheOnClickListeners();
         mCallStart = System.currentTimeMillis();
         /*Intent i = gUsetIntent();
         String CallerIdentifier = i.getStringExtra(SinchHolders.CALL_ID);*/
-        if (!((SinchMainActivity) getActivity()).whatToDo) {
+        if (!((MainActivity) getActivity()).whatToDo) {
             String CallerIdentifier = ((MainActivity) getActivity()).mainCall.getCallId();
             call = SinchHolders.myClient.getCallClient().getCall(CallerIdentifier);
             CallingUsersName = call.getRemoteUserId();
@@ -123,7 +124,8 @@ public class SinchOnGoingCallFragment extends Fragment {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.detach(SinchOnGoingCallFragment.this);
-        ft.replace(R.id.mainholderforsinchcalling, new SinchPlaceCallFragment());
+        ft.replace(R.id.containerView, new TabFragment());
+            ((MainActivity)getActivity()).showActionBar();
         ft.commit();
         //updateTheView(false);
         }    });

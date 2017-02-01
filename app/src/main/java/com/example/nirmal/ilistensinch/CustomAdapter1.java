@@ -18,16 +18,15 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
 
         TextView nick,stat,tit,cat,desc,dt;
         public CardView cardView;
-
         public MyViewHolder(View itemView) {
             super(itemView);
-
             this.nick = (TextView) itemView.findViewById(R.id.nick);
             this.stat = (TextView) itemView.findViewById(R.id.stat);
             this.tit = (TextView) itemView.findViewById(R.id.tit);
             this.cat = (TextView) itemView.findViewById(R.id.cat);
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
+
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
 
@@ -56,8 +55,6 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cardfrag1, parent, false);
-
-
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
@@ -71,9 +68,6 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         TextView cat = holder.cat;
         TextView desc = holder.desc;
         TextView dt= holder.dt;
-
-
-
         nick.setText(dataSet.get(listPosition).getNick());
         stat.setText(dataSet.get(listPosition).getStat());
         tit.setText(dataSet.get(listPosition).getTit());

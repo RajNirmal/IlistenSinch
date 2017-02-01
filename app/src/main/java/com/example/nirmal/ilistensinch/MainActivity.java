@@ -1,6 +1,8 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -14,10 +16,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.sinch.android.rtc.ClientRegistration;
+import com.sinch.android.rtc.Sinch;
+import com.sinch.android.rtc.SinchClient;
+import com.sinch.android.rtc.SinchClientListener;
+import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
 
+import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
+import static com.example.nirmal.ilistensinch.SinchHolders.APP_SECRET;
+import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
 import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
 
 
@@ -25,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     public int mainFragmentHolder;
+    ProgressDialog spinnerLog;
     public FragmentManager fragmentManager;
     FragmentTransaction mFragmentTransaction;
     android.support.v7.widget.Toolbar toolbar;
@@ -47,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          *Setup the DrawerLayout and NavigationView
          */
+        buildClient(SinchHolders.phpUserNickName);
         myClient.getCallClient().addCallClientListener(new MainActivity.SinchIncomingCallListener());
         updateTheTokeninHostinger();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -117,6 +129,58 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
     }
+    private void buildClient(String x){
+        showSpinner();
+        myClient = Sinch.getSinchClientBuilder().context(this).userId(x).applicationKey(APP_KEY).applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();
+        myClient.setSupportCalling(true);
+        myClient.startListeningOnActiveConnection();
+        myClient.setSupportActiveConnectionInBackground(true);
+        //  myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
+
+        myClient.addSinchClientListener(new SinchClientListener() {
+            @Override
+            public void onClientStarted(SinchClient sinchClient) {
+                // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
+                spinnerLog.dismiss();
+                /*Intent i = new Intent(SinchLoginActivity.this,MainActivity.class);
+                startActivity(i);*/
+            }
+
+            @Override
+            public void onClientStopped(SinchClient sinchClient) {
+                Toast.makeText(getApplicationContext(),"Client is disconnected",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onClientFailed(SinchClient sinchClient, SinchError sinchError) {
+                Toast.makeText(getApplicationContext(),"Connection failed. Try again after sometime",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onRegistrationCredentialsRequired(SinchClient sinchClient, ClientRegistration clientRegistration) {
+
+            }
+
+            @Override
+            public void onLogMessage(int i, String s, String s1) {
+
+            }
+        });
+        myClient.start();
+    }
+    private void showSpinner(){
+        spinnerLog = new ProgressDialog(MainActivity.this);
+        spinnerLog.setTitle("Trying to log in");
+        spinnerLog.setMessage("Please Wait");
+        spinnerLog.show();
+    }
+
+    public void showActionBar(){
+        getSupportActionBar().show();
+    }
+    public void hideActionBar(){
+        getSupportActionBar().hide();
+    }
     class SinchIncomingCallListener implements CallClientListener {
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
@@ -137,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         theUsertoCall = x;
         whatToDo = true;
         FragmentTransaction makeaCall = fragmentManager.beginTransaction();
+        hideActionBar();
         makeaCall.replace(mainFragmentHolder,new SinchOnGoingCallFragment()).commit();
     }
     public void goBackToMain(){
@@ -163,11 +228,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id){
-            case R.id.action_call:
-               // Toast.makeText(getApplicationContext(),"Call Icon Has been clicked",Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(MainActivity.this,SinchLoginActivity.class);
-                startActivity(i);
-                break;
+
         }
         return true;
     }

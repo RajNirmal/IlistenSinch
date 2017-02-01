@@ -71,7 +71,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
                 if(flag){
                     writeDatatoSharedPrefs();
                     getDatafromSharedPrefs();
-                    //ToastData();
+                    ToastData();
                     writeDatatoDB();
                     changActivity();
                 }
@@ -106,20 +106,20 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         edit.commit();
     }
     private void ToastData(){
-        String testString = "uName " + uName + " uNick "+uNick+" uPass "+uPass+" uFCM "+uFCM+" uUserProf "+uUserProf+" uExpertise "+uUserExp+" ugender "+ugender+" uZip "+uZip+" uBirth "+uBirth;
-        testing.setText(testString);
+       Intent i = new Intent(dummy_signup_2.this,SinchLoginActivity.class);
+       startActivity(i);;
     }
     private void writeDatatoDB(){
 
         StringRequest sr = new StringRequest(Request.Method.POST,URL , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Error occured try again later",Toast.LENGTH_SHORT).show();
             }
         }){
             @Override

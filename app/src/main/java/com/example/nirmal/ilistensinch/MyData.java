@@ -4,7 +4,7 @@ package com.example.nirmal.ilistensinch;
 
 public class MyData {
 //Home datas....
-static String[] nick={"vijay","raja","vinoth","vignesh","nirmal","srini"};
+    static String[] nick={"vijay","raja","vinoth","vignesh","nirmal","srini"};
     static String[] tit={"Title1","Title2","Title3","Title4","Title5","Title6"};
     static String[] cat={"catogery1","catogery2","catogery3","catogery4","catogery5","catogery6"};
     static String[] desc={"Description1","Description2","Description3","Description4","Description5","Description6"};
