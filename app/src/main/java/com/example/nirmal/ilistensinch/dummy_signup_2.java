@@ -34,7 +34,7 @@ import java.util.Map;
  */
 
 public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelectedListener {
-    String uBirth, ugender, uZip, uName, uNick, uPass, uFCM, uUserProf, uUserExp;
+    String uBirth="1997", ugender, uZip, uName, uNick, uPass, uFCM, uUserProf, uUserExp;
     EditText zipCode;
     Spinner BirthYear;
     RadioGroup userSex;
@@ -73,7 +73,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
                     getDatafromSharedPrefs();
                   //  ToastData();
                     writeDatatoDB();
-                    changActivity();
+//                    changActivity();
                 }
             }
         });
@@ -110,16 +110,17 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
        startActivity(i);;
     }
     private void writeDatatoDB(){
-
+//        Toast.makeText(getApplicationContext(),uName+uNick+uPass+uFCM+uUserProf+uUserExp+ugender+uZip+uBirth,Toast.LENGTH_SHORT).show();
         StringRequest sr = new StringRequest(Request.Method.POST,URL , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-             //   Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                changActivity();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Error occured try again later",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),error.toString()+"Error occured try again later",Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -148,9 +149,8 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
             Toast.makeText(getApplicationContext(),"Enter Zip Code",Toast.LENGTH_SHORT).show();
             return false;
         }else
-
         {
-            Toast.makeText(getApplicationContext(),"Enter valid Zip Code",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(),"Enter valid Zip Code",Toast.LENGTH_SHORT).show();
             return true;
         }
       /*  if(BirthYear.equals("2017")){

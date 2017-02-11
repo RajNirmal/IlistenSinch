@@ -44,7 +44,17 @@
         android:layout_below="@+id/r"
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nothingtoshow"
+        android:text="No Meetings to show"
+        android:textColor="#757575"
+        android:gravity="center"
+        android:layout_marginTop="250dp"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        android:textSize="@dimen/text_huge"/>
 
 </RelativeLayout>

@@ -32,7 +32,7 @@
                 android:fontFamily="sans-sarif"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                 />
             <TextView
                 android:id="@+id/nick"
@@ -43,7 +43,7 @@
                 android:textColor="@color/white"
                 android:fontFamily="sans-sarif"
                 android:layout_toRightOf="@+id/nickname"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                 />
             <TextView
                 android:text="Online"
@@ -52,7 +52,7 @@
                 android:fontFamily="sans-sarif"
                 android:textColor="@color/white"
                 android:id="@+id/stat"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 />
@@ -65,7 +65,7 @@
                 android:textColor="@color/white"
                 android:layout_marginTop="10dp"
                 android:id="@+id/title"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                 android:layout_below="@+id/stat" />
             <TextView
                 android:text="Title"
@@ -75,7 +75,7 @@
                 android:textColor="@color/white"
                 android:id="@+id/tit"
                 android:layout_marginTop="10dp"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/title"
                 android:layout_below="@+id/nick"/>
@@ -88,7 +88,7 @@
                 android:layout_marginTop="10dp"
                 android:id="@+id/category"
                 android:layout_below="@+id/title"
-                android:textSize="10dp"/>
+                android:textSize="@dimen/text_small"/>
 
             <TextView
                 android:text="Category"
@@ -101,7 +101,7 @@
                 android:layout_marginLeft="5dp"
                 android:id="@+id/cat"
                 android:layout_toRightOf="@+id/category"
-                android:textSize="10dp"/>
+                android:textSize="@dimen/text_small"/>
 
             <TextView
                 android:text="Description       :"
@@ -112,7 +112,7 @@
                 android:fontFamily="sans-sarif"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/white"
-                android:textSize="10dp" />
+                android:textSize="@dimen/text_small" />
             <TextView
                 android:text="Desc"
                 android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                 android:layout_toRightOf="@+id/description"
                 android:fontFamily="sans-sarif"
                 android:textColor="@color/white"
-                android:textSize="10dp" />
+                android:textSize="@dimen/text_small" />
             <ImageView
                 android:id="@+id/line"
                 android:layout_width="match_parent"
@@ -141,7 +141,7 @@
                 android:layout_above="@+id/line"
                 android:textColor="@color/white"
                 android:fontFamily="sans-sarif"
-                android:textSize="10dp"
+                android:textSize="@dimen/text_small"
                />
             <TextView
                 android:id="@+id/can"
@@ -152,7 +152,7 @@
                 android:text="cancel"
                 android:drawableLeft="@drawable/ic3"
                 android:drawablePadding="5dp"
-                android:textSize="12dp"
+                android:textSize="@dimen/text_small"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 />
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:text="participate"
                 android:textAllCaps="true"
-                android:textSize="12dp"
+                android:textSize="@dimen/text_small"
                 android:drawableLeft="@drawable/ic2"
                 android:drawablePadding="5dp"
                 android:textColor="#ffffff"
@@ -179,7 +179,7 @@
                 android:drawablePadding="5dp"
                 android:textColor="#ffffff"
                 android:textAllCaps="true"
-                android:textSize="12dp"
+                android:textSize="@dimen/text_small"
                 android:id="@+id/textView5"
                 android:layout_below="@+id/line"
                 android:layout_centerHorizontal="true" />

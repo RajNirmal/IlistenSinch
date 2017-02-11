@@ -96,7 +96,7 @@ public class dummy_signup extends Activity implements AdapterView.OnItemSelected
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SinchHolders.phpUserName,sName);
-        edit.putString(SinchHolders.phpUserNickName,"snName");
+        edit.putString(SinchHolders.phpUserNickName,sName);
         edit.putString(SinchHolders.phpUserPassword,sPass);
         edit.putString(SinchHolders.phpUserFirebaseToken,sFireBaseToken);
         edit.putString(SinchHolders.phpUserexpertise,"sUserExpert");

@@ -32,7 +32,7 @@ android:tag="cards main container">
             android:fontFamily="sans-sarif"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:textSize="10sp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             />
         <TextView
@@ -44,7 +44,7 @@ android:tag="cards main container">
             android:textColor="@color/white"
             android:fontFamily="sans-sarif"
             android:layout_toRightOf="@+id/nickname"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             />
         <TextView
@@ -54,7 +54,7 @@ android:tag="cards main container">
             android:fontFamily="sans-sarif"
             android:textColor="@color/white"
             android:id="@+id/stat"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
@@ -68,7 +68,7 @@ android:tag="cards main container">
             android:textColor="@color/white"
             android:layout_marginTop="10dp"
             android:id="@+id/title"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             android:layout_below="@+id/stat" />
         <TextView
@@ -79,7 +79,7 @@ android:tag="cards main container">
             android:textColor="@color/white"
             android:id="@+id/tit"
             android:layout_marginTop="10dp"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             android:layout_marginLeft="5dp"
            android:layout_toRightOf="@+id/title"
@@ -93,7 +93,7 @@ android:tag="cards main container">
             android:layout_marginTop="10dp"
             android:id="@+id/category"
             android:layout_below="@+id/title"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"/>
 
         <TextView
@@ -107,7 +107,7 @@ android:tag="cards main container">
             android:layout_marginTop="10dp"
             android:id="@+id/cat"
             android:layout_toRightOf="@+id/category"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"/>
 
         <TextView
@@ -119,7 +119,7 @@ android:tag="cards main container">
              android:layout_below="@+id/cat"
             android:fontFamily="sans-sarif"
             android:textColor="@color/white"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center" />
         <TextView
             android:text="Use to call and chat"
@@ -132,13 +132,13 @@ android:tag="cards main container">
            android:layout_toRightOf="@+id/description"
             android:fontFamily="sans-sarif"
             android:textColor="@color/white"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center" />
 <ImageView
     android:id="@+id/line"
     android:layout_width="match_parent"
     android:layout_height="0.1dp"
-    android:layout_above="@+id/part"
+    android:layout_above="@+id/accept_textview"
     android:layout_marginBottom="10dp"
     android:layout_marginTop="10dp"
     android:background="#ffffff"/>
@@ -150,12 +150,12 @@ android:tag="cards main container">
             android:id="@+id/dt"
             android:textColor="@color/white"
             android:layout_above="@+id/line"
-            android:textSize="10dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             android:fontFamily="san-serif"
           />
         <TextView
-            android:id="@id/part"
+            android:id="@+id/accept_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -164,28 +164,28 @@ android:tag="cards main container">
             android:textColor="#ffffff"
             android:drawableLeft="@drawable/ic2"
             android:drawablePadding="5dp"
-            android:text="participate"
+            android:text="Accept"
             android:textAllCaps="true"
-            android:textSize="12dp"
+            android:textSize="@dimen/text_small"
             android:gravity="center"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="cancel"
+            android:text="Reject"
             android:textAllCaps="true"
             android:textColor="#ffffff"
-            android:id="@+id/textView2"
+            android:id="@+id/reject_textview"
             android:drawableLeft="@drawable/ic3"
             android:drawablePadding="5dp"
-            android:textSize="12dp"
+            android:textSize="@dimen/text_small"
             android:layout_alignLeft="@+id/line"
             android:layout_alignStart="@+id/line"
             android:layout_alignParentBottom="true"
-            android:layout_alignTop="@id/part" />
+            android:layout_alignTop="@+id/part" />
 
-        <TextView
+<!--        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notnow"
@@ -194,10 +194,10 @@ android:tag="cards main container">
             android:textAllCaps="true"
             android:textColor="#ffffff"
             android:id="@+id/textView3"
-            android:textSize="12dp"
+            android:textSize="@dimen/text_small"
             android:layout_alignTop="@+id/textView2"
             android:layout_toRightOf="@+id/cat"
-            android:layout_toEndOf="@+id/cat" />
+            android:layout_toEndOf="@+id/cat" />-->
 
     </RelativeLayout>
 

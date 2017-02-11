@@ -33,7 +33,7 @@ public class SinchHolders extends Service{
     public static final String phpUserBirthYear = "birthdate";
     public static final String phpUserZip = "zipcode";
     public static final String phpUserGender = "sex";
-
+    public static Integer lastDataCount = 0;
     public static final String phpMeetingName = "MeetingName";
     public static final String phpMeetingTime = "MeetingStartTime";
     public static final String phpMeetingDuration = "MeetingDuration";

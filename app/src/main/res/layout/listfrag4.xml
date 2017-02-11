@@ -16,5 +16,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nothingtoshowfrag4"
+        android:text="You have no scheduled meetings"
+        android:textColor="#757575"
+        android:gravity="center"
+        android:layout_marginTop="250dp"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        android:textSize="@dimen/text_huge"/>
 
 </RelativeLayout>
