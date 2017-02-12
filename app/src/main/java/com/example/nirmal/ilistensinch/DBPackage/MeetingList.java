@@ -5,7 +5,7 @@ package com.example.nirmal.ilistensinch.DBPackage;
  */
 
 public class MeetingList {
-    int id;
+
 
     public String getMeetingName() {
         return MeetingName;
@@ -63,13 +63,18 @@ public class MeetingList {
         this.id = id;
     }
 
+    public void setStatus(int Status){this.Status = Status;}
+
+    public int getStatus(){return Status;}
+
+    int id,Status;
     String MeetingName,ConferenceDesc;
     String Time,Duration,CreateTime;
     String Presenter;
      public MeetingList(){
 
      }
-    public MeetingList(int mId,String mName, String cDesc,String tTime, String mDuration,String cTime, String pPresenter){
+    public MeetingList(int mId,String mName, String cDesc,String tTime, String mDuration,String cTime, String pPresenter, int mStatus){
         id = mId;
         MeetingName = mName;
         ConferenceDesc = cDesc;
@@ -77,6 +82,7 @@ public class MeetingList {
         Duration = mDuration;
         CreateTime = cTime;
         Presenter = pPresenter;
+        Status = mStatus;
     }
 
 }

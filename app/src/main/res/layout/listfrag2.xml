@@ -34,6 +34,8 @@
                     android:inputType="textCapWords"
                     android:padding="10dp"
                     android:singleLine="true"
+                    android:drawableLeft="@drawable/formattitle"
+                    android:drawablePadding="5dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white_54"
                     android:textSize="@dimen/text_user_entry" />
@@ -58,6 +60,8 @@
                     android:padding="10dp"
                     android:singleLine="true"
                     android:textColor="@color/white"
+                    android:drawableLeft="@drawable/timer"
+                    android:drawablePadding="5dp"
                     android:textColorHint="@color/white_54"
                     android:textSize="@dimen/text_user_entry" />
 
@@ -78,9 +82,11 @@
                     android:layout_below="@+id/line2"
                     android:hint="Description"
                     android:padding="10dp"
+                    android:drawableLeft="@drawable/contentpaste"
+                    android:drawablePadding="5dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white_54"
-                    android:textSize="10dp" />
+                    android:textSize="@dimen/text_small" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -98,6 +104,8 @@
                     android:layout_below="@+id/line3"
                     android:hint="Date"
                     android:padding="10dp"
+                    android:drawableLeft="@drawable/calendartext"
+                    android:drawablePadding="5dp"
                     android:singleLine="true"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white_54"
@@ -119,6 +127,8 @@
                     android:gravity="center_vertical"
                     android:layout_below="@+id/line4"
                     android:hint="Time"
+                    android:drawableLeft="@drawable/clock"
+                    android:drawablePadding="5dp"
                     android:padding="10dp"
                     android:singleLine="true"
                     android:textColor="@color/white"

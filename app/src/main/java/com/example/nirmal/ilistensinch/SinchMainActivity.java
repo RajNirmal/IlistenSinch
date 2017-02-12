@@ -33,6 +33,7 @@ public class SinchMainActivity extends FragmentActivity {
     public Call mainCall;
     String theUsertoCall;
     AudioPlayer mAudioPlayer;
+    Bundle extra;
     public boolean whatToDo = false;//set to true if I am making a call else set to false for incoming call
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,13 @@ public class SinchMainActivity extends FragmentActivity {
         fr.replace(mainFragmentHolder,new SinchPlaceCallFragment());
         fr.commit();
         myClient.getCallClient().addCallClientListener(new SinchIncomingCallListener());
+        extra = getIntent().getExtras();
+        if(extra == null){
+            String User = "Default";
+        }else {
+            String Conferencename = extra.getString(SinchHolders.phpMeetingName);
+            setTheUsertoCall(Conferencename);
+        }
     }
     class SinchIncomingCallListener implements CallClientListener {
         @Override

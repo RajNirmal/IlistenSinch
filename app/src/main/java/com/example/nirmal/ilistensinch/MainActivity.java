@@ -129,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
     }
+    public void startTheCall(String x){
+        Intent i = new Intent(MainActivity.this,SinchMainActivity.class);
+        i.putExtra(SinchHolders.phpMeetingName,x);
+        startActivity(i);
+    }
     private void buildClient(String x){
         showSpinner();
         myClient = Sinch.getSinchClientBuilder().context(this).userId(x).applicationKey(APP_KEY).applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();

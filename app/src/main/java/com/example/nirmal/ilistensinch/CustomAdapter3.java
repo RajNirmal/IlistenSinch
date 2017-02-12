@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHolder>  {
 
-    private ArrayList<DataModel3> dataSet;
+    private ArrayList<DataModel1> dataSet;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -28,7 +28,7 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
             this.cat = (TextView) itemView.findViewById(R.id.cat);
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
-            cardView = (CardView) itemView.findViewById(R.id.card_view);
+            cardView = (CardView) itemView.findViewById(R.id.card_view_frag3);
             cardView.setOnClickListener(this);
 
         }
@@ -46,7 +46,7 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
 
     }
 
-    public CustomAdapter3(ArrayList<DataModel3> data) {
+    public CustomAdapter3(ArrayList<DataModel1> data) {
         this.dataSet = data;
     }
 

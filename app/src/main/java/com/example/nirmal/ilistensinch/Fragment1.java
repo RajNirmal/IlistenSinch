@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,18 +34,18 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
-    String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
-    int MeetingID[];
-    TextView nothingToShow;
-    static int flag = 0;
+    private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
+    private int MeetingID[];
+    private TextView nothingToShow;
+    private static int flag = 0;
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
     private static ArrayList<DataModel1> data;
-    String uName;
+    private String uName;
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
-    DBHandler db;
+    private DBHandler db;
     private final static int INTERVAL = 1000 * 60 * 2; //2 minutes
     RequestQueue requestQueue;
     public Fragment1() {
@@ -95,11 +96,15 @@ public class Fragment1 extends Fragment {
         flag =1;
         return mRootView;
     }
-    private void writeinLocalDB(int i){
-        Integer x = MeetingName.length;
-//        Toast.makeText(getActivity(),x.toString(),Toast.LENGTH_SHORT).show();
-//        for (int i=0; i< MeetingName.length;i++){
-          db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i]));
+    private void getDBdata(int id){
+        MeetingList myList = db.getMeeting(id);
+        Toast.makeText(getActivity(),"MeetingID = "+myList.getId(),Toast.LENGTH_SHORT).show();
+    }
+    private long writeinLocalDB(int i){
+        long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],-1));
+//      Toast.makeText(getActivity(),String.valueOf(MeetingID[i])+MeetingName[i]+ConDesc[i]+Time[i]+Duration[i]+Time[i]+Presenter[i],Toast.LENGTH_SHORT).show();
+//      getDBdata(i);
+        return out;
    }
 
     @Override
@@ -107,7 +112,11 @@ public class Fragment1 extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 //        getHostingerData();
     }
+    public void showToast(String x){
+        String a = x.replaceAll("\\s","");
+        Toast.makeText(getActivity(),a,Toast.LENGTH_SHORT).show();
 
+    }
     private void getHostingerData(){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_users.php";
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -128,8 +137,7 @@ public class Fragment1 extends Fragment {
                         nothingToShow.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.INVISIBLE);
                     }else if(jArray.length() == SinchHolders.lastDataCount){
-                        //Nothing has changed since the last time
-//                       Toast.makeText(getActivity().getApplicationContext(),"Nothing has changed",Toast.LENGTH_SHORT).show();
+                        //Nothing has changed since the last time so no need to update the DB just keep the vrecycler view persistent
                        recyclerView.setVisibility(View.VISIBLE);
                        for (int i =0; i < jArray.length(); i++) {
                            JSONObject jobj = jArray.getJSONObject(i);
@@ -140,13 +148,12 @@ public class Fragment1 extends Fragment {
                            Duration[i] = jobj.getString("Duration");
                            Presenter[i] = jobj.getString("PID");
                            MeetingID[i] = jobj.getInt("MeetingID");
-//                           writeinLocalDB(i);
                        }
                        for (int i = 0; i < MeetingName.length; i++) {
                            data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
                        }
                    }else {
-//                       Toast.makeText(getActivity().getApplicationContext(),"New data received",Toast.LENGTH_SHORT).show();
+//                      New data has been found in the server so call the local Db and update it accordingly
                         recyclerView.setVisibility(View.VISIBLE);
                         for (int i = 0; i < jArray.length(); i++) {
                             JSONObject jobj = jArray.getJSONObject(i);
@@ -157,14 +164,15 @@ public class Fragment1 extends Fragment {
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
-//                            writeinLocalDB(i);
+                            long SuccessorNot = writeinLocalDB(i);
+//                            Toast.makeText(getActivity(),String.valueOf(SuccessorNot),Toast.LENGTH_SHORT).show();
                         }
                         for (int i = 0; i < MeetingName.length; i++) {
                             data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
                         }
 
                     }
-                    adapter = new CustomAdapter1(data);
+                    adapter = new CustomAdapter1(data,Fragment1.this);
                     recyclerView.setAdapter(adapter);
                     SinchHolders.lastDataCount = jArray.length();
               //      Toast.makeText(getActivity().getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
@@ -181,7 +189,6 @@ public class Fragment1 extends Fragment {
 
         requestQueue.add(sr);
     }
-
 
 }
 

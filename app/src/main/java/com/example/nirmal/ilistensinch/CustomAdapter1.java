@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 
 
 public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHolder>  {
-
+    private Fragment1 myFrag;
     private ArrayList<DataModel1> dataSet;
     DBHandler db;
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -44,7 +44,8 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         @Override
         public void onClick(View v) {
             if( v.getId() == butAccept.getId()){
-                Toast.makeText(v.getContext(),"Meeting ID = "+ dataSet.get(getAdapterPosition()).getMeetId()+" Meeting Name = "+dataSet.get(getAdapterPosition()).getTit(),Toast.LENGTH_SHORT).show();
+//                Toast.makeText(v.getContext(),"Meeting ID = "+ dataSet.get(getAdapterPosition()).getMeetId()+" Meeting Name = "+dataSet.get(getAdapterPosition()).getTit(),Toast.LENGTH_SHORT).show();
+                myFrag.showToast(dataSet.get(getAdapterPosition()).getTit());
 
             }else if (v.getId() == butReject.getId()){
                 Toast.makeText(v.getContext(),"Button reject clicked on position"+ String.valueOf(getAdapterPosition()),Toast.LENGTH_SHORT).show();
@@ -65,8 +66,9 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         for (int i=0; i< MeetingName.length;i++){*/
 //        db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i]));
     }
-    public CustomAdapter1(ArrayList<DataModel1> data) {
+    public CustomAdapter1(ArrayList<DataModel1> data,Fragment1 frag) {
         this.dataSet = data;
+        myFrag = frag;
     }
 
     @Override
