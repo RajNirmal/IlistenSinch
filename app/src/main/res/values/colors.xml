@@ -24,4 +24,5 @@
     <color name="colorAccent">#9eb3c4</color>
     <color name="txt">#212121</color>
     <color name="colorPrimaryDark">#2f3f4c</color>
+    <color name="colorTextCallColor">#F5F5DC</color>
 </resources>

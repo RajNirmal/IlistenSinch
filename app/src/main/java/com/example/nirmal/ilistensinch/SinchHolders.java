@@ -41,6 +41,7 @@ public class SinchHolders extends Service{
     public static final String phpMeetingCreator = "CreatorId";
     public static final String phpMeetingCategory = "concategory";
     public static final String phpMeetingDesc = "condesc";
+    public static final String phpMeetingId = "MeetingId";
     static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
         myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());

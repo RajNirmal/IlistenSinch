@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 /**
  * Created by nirmal on 29/1/17.
  */
@@ -54,11 +57,46 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
         return output;
     }
+    public ArrayList<MeetingList> getAllMeetings(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<MeetingList> allMeetings = new ArrayList<>();
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_STATUS+" = 1",null);
+        try{
+            while(cr.moveToNext())
+                allMeetings.add(new MeetingList(Integer.parseInt(cr.getString(0)), cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4), cr.getString(5), cr.getString(6), Integer.parseInt(cr.getString(7))));
+        }finally {
+            cr.close();
+        }
+        return allMeetings;
+    }
+    public long updateMeetingStatus(MeetingList list){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cValues = new ContentValues();
+        cValues.put(KEY_MEETING_KEY, list.getId());
+        cValues.put(KEY_MEETING_NAME, list.getMeetingName());
+        cValues.put(KEY_CONFERENCE_DESC,list.getConferenceDesc());
+        cValues.put(KEY_TIME, list.getTime());
+        cValues.put(KEY_DURATION, list.getDuration());
+        cValues.put(KEY_CREATE_TIME, list.getCreateTime());
+        cValues.put(KEY_PRESENTER, list.getPresenter());
+        cValues.put(KEY_MEETING_STATUS, list.getStatus());
+        long output = db.update(TABLE_NAME,cValues,KEY_MEETING_KEY+"= ?",new String[]{String.valueOf(list.getId())});
+        db.close();
+        return output;
+    }
+    public int getMeetingStatus(int x){
+        SQLiteDatabase db =this.getReadableDatabase();
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_KEY+" = "+ String.valueOf(x),null);
+        cr.moveToFirst();
+        int status = Integer.parseInt(cr.getString(7));
+        return (int)status;
+    }
     public MeetingList getMeeting(Integer id){
         SQLiteDatabase db = this.getReadableDatabase();
 //        Cursor cr = db.query(TABLE_NAME,new String[]{KEY_MEETING_KEY,KEY_MEETING_NAME, KEY_CONFERENCE_DESC,KEY_TIME,KEY_DURATION,KEY_CREATE_TIME,KEY_PRESENTER,KEY_MEETING_STATUS},KEY_MEETING_KEY+"=?",new String[]
 //                {String.valueOf(id)},null,null,null,null);
-        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+" where "+KEY_MEETING_KEY+" = ?",new String[] {id.toString()});
+//        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+" where "+KEY_MEETING_KEY+" = ?",new String[] {id.toString()});
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME,null);
         MeetingList list;
         if(cr.moveToFirst()) {
 //            cr.moveToFirst();
@@ -66,6 +104,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }else{
             list = null;
         }
+        cr.close();
         return list;
     }
 }

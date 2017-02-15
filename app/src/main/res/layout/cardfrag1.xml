@@ -158,8 +158,9 @@ android:tag="cards main container">
             android:id="@+id/accept_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/accept_margin"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
+            android:foregroundGravity="center"
             android:fontFamily="san-serif"
             android:textColor="#ffffff"
             android:drawableLeft="@drawable/ic2"
@@ -170,6 +171,7 @@ android:tag="cards main container">
             android:gravity="center"
             />
 
+<!--
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -185,7 +187,7 @@ android:tag="cards main container">
             android:layout_alignParentBottom="true"
             android:layout_alignTop="@+id/part" />
 
-<!--        <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notnow"
@@ -197,7 +199,8 @@ android:tag="cards main container">
             android:textSize="@dimen/text_small"
             android:layout_alignTop="@+id/textView2"
             android:layout_toRightOf="@+id/cat"
-            android:layout_toEndOf="@+id/cat" />-->
+            android:layout_toEndOf="@+id/cat" />
+-->
 
     </RelativeLayout>
 

@@ -54,6 +54,11 @@ public class SinchMainActivity extends FragmentActivity {
             setTheUsertoCall(Conferencename);
         }
     }
+    public void letsGoBackToMainActivity(){
+        Intent i = new Intent(SinchMainActivity.this,MainActivity.class);
+        startActivity(i);
+    }
+
     class SinchIncomingCallListener implements CallClientListener {
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {

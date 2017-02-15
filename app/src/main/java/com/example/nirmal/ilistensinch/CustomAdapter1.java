@@ -33,11 +33,11 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
             this.butAccept = (TextView)itemView.findViewById(R.id.accept_textview);
-            this.butReject = (TextView)itemView.findViewById(R.id.reject_textview);
+//            this.butReject = (TextView)itemView.findViewById(R.id.reject_textview);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
             butAccept.setOnClickListener(this);
-            butReject.setOnClickListener(this);
+//            butReject.setOnClickListener(this);
             db = new DBHandler(itemView.getContext());
         }
 
@@ -45,10 +45,9 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         public void onClick(View v) {
             if( v.getId() == butAccept.getId()){
 //                Toast.makeText(v.getContext(),"Meeting ID = "+ dataSet.get(getAdapterPosition()).getMeetId()+" Meeting Name = "+dataSet.get(getAdapterPosition()).getTit(),Toast.LENGTH_SHORT).show();
-                myFrag.showToast(dataSet.get(getAdapterPosition()).getTit());
-
-            }else if (v.getId() == butReject.getId()){
-                Toast.makeText(v.getContext(),"Button reject clicked on position"+ String.valueOf(getAdapterPosition()),Toast.LENGTH_SHORT).show();
+                String x = String.valueOf(dataSet.get(getAdapterPosition()).getMeetId());
+//                Toast.makeText(v.getContext(),x,Toast.LENGTH_SHORT).show();
+                myFrag.showToast(x);
             }
 
             /*int position=getAdapterPosition();
@@ -60,11 +59,8 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         }
 
     }
-    private void writeinLocalDB(int i){
-        /*Integer x = MeetingName.length;
-        Toast.makeText(getActivity(),x.toString(),Toast.LENGTH_SHORT).show();
-        for (int i=0; i< MeetingName.length;i++){*/
-//        db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i]));
+    public void updateDataShown(){
+
     }
     public CustomAdapter1(ArrayList<DataModel1> data,Fragment1 frag) {
         this.dataSet = data;
@@ -72,9 +68,7 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
-
+    public MyViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardfrag1, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
@@ -82,7 +76,6 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder,final int listPosition) {
-
         TextView nick = holder.nick;
         TextView stat = holder.stat;
         TextView tit = holder.tit;

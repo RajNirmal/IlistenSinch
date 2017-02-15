@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/callingscreenbackground">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:id="@+id/caller_name"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorTextCallColor"
         android:text="Hello"
         android:layout_gravity="center"/>
     <TextView
@@ -15,7 +17,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:id="@+id/calling_time"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorTextCallColor"
         android:text="Hello"
         android:layout_gravity="center"/>
     <View
@@ -31,16 +33,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/answerthecall"
-            android:background="@drawable/button_accept"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+
+            android:id="@+id/rejectthecall"
+            android:background="@drawable/cancelcall"
+
             android:layout_gravity="center"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/rejectthecall"
-            android:background="@drawable/button_decline"
+            android:id="@+id/answerthecall2"
+            android:background="@android:color/transparent"
             android:layout_gravity="center"/>
-
     </LinearLayout>
 
 </LinearLayout>

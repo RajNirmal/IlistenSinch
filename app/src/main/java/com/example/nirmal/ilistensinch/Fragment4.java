@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
+import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
 import java.util.ArrayList;
 
@@ -17,11 +21,11 @@ public class Fragment4 extends Fragment {
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
-    private static ArrayList<DataModel4> data;
+    private static ArrayList<MeetingList> data;
     TextView noShow4;
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
-
+    private DBHandler db;
 
     public Fragment4() {
         // TODO Auto-generated constructor stub
@@ -44,12 +48,23 @@ public class Fragment4 extends Fragment {
         noShow4 = (TextView) mRootView.findViewById(R.id.nothingtoshowfrag4);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
+        db = new DBHandler(getActivity());
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setVisibility(View.INVISIBLE);
-        noShow4.setVisibility(View.VISIBLE);
+        getAllMeetings();
         return mRootView;
+    }
+    public void getAllMeetings(){
+        data = db.getAllMeetings();
+        if(data.isEmpty()){
+            noShow4.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
+        }else {
+            adapter = new CustomAdapter4(data);
+            recyclerView.setAdapter(adapter);
+        }
+//        Toast.makeText(getActivity(),meetingsList.toString(),Toast.LENGTH_SHORT).show();
     }
 
 }

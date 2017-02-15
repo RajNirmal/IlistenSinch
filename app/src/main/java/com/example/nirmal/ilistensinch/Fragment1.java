@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,6 +33,8 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Fragment1 extends Fragment {
     private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
@@ -65,7 +68,7 @@ public class Fragment1 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getHostingerData();
+        getAllMeetingsFromHostingerDB();
         mRootView = inflater.inflate(R.layout.listfrag1, container, false);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
         nothingToShow = (TextView)mRootView.findViewById(R.id.nothingtoshow);
@@ -77,15 +80,14 @@ public class Fragment1 extends Fragment {
         data = new ArrayList<DataModel1>();
      /*   for (int i = 0; i < MyData.nick.length; i++) {
             data.add(new DataModel1(MyData.nick[i], MyData.stat[i], MyData.tit[i], MyData.cat[i], MyData.desc[i], MyData.dt[i]));
-        }
-       final  Handler mhandler = new Handler();
+        }*/
+      /* final  Handler mhandler = new Handler();
         mhandler.postDelayed(new Runnable() {
             public void run() {
-                getHostingerData();
-                mhandler.postDelayed(this, 120000);//now is every 2 minutes
-
+                mhandler.postDelayed(this, 5000);//now is every 2 minutes
+                checkTheAcceptStatus();
             }
-        }, 120000); //Every 120000 ms (2 minutes)*/
+        }, 5000); //Every 120000 ms (2 minutes)*/
         try{
             SharedPreferences sp = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
             uName = sp.getString(SinchHolders.phpUserName,"-1");
@@ -96,29 +98,82 @@ public class Fragment1 extends Fragment {
         flag =1;
         return mRootView;
     }
+    private void checkTheAcceptStatus(int x){
+        int status = db.getMeetingStatus(x);
+        Toast.makeText(getActivity(),String.valueOf(status),Toast.LENGTH_SHORT).show();
+        if(status == 1){
+
+        }
+
+    }
     private void getDBdata(int id){
         MeetingList myList = db.getMeeting(id);
-        Toast.makeText(getActivity(),"MeetingID = "+myList.getId(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),"Meeting Status = "+myList.getStatus()+" Meeting Name = "+myList.getMeetingName(),Toast.LENGTH_SHORT).show();
     }
-    private long writeinLocalDB(int i){
-        long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],-1));
-//      Toast.makeText(getActivity(),String.valueOf(MeetingID[i])+MeetingName[i]+ConDesc[i]+Time[i]+Duration[i]+Time[i]+Presenter[i],Toast.LENGTH_SHORT).show();
-//      getDBdata(i);
-        return out;
-   }
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 //        getHostingerData();
     }
     public void showToast(String x){
-        String a = x.replaceAll("\\s","");
-        Toast.makeText(getActivity(),a,Toast.LENGTH_SHORT).show();
-
+        Integer MeetId = Integer.parseInt(x);
+//        Toast.makeText(getActivity().getApplicationContext(),MeetId.toString(),Toast.LENGTH_SHORT).show();
+        getTheMeetingDataFromHostinger(MeetId);
     }
-    private void getHostingerData(){
-        final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_users.php";
+
+    private long writeinLocalDB(int i){
+        long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],-1));
+        Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
+//        getDBdata(i);
+        return out;
+   }
+
+    private void getTheMeetingDataFromHostinger(final int Id){
+        final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_id.php";
+        StringRequest stringRequestr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+//                Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
+                final MeetingList myList ;
+                String tMeetingName,tConCategory,tConDesc,tTime,tDuration,tPresenter;
+                int tMeetingID;
+                try{
+                    JSONObject obj = new JSONObject(response);
+                    JSONArray jsonArray = obj.getJSONArray("result");
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    tMeetingName = jsonObject.getString("MeetingName");
+                    tConCategory = jsonObject.getString("ConCategory");
+                    tConDesc = jsonObject.getString("ConDesc");
+                    tTime = "Time : " + jsonObject.getString("Time");
+                    tDuration = jsonObject.getString("Duration");
+                    tPresenter = jsonObject.getString("PID");
+                    tMeetingID = jsonObject.getInt("MeetingID");
+                    myList = new MeetingList(tMeetingID,tMeetingName,tConDesc,tTime,tDuration,tTime,tPresenter,1);
+                    getDBdata(tMeetingID);
+                    long out = db.updateMeetingStatus(myList);
+                    Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
+                    getDBdata(tMeetingID);
+                }catch (JSONException e){
+                    Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put(SinchHolders.phpMeetingId,String.valueOf(Id));
+                return map;
+            }
+        };
+        requestQueue.add(stringRequestr);
+    }
+    private void getAllMeetingsFromHostingerDB(){
+        final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_meetings.php";
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -137,14 +192,14 @@ public class Fragment1 extends Fragment {
                         nothingToShow.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.INVISIBLE);
                     }else if(jArray.length() == SinchHolders.lastDataCount){
-                        //Nothing has changed since the last time so no need to update the DB just keep the vrecycler view persistent
+                        //Nothing has changed since the last time so no need to update the DB just keep the recycler view persistent
                        recyclerView.setVisibility(View.VISIBLE);
                        for (int i =0; i < jArray.length(); i++) {
                            JSONObject jobj = jArray.getJSONObject(i);
                            MeetingName[i] = jobj.getString("MeetingName");
                            ConCategory[i] = jobj.getString("ConCategory");
                            ConDesc[i] = jobj.getString("ConDesc");
-                           Time[i] = "Time = " + jobj.getString("Time");
+                           Time[i] = "Time : " + jobj.getString("Time");
                            Duration[i] = jobj.getString("Duration");
                            Presenter[i] = jobj.getString("PID");
                            MeetingID[i] = jobj.getInt("MeetingID");
@@ -164,7 +219,8 @@ public class Fragment1 extends Fragment {
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
-                            long SuccessorNot = writeinLocalDB(i);
+                            writeinLocalDB(i);
+                            checkTheAcceptStatus(MeetingID[i]);
 //                            Toast.makeText(getActivity(),String.valueOf(SuccessorNot),Toast.LENGTH_SHORT).show();
                         }
                         for (int i = 0; i < MeetingName.length; i++) {

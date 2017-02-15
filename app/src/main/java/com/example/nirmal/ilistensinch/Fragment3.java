@@ -62,13 +62,14 @@ public class Fragment3 extends Fragment {
         mRootView = inflater.inflate(R.layout.listfrag3, container, false);
         noShow2 = (TextView) mRootView.findViewById(R.id.nothingtoshowfrag3);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
+        noShow2.setVisibility(View.INVISIBLE);
         recyclerView.setHasFixedSize(false);
         data = new ArrayList<DataModel1>();
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setVisibility(View.INVISIBLE);
-        noShow2.setVisibility(View.VISIBLE);
+//        noShow2.setVisibility(View.VISIBLE);
         getSharedPrefsUserName();
         getMeetingsCreatedByUserFromHostinger();
         return mRootView;
@@ -110,7 +111,10 @@ public class Fragment3 extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                     adapter = new CustomAdapter3(data);
                     recyclerView.setAdapter(adapter);
-                    noShow2.setVisibility(View.INVISIBLE);
+//                    noShow2.setVisibility(View.INVISIBLE);
+                    if(jArray.length() == 0){
+                        noShow2.setVisibility(View.VISIBLE);
+                    }
                 }catch (JSONException e){
                     Toast.makeText(getActivity(),"Try again after some time",Toast.LENGTH_SHORT).show();
                 }

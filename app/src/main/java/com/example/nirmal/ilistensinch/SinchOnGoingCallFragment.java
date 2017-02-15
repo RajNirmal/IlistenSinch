@@ -61,22 +61,22 @@ public class SinchOnGoingCallFragment extends Fragment {
         acceptButton = (Button) subView.findViewById(R.id.answerthecall);
         rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
         mCallDuration = (TextView) subView.findViewById(R.id.calling_time);
-
+        mCallDuration.setVisibility(View.INVISIBLE);
        // String whatUserToCall = (((SinchMainActivity) getActivity()).getTheUsertoCall());
         mAudioPlayer = new AudioPlayer(getActivity());
         setTheOnClickListeners();
         mCallStart = System.currentTimeMillis();
         /*Intent i = gUsetIntent();
         String CallerIdentifier = i.getStringExtra(SinchHolders.CALL_ID);*/
-        if (!((MainActivity) getActivity()).whatToDo) {
-            String CallerIdentifier = ((MainActivity) getActivity()).mainCall.getCallId();
+        if (!((SinchMainActivity) getActivity()).whatToDo) {
+            String CallerIdentifier = ((SinchMainActivity) getActivity()).mainCall.getCallId();
             call = SinchHolders.myClient.getCallClient().getCall(CallerIdentifier);
             CallingUsersName = call.getRemoteUserId();
             UserNameinTextView.setText(CallingUsersName);
             mAudioPlayer.playRingtone();
             updateTheView(false);
         } else {
-            CallingUsersName = (((MainActivity) getActivity()).getTheUsertoCall());
+            CallingUsersName = (((SinchMainActivity) getActivity()).getTheUsertoCall());
             try {
                 call = SinchHolders.myClient.getCallClient().callConference(CallingUsersName);
                 call.addCallListener(new SinchCallListener());
@@ -119,15 +119,16 @@ public class SinchOnGoingCallFragment extends Fragment {
             call.hangup();
         mAudioPlayer.stopRingtone();
         mAudioPlayer.stopProgressTone();
-                /*Intent i = new Intent(In.this,SinchMainActivity.class);
-                startActivity(i);*/
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        ((SinchMainActivity)getActivity()).letsGoBackToMainActivity();
+        /*Intent i = new Intent(In.this,SinchMainActivity.class);
+          startActivity(i);*/
+        /*FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.detach(SinchOnGoingCallFragment.this);
         ft.replace(R.id.containerView, new TabFragment());
             ((MainActivity)getActivity()).showActionBar();
         ft.commit();
-        //updateTheView(false);
+        *///updateTheView(false);
         }    });
     }
 
@@ -135,10 +136,10 @@ public class SinchOnGoingCallFragment extends Fragment {
         //Send false if to show two buttons and send true to show one button
 
         if(x) {
-            acceptButton.setVisibility(View.GONE);
+//            acceptButton.setVisibility(View.GONE);
             rejectButton.setGravity(Gravity.CENTER);
         }else{
-            acceptButton.setVisibility(View.VISIBLE);
+//            acceptButton.setVisibility(View.VISIBLE);
         }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -176,6 +177,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         public void onCallProgressing(com.sinch.android.rtc.calling.Call progressingCall) {
             //call is ringing
             mAudioPlayer.playProgressTone();
+            mCallDuration.setVisibility(View.VISIBLE);
         }
 
         @Override

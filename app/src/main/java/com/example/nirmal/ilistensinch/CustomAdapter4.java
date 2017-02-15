@@ -1,5 +1,7 @@
 package com.example.nirmal.ilistensinch;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
+
 import java.util.ArrayList;
 
 
 public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHolder>  {
 
-    private ArrayList<DataModel4> dataSet;
+    private ArrayList<MeetingList> dataSet;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -28,7 +32,7 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
             this.cat = (TextView) itemView.findViewById(R.id.cat);
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
-            this.part = (TextView) itemView.findViewById(R.id.part);
+//            this.part = (TextView) itemView.findViewById(R.id.part);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
 
@@ -47,18 +51,15 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
 
     }
 
-    public CustomAdapter4(ArrayList<DataModel4> data) {
+    public CustomAdapter4(ArrayList<MeetingList> data) {
         this.dataSet = data;
     }
-
+    public String Category;
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cardfrag4, parent, false);
-
-
+    public MyViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardfrag4, parent, false);
+        SharedPreferences prefs = parent.getContext().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
+        Category = prefs.getString(SinchHolders.phpUserProfession,"xyz");
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
@@ -72,17 +73,14 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
         TextView cat = holder.cat;
         TextView desc = holder.desc;
         TextView dt= holder.dt;
-        TextView part= holder.part;
-
-
-
-        nick.setText(dataSet.get(listPosition).getNick());
-        stat.setText(dataSet.get(listPosition).getStat());
-        tit.setText(dataSet.get(listPosition).getTit());
-        cat.setText(dataSet.get(listPosition).getCat());
-        desc.setText(dataSet.get(listPosition).getDesc());
-        dt.setText(dataSet.get(listPosition).getDt());
-        part.setText(dataSet.get(listPosition).getPart());
+//        TextView part= holder.part;
+        nick.setText(dataSet.get(listPosition).getPresenter());
+        stat.setText("Scheduled");
+        tit.setText(dataSet.get(listPosition).getMeetingName());
+        cat.setText(Category);
+        desc.setText(dataSet.get(listPosition).getConferenceDesc());
+        dt.setText(dataSet.get(listPosition).getTime());
+//        part.setText(dataSet.get(listPosition).getPart());
     }
 
 
