@@ -1,12 +1,9 @@
 package com.example.nirmal.ilistensinch;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
@@ -14,12 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sinch.android.rtc.MissingPermissionException;
 import com.sinch.android.rtc.PushPair;
-import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 
@@ -38,7 +35,8 @@ public class SinchOnGoingCallFragment extends Fragment {
     private UpdateCallDurationTask mDurationTask;
     private Timer mTimer;
     TextView UserNameinTextView,mCallDuration;
-    Button acceptButton, rejectButton;
+    Button rejectButton;
+    ImageButton acceptButton;
     private long mCallStart = 0;
     AudioPlayer mAudioPlayer;
     private class UpdateCallDurationTask extends TimerTask {
@@ -56,11 +54,11 @@ public class SinchOnGoingCallFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View subView = inflater.inflate(R.layout.sinch_incoming_call, container, false);
-        UserNameinTextView = (TextView) subView.findViewById(R.id.caller_name);
-        acceptButton = (Button) subView.findViewById(R.id.answerthecall);
-        rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
-        mCallDuration = (TextView) subView.findViewById(R.id.calling_time);
+        View subView = inflater.inflate(R.layout.sinch_conference_fragment, container, false);
+        UserNameinTextView = (TextView) subView.findViewById(R.id.conferencename);
+        acceptButton = (ImageButton) subView.findViewById(R.id.rejectconferencebutton);
+//        rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
+        mCallDuration = (TextView) subView.findViewById(R.id.conferenceduration);
         mCallDuration.setVisibility(View.INVISIBLE);
        // String whatUserToCall = (((SinchMainActivity) getActivity()).getTheUsertoCall());
         mAudioPlayer = new AudioPlayer(getActivity());
@@ -74,7 +72,7 @@ public class SinchOnGoingCallFragment extends Fragment {
             CallingUsersName = call.getRemoteUserId();
             UserNameinTextView.setText(CallingUsersName);
             mAudioPlayer.playRingtone();
-            updateTheView(false);
+//            updateTheView(false);
         } else {
             CallingUsersName = (((SinchMainActivity) getActivity()).getTheUsertoCall());
             try {
@@ -85,7 +83,7 @@ public class SinchOnGoingCallFragment extends Fragment {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{e.getRequiredPermission()}, 0);
             }
             UserNameinTextView.setText(CallingUsersName);
-            updateTheView(true);
+//            updateTheView(true);
         }
         return subView;
     }
@@ -105,31 +103,19 @@ public class SinchOnGoingCallFragment extends Fragment {
         @Override
         public void onClick (View view){
         call.addCallListener(new SinchCallListener());
-        try {
+        call.hangup();
+        mAudioPlayer.stopRingtone();
+        mAudioPlayer.stopProgressTone();
+            ((SinchMainActivity)getActivity()).letsGoBackToMainActivity();
+        /*try {
             call.answer();
             acceptButton.setVisibility(View.INVISIBLE);
         } catch (MissingPermissionException e) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{e.getRequiredPermission()}, 0);
-        }
-        updateTheView(true);
+        }*/
+//        updateTheView(true);
         }   });
-        rejectButton.setOnClickListener(new View.OnClickListener(){
-        @Override
-        public void onClick (View view){
-            call.hangup();
-        mAudioPlayer.stopRingtone();
-        mAudioPlayer.stopProgressTone();
-        ((SinchMainActivity)getActivity()).letsGoBackToMainActivity();
-        /*Intent i = new Intent(In.this,SinchMainActivity.class);
-          startActivity(i);*/
-        /*FragmentManager fm = getActivity().getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.detach(SinchOnGoingCallFragment.this);
-        ft.replace(R.id.containerView, new TabFragment());
-            ((MainActivity)getActivity()).showActionBar();
-        ft.commit();
-        *///updateTheView(false);
-        }    });
+
     }
 
     private void updateTheView(boolean x){
@@ -137,7 +123,7 @@ public class SinchOnGoingCallFragment extends Fragment {
 
         if(x) {
 //            acceptButton.setVisibility(View.GONE);
-            rejectButton.setGravity(Gravity.CENTER);
+//            rejectButton.setGravity(Gravity.CENTER);
         }else{
 //            acceptButton.setVisibility(View.VISIBLE);
         }
@@ -150,8 +136,8 @@ public class SinchOnGoingCallFragment extends Fragment {
                     .LENGTH_LONG).show();
         }
     }
-    class SinchCallListener implements CallListener {
 
+    class SinchCallListener implements CallListener {
         @Override
         public void onCallEnded(com.sinch.android.rtc.calling.Call endedCall) {
             //call ended by either party
@@ -159,12 +145,11 @@ public class SinchOnGoingCallFragment extends Fragment {
             mAudioPlayer.stopProgressTone();
             getActivity().setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             String endMsg = "Call ended: " + endedCall.getDetails().toString();
-            Toast.makeText(getActivity(), endMsg, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), endMsg, Toast.LENGTH_LONG).show();
             mAudioPlayer.stopProgressTone();
-            updateTheView(false);
-            rejectButton.performClick();
+//            updateTheView(false);
+//            acceptButton.performClick();
         }
-
         @Override
         public void onCallEstablished(com.sinch.android.rtc.calling.Call establishedCall) {
             //incoming call was picked up
@@ -172,27 +157,23 @@ public class SinchOnGoingCallFragment extends Fragment {
             mCallStart = System.currentTimeMillis();
             getActivity().setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         }
-
         @Override
         public void onCallProgressing(com.sinch.android.rtc.calling.Call progressingCall) {
             //call is ringing
             mAudioPlayer.playProgressTone();
             mCallDuration.setVisibility(View.VISIBLE);
         }
-
         @Override
         public void onShouldSendPushNotification(com.sinch.android.rtc.calling.Call call, List<PushPair> pushPairs) {
             //don't worry about this right now
         }
     }
-
     @Override
     public void onPause() {
         super.onPause();
         mDurationTask.cancel();
         mTimer.cancel();
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -200,5 +181,4 @@ public class SinchOnGoingCallFragment extends Fragment {
         mDurationTask = new UpdateCallDurationTask();
         mTimer.schedule(mDurationTask, 0, 500);
     }
-
 }

@@ -1,8 +1,10 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,6 +46,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     String stringTitle,stringDesc,stringDuration,stringDate,userName,Category,stringTime;
     DatePickerDialog datePicker;
     TimePickerDialog timePicker;
+    AlertDialog.Builder alertDialog;
     SimpleDateFormat meetingDateString;
     public Fragment2() {
         // TODO Auto-generated constructor stub
@@ -56,6 +59,27 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        alertDialog = new AlertDialog.Builder(getActivity());
+
+        // Setting Dialog Title
+        alertDialog.setTitle("iListen");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Meeting Successfully Created");
+
+        // Setting Icon to Dialog
+//        alertDialog.setIcon(R.drawable.tick);
+
+        // Setting OK Button
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to execute after dialog closed
+//                Toast.makeText(getContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Showing Alert Message
+
     }
 
     @Nullable
@@ -179,6 +203,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                     meetingTitle.setText("");
                     meetingDuration.setText("");
                     meetingDesc.setText("");
+                    alertDialog.show();
                 }
             }
         }, new Response.ErrorListener() {

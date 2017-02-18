@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/btnbord"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/conferencename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:layout_marginTop="43dp"
+        android:text="Vijay" />
+
+    <TextView
+        android:id="@+id/conferenceduration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/conferencename"
+        android:layout_alignStart="@+id/conferencename"
+        android:textColor="@color/white"
+        android:layout_below="@+id/conferencename"
+        android:layout_marginTop="26dp"
+        android:text="00:15 "/>
+
+
+
+
+    <ImageButton
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/call2"
+        android:layout_marginBottom="27dp"
+        android:layout_above="@+id/button5"
+        android:layout_toLeftOf="@+id/conferenceduration"
+        android:layout_toStartOf="@+id/conferenceduration" />
+
+    <ImageButton
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/call3"
+        android:layout_alignTop="@+id/button3"
+        android:layout_alignLeft="@+id/button6"
+        android:layout_alignStart="@+id/button6" />
+
+    <ImageButton
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/call4"
+        android:layout_marginBottom="47dp"
+        android:layout_above="@+id/rejectconferencebutton"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_alignStart="@+id/button3" />
+
+    <ImageButton
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/call5"
+        android:layout_alignTop="@+id/button5"
+        android:layout_toRightOf="@+id/conferenceduration"
+        android:layout_toEndOf="@+id/conferenceduration" />
+
+    <ImageButton
+        android:id="@+id/rejectconferencebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/call1"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

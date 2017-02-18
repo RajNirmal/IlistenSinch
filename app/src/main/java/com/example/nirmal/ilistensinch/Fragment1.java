@@ -1,6 +1,8 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,13 +34,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Fragment1 extends Fragment {
     private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
-    private int MeetingID[];
+    private int MeetingID[],Status[];
+    public String UserNameInSharedPrefs;
     private TextView nothingToShow;
     private static int flag = 0;
     private static RecyclerView.Adapter adapter;
@@ -49,6 +56,7 @@ public class Fragment1 extends Fragment {
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
     private DBHandler db;
+    AlertDialog.Builder alertDialog;
     private final static int INTERVAL = 1000 * 60 * 2; //2 minutes
     RequestQueue requestQueue;
     public Fragment1() {
@@ -78,16 +86,16 @@ public class Fragment1 extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         data = new ArrayList<DataModel1>();
-     /*   for (int i = 0; i < MyData.nick.length; i++) {
-            data.add(new DataModel1(MyData.nick[i], MyData.stat[i], MyData.tit[i], MyData.cat[i], MyData.desc[i], MyData.dt[i]));
-        }*/
-      /* final  Handler mhandler = new Handler();
-        mhandler.postDelayed(new Runnable() {
-            public void run() {
-                mhandler.postDelayed(this, 5000);//now is every 2 minutes
-                checkTheAcceptStatus();
+        alertDialog = new AlertDialog.Builder(getActivity());
+        getTheUserNameFromSharedPrefs();
+        // Setting OK Button
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to execute after dialog closed
+//                Toast.makeText(getContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
             }
-        }, 5000); //Every 120000 ms (2 minutes)*/
+        });
+
         try{
             SharedPreferences sp = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
             uName = sp.getString(SinchHolders.phpUserName,"-1");
@@ -98,17 +106,21 @@ public class Fragment1 extends Fragment {
         flag =1;
         return mRootView;
     }
-    private void checkTheAcceptStatus(int x){
+    /*private void checkTheAcceptStatus(int x){
         int status = db.getMeetingStatus(x);
         Toast.makeText(getActivity(),String.valueOf(status),Toast.LENGTH_SHORT).show();
         if(status == 1){
 
         }
-
+    }
+    */
+    public void getTheUserNameFromSharedPrefs(){
+        SharedPreferences prefs = getActivity().getSharedPreferences(SinchHolders.SharedPrefName,Context.MODE_PRIVATE);
+        UserNameInSharedPrefs = prefs.getString(SinchHolders.phpUserName,"xyz");
     }
     private void getDBdata(int id){
         MeetingList myList = db.getMeeting(id);
-        Toast.makeText(getActivity(),"Meeting Status = "+myList.getStatus()+" Meeting Name = "+myList.getMeetingName(),Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(),"Meeting Status = "+myList.getStatus()+" Meeting Name = "+myList.getMeetingName(),Toast.LENGTH_SHORT).show();
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -117,13 +129,13 @@ public class Fragment1 extends Fragment {
     }
     public void showToast(String x){
         Integer MeetId = Integer.parseInt(x);
-//        Toast.makeText(getActivity().getApplicationContext(),MeetId.toString(),Toast.LENGTH_SHORT).show();
         getTheMeetingDataFromHostinger(MeetId);
+
     }
 
     private long writeinLocalDB(int i){
-        long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],-1));
-        Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
+        long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],Status[i]));
+//        Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
 //        getDBdata(i);
         return out;
    }
@@ -151,8 +163,28 @@ public class Fragment1 extends Fragment {
                     myList = new MeetingList(tMeetingID,tMeetingName,tConDesc,tTime,tDuration,tTime,tPresenter,1);
                     getDBdata(tMeetingID);
                     long out = db.updateMeetingStatus(myList);
-                    Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
+//                    String[] split = jsonObject.getString("Time").split("\\s+");
+                    try {
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+                        String dat1 = formatter.format(calendar.getTime());
+                        Date date1 = formatter.parse(dat1);
+                        String dat2 = jsonObject.getString("Time");
+                        Date date2 = formatter.parse(dat2);
+                        if(date1.compareTo(date2)<0){
+                            alertDialog.setTitle("Meeting Scheduled");
+                            alertDialog.setMessage("You can attend \""+tMeetingName+"\" Meeting");
+//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
+                        }else if(date1.compareTo(date2)>0){
+                            alertDialog.setTitle("Meeting over");
+                            alertDialog.setMessage("\""+tMeetingName+"\" is already over");
+//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
+                        }
+                    }catch (ParseException e){
+                        Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+                    }
                     getDBdata(tMeetingID);
+                    alertDialog.show();
                 }catch (JSONException e){
                     Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
                 }
@@ -187,8 +219,9 @@ public class Fragment1 extends Fragment {
                     Duration = new String[jArray.length()];
                     Presenter = new String[jArray.length()];
                     MeetingID = new int[jArray.length()];
+                    Status = new int[jArray.length()];
                    if(jArray.length()==0){
-                       Toast.makeText(getActivity().getApplicationContext(),"Length is 0",Toast.LENGTH_SHORT).show();
+//                       Toast.makeText(getActivity().getApplicationContext(),"Length is 0",Toast.LENGTH_SHORT).show();
                         nothingToShow.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.INVISIBLE);
                     }else if(jArray.length() == SinchHolders.lastDataCount){
@@ -203,9 +236,11 @@ public class Fragment1 extends Fragment {
                            Duration[i] = jobj.getString("Duration");
                            Presenter[i] = jobj.getString("PID");
                            MeetingID[i] = jobj.getInt("MeetingID");
+                           Status[i] = db.getMeetingStatus(MeetingID[i]);
                        }
                        for (int i = 0; i < MeetingName.length; i++) {
-                           data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
+                           if(!(UserNameInSharedPrefs.equals(Presenter[i])))
+                            data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
                        }
                    }else {
 //                      New data has been found in the server so call the local Db and update it accordingly
@@ -215,16 +250,17 @@ public class Fragment1 extends Fragment {
                             MeetingName[i] = jobj.getString("MeetingName");
                             ConCategory[i] = jobj.getString("ConCategory");
                             ConDesc[i] = jobj.getString("ConDesc");
-                            Time[i] = "Time = " + jobj.getString("Time");
+                            Time[i] = "Time : " + jobj.getString("Time");
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
                             writeinLocalDB(i);
-                            checkTheAcceptStatus(MeetingID[i]);
+                            Status[i] = db.getMeetingStatus(MeetingID[i]);
 //                            Toast.makeText(getActivity(),String.valueOf(SuccessorNot),Toast.LENGTH_SHORT).show();
                         }
                         for (int i = 0; i < MeetingName.length; i++) {
-                            data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
+                            if(!(UserNameInSharedPrefs.equals(Presenter[i])))
+                                data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
                         }
 
                     }

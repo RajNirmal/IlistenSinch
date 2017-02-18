@@ -93,24 +93,28 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.save_orders) {
                     FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new NavDrawFrag1()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
                 }
 
                 if (menuItem.getItemId() == R.id.collections) {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new NavDrawFrag1()).commit();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
 
                 }
+                if (menuItem.getItemId() == R.id.returns) {
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
 
+                }
                 if (menuItem.getItemId() == R.id.help) {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new NavDrawFrag1()).commit();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
 
                 }
 
                 if (menuItem.getItemId() == R.id.exit) {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new NavDrawFrag1()).commit();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
 
                 }
 

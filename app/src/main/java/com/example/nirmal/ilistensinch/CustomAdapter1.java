@@ -1,5 +1,7 @@
 package com.example.nirmal.ilistensinch;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,6 +50,9 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
                 String x = String.valueOf(dataSet.get(getAdapterPosition()).getMeetId());
 //                Toast.makeText(v.getContext(),x,Toast.LENGTH_SHORT).show();
                 myFrag.showToast(x);
+                butAccept.setText("Accepted");
+                butAccept.setTextColor(Color.parseColor("#00e676"));
+//                Intent intent = new Intent()
             }
 
             /*int position=getAdapterPosition();
@@ -59,9 +64,7 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         }
 
     }
-    public void updateDataShown(){
 
-    }
     public CustomAdapter1(ArrayList<DataModel1> data,Fragment1 frag) {
         this.dataSet = data;
         myFrag = frag;
@@ -83,11 +86,16 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
         TextView desc = holder.desc;
         TextView dt= holder.dt;
         nick.setText(dataSet.get(listPosition).getNick());
-        stat.setText(dataSet.get(listPosition).getStat());
+       // stat.setText(dataSet.get(listPosition).getStat());
         tit.setText(dataSet.get(listPosition).getTit());
         cat.setText(dataSet.get(listPosition).getCat());
         desc.setText(dataSet.get(listPosition).getDesc());
         dt.setText(dataSet.get(listPosition).getDt());
+        Integer status = Integer.valueOf(dataSet.get(listPosition).getStat());
+        if(status == 1){
+            holder.butAccept.setText("Accepted");
+            holder.butAccept.setTextColor(Color.parseColor("#00e676"));
+        }
     }
 
 

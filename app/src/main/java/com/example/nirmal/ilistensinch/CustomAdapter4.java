@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
@@ -15,12 +16,12 @@ import java.util.ArrayList;
 
 
 public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHolder>  {
-
+    private Fragment4 myFrag;
     private ArrayList<MeetingList> dataSet;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView nick,stat,tit,cat,desc,dt,part;
+        TextView nick,stat,tit,cat,desc,dt,join;
         public CardView cardView;
 
         public MyViewHolder(View itemView) {
@@ -32,15 +33,20 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
             this.cat = (TextView) itemView.findViewById(R.id.cat);
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
-//            this.part = (TextView) itemView.findViewById(R.id.part);
+            this.join = (TextView) itemView.findViewById(R.id.joinnowbutton);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
-
+            join.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            if(v.getId() == join.getId()){
+                String x = dataSet.get(getAdapterPosition()).getMeetingName();
+                String y = dataSet.get(getAdapterPosition()).getTime();
+//                Toast.makeText(v.getContext(),x,Toast.LENGTH_LONG).show();
+                myFrag.startMeeting(x,y);
+            }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);
          /*  Intent intent = new Intent(v.getContext(),Review.class);
@@ -51,8 +57,9 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
 
     }
 
-    public CustomAdapter4(ArrayList<MeetingList> data) {
+    public CustomAdapter4(ArrayList<MeetingList> data, Fragment4 frag) {
         this.dataSet = data;
+        this.myFrag = frag;
     }
     public String Category;
     @Override
@@ -73,7 +80,7 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
         TextView cat = holder.cat;
         TextView desc = holder.desc;
         TextView dt= holder.dt;
-//        TextView part= holder.part;
+//        TextView join= holder.join;
         nick.setText(dataSet.get(listPosition).getPresenter());
         stat.setText("Scheduled");
         tit.setText(dataSet.get(listPosition).getMeetingName());
