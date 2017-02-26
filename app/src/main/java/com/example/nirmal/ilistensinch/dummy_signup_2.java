@@ -79,7 +79,7 @@ public class dummy_signup_2 extends Activity implements AdapterView.OnItemSelect
         });
     }
     private void changActivity(){
-        Intent i = new Intent(dummy_signup_2.this,MainActivity.class);
+        Intent i = new Intent(dummy_signup_2.this,Terms.class);
         startActivity(i);
     }
     private void getDatafromSharedPrefs(){

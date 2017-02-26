@@ -63,13 +63,23 @@ public class Fragment4 extends Fragment {
             String dat2 = sb.toString();
             Date date2 = formatter.parse(dat2);
             if(date1.compareTo(date2)<0){
-                alert.setTitle("Time has not arrived yet");
+                String timeDifference = printDifference(date1,date2);
+                if(timeDifference.contains(" Hour")){
+                    alert.setTitle(timeDifference + " Remaining");
+//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                }else if(timeDifference.contains(" True")){
+                    alert.setTitle(timeDifference + " Minutes Remaining");
+//                    Toast.makeText(getActivity(),"Has only minutes",Toast.LENGTH_SHORT).show();
+                }
+
+
                 alert.setMessage("Would You like to join \""+MeetName+"\" Meeting right now");
                 alert.setCancelable(false);
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ((MainActivity)getActivity()).startTheCall(MeetName);
+                        String meetingName = MeetName.replace(" ","");
+                        ((MainActivity)getActivity()).startTheCall(meetingName);
                     }
                 });
                 alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -119,6 +129,39 @@ public class Fragment4 extends Fragment {
 */
 
     }
+    public String printDifference(Date startDate, Date endDate){
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
+        /*System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+        System.out.println("different : " + different);
+*/
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+        long elapsedSeconds = different / secondsInMilli;
+        String remaining;
+        if((elapsedDays == 0)&&(elapsedHours == 0)){
+            remaining = String.valueOf(elapsedMinutes)+"True";
+        }else {
+            remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
+        }
+        return remaining;
+        /*System.out.printf(
+                "%d days, %d hours, %d minutes, %d seconds%n",
+                elapsedDays,
+                elapsedHours, elapsedMinutes, elapsedSeconds);*/
+
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.listfrag4, container, false);
@@ -129,6 +172,7 @@ public class Fragment4 extends Fragment {
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        setTheTimings();
         getAllMeetings();
         return mRootView;
     }
@@ -143,7 +187,33 @@ public class Fragment4 extends Fragment {
         }
 //        Toast.makeText(getActivity(),meetingsList.toString(),Toast.LENGTH_SHORT).show();
     }
+    private void setTheTimings(){
+        data = db.getAllMeetings();
+        for(int i = 0; i<data.size() ; i++) {
+            MeetingList SingleMeeting =  data.get(i);
+            String time = SingleMeeting.getTime();
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+            String[] split = time.split("\\s+");
+            StringBuilder sb = new StringBuilder();
+            for(int j=2;j<split.length;j++)
+                sb.append(split[j]+" ");
+            try {
+                String dat1 = formatter.format(calendar.getTime());
+                Date date1 = formatter.parse(dat1);
+                String dat2 = sb.toString();
+                Date date2 = formatter.parse(dat2);
+                if(date1.compareTo(date2)>0){
+                    MeetingList myList = new MeetingList(SingleMeeting.getId(),SingleMeeting.getMeetingName(),SingleMeeting.getConferenceDesc(),SingleMeeting.getTime(),SingleMeeting.getDuration(),SingleMeeting.getTime(),SingleMeeting.getPresenter(),2);
+                    db.updateMeetingStatus(myList);
+                }
+            }catch (ParseException e){
+                Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+            }
 
+        }
+        data.clear();
+    }
 }
 /*
         data = new ArrayList<DataModel4>();

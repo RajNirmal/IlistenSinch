@@ -132,14 +132,50 @@ public class Fragment1 extends Fragment {
         getTheMeetingDataFromHostinger(MeetId);
 
     }
-
+    private void setTheAlarmForTheUser(){
+//        Intent i = new Intent((MainActivity)getActivity().this)
+    }
     private long writeinLocalDB(int i){
         long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],Status[i]));
+
 //        Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
 //        getDBdata(i);
         return out;
    }
+    public long getDifferenceInMilliSeconds(Date startDate, Date endDate){
 
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
+        /*System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+        System.out.println("different : " + different);
+*/
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+        long elapsedSeconds = different / secondsInMilli;
+        long theSecondsRemaining = ((elapsedSeconds * 1000) + (elapsedMinutes * 60000) + (elapsedHours * 60000 * 60) + (elapsedDays * 60000 * 60 * 24));
+        return theSecondsRemaining;
+     /*   String remaining;
+        if((elapsedDays == 0)&&(elapsedHours == 0)){
+            remaining = String.valueOf(elapsedMinutes)+"True";
+        }else {
+            remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
+        }
+        System.out.printf(
+                "%d days, %d hours, %d minutes, %d seconds%n",
+                elapsedDays,
+                elapsedHours, elapsedMinutes, elapsedSeconds);
+*/
+    }
     private void getTheMeetingDataFromHostinger(final int Id){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_id.php";
         StringRequest stringRequestr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -174,6 +210,8 @@ public class Fragment1 extends Fragment {
                         if(date1.compareTo(date2)<0){
                             alertDialog.setTitle("Meeting Scheduled");
                             alertDialog.setMessage("You can attend \""+tMeetingName+"\" Meeting");
+                            long timeRemaining = getDifferenceInMilliSeconds(date1,date2);
+                            ((MainActivity)getActivity()).setTheAlarm(Id,timeRemaining);
 //                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
                         }else if(date1.compareTo(date2)>0){
                             alertDialog.setTitle("Meeting over");

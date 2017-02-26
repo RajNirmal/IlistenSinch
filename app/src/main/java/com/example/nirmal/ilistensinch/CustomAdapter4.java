@@ -80,13 +80,17 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
         TextView cat = holder.cat;
         TextView desc = holder.desc;
         TextView dt= holder.dt;
-//        TextView join= holder.join;
+        TextView join= holder.join;
         nick.setText(dataSet.get(listPosition).getPresenter());
         stat.setText("Scheduled");
         tit.setText(dataSet.get(listPosition).getMeetingName());
         cat.setText(Category);
         desc.setText(dataSet.get(listPosition).getConferenceDesc());
         dt.setText(dataSet.get(listPosition).getTime());
+        if((dataSet.get(listPosition).getStatus())==2){
+            join.setText("Meeting Over");
+        }
+//        join
 //        part.setText(dataSet.get(listPosition).getPart());
     }
 

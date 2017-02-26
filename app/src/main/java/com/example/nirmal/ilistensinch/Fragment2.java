@@ -177,6 +177,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                 getSharedPrefsData();
                 sendTheDataToHostinger(stringTitle, finalDateandTime, stringDuration, stringDesc);
                 sendPushToAllUsers(stringTitle, stringDate, stringDuration);
+                ((MainActivity)getActivity()).switchToThirdFragment();
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),"Please enter all the details",Toast.LENGTH_LONG).show();
             }

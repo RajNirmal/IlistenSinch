@@ -1,13 +1,20 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -43,7 +50,14 @@ public class MainActivity extends AppCompatActivity {
     public Call mainCall;
     AudioPlayer mAudioPlayer;
     public boolean whatToDo = false;//set to true if I am making a call else set to false for incoming call
-
+    public static TabLayout tabLayout;
+    public static ViewPager viewPager;
+    public static int int_items = 4 ;
+    private int[] tabIcons = {
+            R.drawable.hom,
+            R.drawable.tab2,
+            R.drawable.tab3
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +69,17 @@ public class MainActivity extends AppCompatActivity {
                 Object value = getIntent().getExtras().get(key);
             }
         }
+        tabLayout = (TabLayout)findViewById(R.id.tabs);
+        viewPager = (ViewPager)findViewById(R.id.viewpager);
+        viewPager.setAdapter(new MainActivity.MyAdapter(getSupportFragmentManager()));
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                tabLayout.setupWithViewPager(viewPager);
+                setupTabIcons();
+            }
+        });
+
         /**
          *Setup the DrawerLayout and NavigationView
          */
@@ -63,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         updateTheTokeninHostinger();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff) ;
-        mainFragmentHolder = R.id.containerView;
+//        mainFragmentHolder = R.id.containerView;
         /**
          * Lets inflate the very first fragment
          * Here , we are inflating the TabFragment as the first Fragment
@@ -76,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragmentManager = getSupportFragmentManager();
         mFragmentTransaction = fragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
+//        mFragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
         /**
          * Setup click events on the Navigation View Items.
          */
@@ -87,34 +112,40 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
 
                 if (menuItem.getItemId() == R.id.home) {
-                    FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
+                    viewPager.setCurrentItem(0,true);
+                    /*FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
+                    xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
                 }
 
                 if (menuItem.getItemId() == R.id.save_orders) {
-                    FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
-                }
-
-                if (menuItem.getItemId() == R.id.collections) {
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
-
+                    viewPager.setCurrentItem(1,true);
+                    /*FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
+                    xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
                 }
                 if (menuItem.getItemId() == R.id.returns) {
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
+                    viewPager.setCurrentItem(2,true);
+                    /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
 
                 }
+                if (menuItem.getItemId() == R.id.collections) {
+                    viewPager.setCurrentItem(3,true);
+                    /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
+
+                }
+
                 if (menuItem.getItemId() == R.id.help) {
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
+                    viewPager.setCurrentItem(0,true);
+                    /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
 
                 }
 
                 if (menuItem.getItemId() == R.id.exit) {
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
+                    viewPager.setCurrentItem(0,true);
+                    /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
 
                 }
 
@@ -133,10 +164,73 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
     }
+    public void switchToThirdFragment(){
+        viewPager.setCurrentItem(2,true);
+    }
+    class MyAdapter extends FragmentPagerAdapter {
+
+        public MyAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        /**
+         * Return fragment with respect to Position .
+         */
+
+        @Override
+        public Fragment getItem(int position)
+        {
+            switch (position){
+                case 0 : return new Fragment1();
+                case 1 : return new Fragment2();
+                case 2 : return new Fragment3();
+                case 3 : return new Fragment4();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+
+            return int_items;
+
+        }
+
+        /**
+         * This method returns the title of the tab according to the position.
+         */
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+
+            switch (position){
+                case 0 :
+                    return "";
+                case 1 :
+                    return "New Invite";
+                case 2 :
+                    return "My Invite";
+                case 3 :
+                    return "My Participation";
+            }
+            return null;
+        }
+
+    }
+    public void setTheAlarm(final int MeetID, final long TimeRemaining){
+        Intent i = new Intent(MainActivity.this,myBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),MeetID,i,0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
+        Toast.makeText(this, "Alarm set in 1 seconds",Toast.LENGTH_SHORT).show();
+    }
     public void startTheCall(String x){
         Intent i = new Intent(MainActivity.this,SinchMainActivity.class);
         i.putExtra(SinchHolders.phpMeetingName,x);
         startActivity(i);
+    }
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
     }
     private void buildClient(String x){
         showSpinner();
@@ -145,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
         myClient.startListeningOnActiveConnection();
         myClient.setSupportActiveConnectionInBackground(true);
         //  myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
-
         myClient.addSinchClientListener(new SinchClientListener() {
             @Override
             public void onClientStarted(SinchClient sinchClient) {

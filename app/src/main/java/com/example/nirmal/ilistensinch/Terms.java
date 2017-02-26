@@ -27,7 +27,7 @@ Button b1,b2;
 
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Terms.this, SignUp.class);
+                Intent i = new Intent(Terms.this, MainActivity.class);
                 startActivity(i);
             }
 

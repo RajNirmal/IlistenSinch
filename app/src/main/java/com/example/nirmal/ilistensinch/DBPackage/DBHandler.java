@@ -57,10 +57,25 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
         return output;
     }
+    //Perfectly working code below
+    /*
     public ArrayList<MeetingList> getAllMeetings(){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<MeetingList> allMeetings = new ArrayList<>();
         Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_STATUS+" = 1",null);
+        try{
+            while(cr.moveToNext())
+                allMeetings.add(new MeetingList(Integer.parseInt(cr.getString(0)), cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4), cr.getString(5), cr.getString(6), Integer.parseInt(cr.getString(7))));
+        }finally {
+            cr.close();
+        }
+        return allMeetings;
+    }
+    */
+    public ArrayList<MeetingList> getAllMeetings(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<MeetingList> allMeetings = new ArrayList<>();
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_STATUS+" = 1 OR "+ KEY_MEETING_STATUS+ " = 2",null);
         try{
             while(cr.moveToNext())
                 allMeetings.add(new MeetingList(Integer.parseInt(cr.getString(0)), cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4), cr.getString(5), cr.getString(6), Integer.parseInt(cr.getString(7))));
