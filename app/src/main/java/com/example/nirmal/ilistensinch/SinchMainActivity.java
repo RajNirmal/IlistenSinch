@@ -1,6 +1,7 @@
 package com.example.nirmal.ilistensinch;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -12,7 +13,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.Sinch;
+import com.sinch.android.rtc.SinchClient;
+import com.sinch.android.rtc.SinchClientListener;
+import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
@@ -21,6 +27,10 @@ import com.sinch.android.rtc.calling.CallListener;
 
 import java.util.List;
 
+import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
+import static com.example.nirmal.ilistensinch.SinchHolders.APP_SECRET;
+import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
+import static com.example.nirmal.ilistensinch.SinchHolders.SharedPrefName;
 import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
 
 /**
@@ -35,9 +45,16 @@ public class SinchMainActivity extends FragmentActivity {
     AudioPlayer mAudioPlayer;
     Bundle extra;
     public boolean whatToDo = false;//set to true if I am making a call else set to false for incoming call
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if(intent.hasExtra("StartaClient")){
+            boolean flag = intent.getBooleanExtra("StartaClient",true);
+            if(flag)
+                buildClient();
+        }
         setContentView(R.layout.sinch_call_activity);
         fragmentManager = this.getSupportFragmentManager();
         mainFragmentHolder = R.id.mainholderforsinchcalling;
@@ -57,6 +74,46 @@ public class SinchMainActivity extends FragmentActivity {
     public void letsGoBackToMainActivity(){
         Intent i = new Intent(SinchMainActivity.this,MainActivity.class);
         startActivity(i);
+    }
+    private void buildClient(){
+//        showSpinner();
+        SharedPreferences spefs = getApplication().getSharedPreferences(SharedPrefName,MODE_PRIVATE);
+        String UserName = spefs.getString(SinchHolders.phpUserName,"DefaultVal");
+        myClient = Sinch.getSinchClientBuilder().context(this).userId(UserName).applicationKey(APP_KEY).applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();
+        myClient.setSupportCalling(true);
+        myClient.startListeningOnActiveConnection();
+        myClient.setSupportActiveConnectionInBackground(true);
+        //  myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
+        myClient.addSinchClientListener(new SinchClientListener() {
+            @Override
+            public void onClientStarted(SinchClient sinchClient) {
+                // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
+//                spinnerLog.dismiss();
+                /*Intent i = new Intent(SinchLoginActivity.this,MainActivity.class);
+                startActivity(i);*/
+            }
+
+            @Override
+            public void onClientStopped(SinchClient sinchClient) {
+                Toast.makeText(getApplicationContext(),"Client is disconnected",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onClientFailed(SinchClient sinchClient, SinchError sinchError) {
+                Toast.makeText(getApplicationContext(),"Connection failed. Try again after sometime",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onRegistrationCredentialsRequired(SinchClient sinchClient, ClientRegistration clientRegistration) {
+
+            }
+
+            @Override
+            public void onLogMessage(int i, String s, String s1) {
+
+            }
+        });
+        myClient.start();
     }
 
     class SinchIncomingCallListener implements CallClientListener {

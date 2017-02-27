@@ -35,6 +35,7 @@ import com.sinch.android.rtc.calling.CallClientListener;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_SECRET;
 import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
+import static com.example.nirmal.ilistensinch.SinchHolders.SharedPrefName;
 import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
 
 
@@ -83,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         /**
          *Setup the DrawerLayout and NavigationView
          */
-        buildClient(SinchHolders.phpUserNickName);
+        getSharedfs();
+        buildClient(SinchHolders.UserName);
+
         myClient.getCallClient().addCallClientListener(new MainActivity.SinchIncomingCallListener());
         updateTheTokeninHostinger();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -97,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout, toolbar,R.string.blank,R.string.blank);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragmentManager = getSupportFragmentManager();
         mFragmentTransaction = fragmentManager.beginTransaction();
@@ -158,11 +160,12 @@ public class MainActivity extends AppCompatActivity {
          * Setup Drawer Toggle of the Toolbar
          */
 
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
         mDrawerToggle.syncState();
-
+    }
+    public void getSharedfs(){
+        SharedPreferences sp = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
+        SinchHolders.UserName = sp.getString(SinchHolders.phpUserName,"Randoms");
     }
     public void switchToThirdFragment(){
         viewPager.setCurrentItem(2,true);
@@ -217,11 +220,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public void setTheAlarm(final int MeetID, final long TimeRemaining){
+    public void setTheAlarm(final int MeetID, final long TimeRemaining, final String MeetName){
         Intent i = new Intent(MainActivity.this,myBroadcastReceiver.class);
+        i.putExtra(SinchHolders.phpMeetingId,MeetID);
+        i.putExtra(SinchHolders.phpMeetingName, MeetName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),MeetID,i,0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 2000, pendingIntent);
         Toast.makeText(this, "Alarm set in 1 seconds",Toast.LENGTH_SHORT).show();
     }
     public void startTheCall(String x){

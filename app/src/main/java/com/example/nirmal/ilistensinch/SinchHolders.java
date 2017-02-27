@@ -23,6 +23,7 @@ public class SinchHolders extends Service{
     public static final String ENVIRONMENT = "sandbox.sinch.com";
     public static final String CALL_ID = "CALL_ID";
     public static String FirebaseToken;
+    public static String UserName = "Username";
     public static final String SharedPrefName = "SinchListen";
     public static final String phpUserName = "UserName";
     public static final String phpUserNickName = "NickName";

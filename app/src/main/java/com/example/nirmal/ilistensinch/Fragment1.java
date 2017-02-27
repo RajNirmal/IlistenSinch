@@ -211,7 +211,7 @@ public class Fragment1 extends Fragment {
                             alertDialog.setTitle("Meeting Scheduled");
                             alertDialog.setMessage("You can attend \""+tMeetingName+"\" Meeting");
                             long timeRemaining = getDifferenceInMilliSeconds(date1,date2);
-                            ((MainActivity)getActivity()).setTheAlarm(Id,timeRemaining);
+                            ((MainActivity)getActivity()).setTheAlarm(Id,timeRemaining,tMeetingName);
 //                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
                         }else if(date1.compareTo(date2)>0){
                             alertDialog.setTitle("Meeting over");
