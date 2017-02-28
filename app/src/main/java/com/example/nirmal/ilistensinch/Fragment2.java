@@ -15,9 +15,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -41,7 +45,8 @@ import static android.text.InputType.TYPE_NULL;
 
 public class Fragment2 extends Fragment implements View.OnClickListener{
 
-    EditText meetingTitle,meetingDesc,meetingDuration,meetingDate,meetingTime;
+    EditText meetingTitle,meetingDesc,meetingDate,meetingTime;
+    Spinner meetingDuration;
     TextView FinishSettingUpMeeting;
     String stringTitle,stringDesc,stringDuration,stringDate,userName,Category,stringTime;
     DatePickerDialog datePicker;
@@ -87,7 +92,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View subView = inflater.inflate(R.layout.listfrag2,container,false);
         meetingTitle = (EditText)subView.findViewById(R.id.title_meeting);
-        meetingDuration = (EditText)subView.findViewById(R.id.duration_meeting);
+        meetingDuration = (Spinner)subView.findViewById(R.id.duration_meeting);
         meetingDate = (EditText)subView.findViewById(R.id.dt_meeting);
         meetingTime = (EditText)subView.findViewById(R.id.time_meeting);
         meetingDesc = (EditText)subView.findViewById(R.id.desc_meeting);
@@ -95,6 +100,16 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         meetingDateString = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         meetingDate.setInputType(TYPE_NULL);
         setDateTimeField();
+        meetingDuration.setOnItemSelectedListener(myListener);
+        List<Integer> categories = new ArrayList<>();
+        categories.add(10);
+        categories.add(20);
+        categories.add(30);
+        ArrayAdapter<Integer> dataAdapter = new ArrayAdapter<Integer>(inflater.getContext(), R.layout.spinner_item, categories);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        meetingDuration.setAdapter(dataAdapter);
         FinishSettingUpMeeting.setOnClickListener(this);
         meetingDate.setOnClickListener(this);
         meetingTime.setOnClickListener(this);
@@ -118,6 +133,22 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             }
         },newCalendar.get(Calendar.HOUR_OF_DAY),newCalendar.get(Calendar.MINUTE));*/
     }
+    AdapterView.OnItemSelectedListener myListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            // On selecting a spinner item
+            String item = adapterView.getItemAtPosition(i).toString();
+            stringDuration = item;
+            // Showing selected spinner item
+//            Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+            stringDuration = "10";
+        }
+    };
+
     private void setTimeField(){
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -170,7 +201,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         if (view == FinishSettingUpMeeting){
             stringTitle = meetingTitle.getText().toString().trim();
             stringDesc = meetingDesc.getText().toString().trim();
-            stringDuration = meetingDuration.getText().toString().trim();
+//            stringDuration = meetingDuration.getText().toString().trim();
             String finalDateandTime = stringDate+" "+stringTime;
 //            Toast.makeText(getActivity(),finalDateandTime,Toast.LENGTH_SHORT).show();
             if((!(stringTitle.isEmpty())&&(!(stringDesc.isEmpty()))&&(!(stringDuration.isEmpty())))){
@@ -202,7 +233,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                     meetingDate.setText("");
                     meetingTime.setText("");
                     meetingTitle.setText("");
-                    meetingDuration.setText("");
+//                    meetingDuration.setText("");
                     meetingDesc.setText("");
                     alertDialog.show();
                 }

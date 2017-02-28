@@ -47,7 +47,7 @@
                     android:layout_below="@id/title_meeting"
                     android:background="@color/white_greyish" />
 
-                <EditText
+                <!--<EditText
                     android:id="@+id/duration_meeting"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -63,7 +63,21 @@
                     android:drawableLeft="@drawable/timer"
                     android:drawablePadding="5dp"
                     android:textColorHint="@color/white_54"
-                    android:textSize="@dimen/text_user_entry" />
+                    android:textSize="@dimen/text_user_entry" />-->
+                <Spinner
+                    android:id="@+id/duration_meeting"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:layout_below="@+id/line1"
+                    android:padding="10dp"
+                    android:textColor="@color/white_greyish"
+                    android:textSize="@dimen/text_small"
+                    android:prompt="@string/spinner_title"/>
+
+
 
                 <View
                     android:layout_width="fill_parent"

@@ -1,5 +1,6 @@
 package com.example.nirmal.ilistensinch;
 
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -36,6 +37,8 @@ public class SinchOnGoingCallFragment extends Fragment {
     private Timer mTimer;
     TextView UserNameinTextView,mCallDuration;
     Button rejectButton;
+    MediaPlayer mp;
+
     ImageButton acceptButton;
     private long mCallStart = 0;
     AudioPlayer mAudioPlayer;
@@ -54,6 +57,7 @@ public class SinchOnGoingCallFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mp = MediaPlayer.create(inflater.getContext(),R.raw.alrm);
         View subView = inflater.inflate(R.layout.sinch_conference_fragment, container, false);
         UserNameinTextView = (TextView) subView.findViewById(R.id.conferencename);
         acceptButton = (ImageButton) subView.findViewById(R.id.rejectconferencebutton);
@@ -142,8 +146,10 @@ public class SinchOnGoingCallFragment extends Fragment {
         public void onCallEnded(com.sinch.android.rtc.calling.Call endedCall) {
             //call ended by either party
             CallEndCause cause = endedCall.getDetails().getEndCause();
+//            mp.start();
             mAudioPlayer.stopProgressTone();
             getActivity().setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+            Toast.makeText(getActivity(),"The tone should not play",Toast.LENGTH_SHORT).show();
             String endMsg = "Call ended: " + endedCall.getDetails().toString();
 //            Toast.makeText(getActivity(), endMsg, Toast.LENGTH_LONG).show();
             mAudioPlayer.stopProgressTone();
@@ -153,14 +159,21 @@ public class SinchOnGoingCallFragment extends Fragment {
         @Override
         public void onCallEstablished(com.sinch.android.rtc.calling.Call establishedCall) {
             //incoming call was picked up
-            mAudioPlayer.stopProgressTone();
+            mp.start();
+            Toast.makeText(getActivity(),"The tone should play"+mp.isPlaying(),Toast.LENGTH_SHORT).show();
+
+
+//            mAudioPlayer.stopProgressTone();
             mCallStart = System.currentTimeMillis();
             getActivity().setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         }
         @Override
         public void onCallProgressing(com.sinch.android.rtc.calling.Call progressingCall) {
             //call is ringing
-            mAudioPlayer.playProgressTone();
+            mp.start();
+            Toast.makeText(getActivity(),"The call is progressing"+mp.isPlaying(),Toast.LENGTH_SHORT).show();
+
+//            mAudioPlayer.playProgressTone();
             mCallDuration.setVisibility(View.VISIBLE);
         }
         @Override

@@ -13,6 +13,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
@@ -21,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Fragment4 extends Fragment {
 
@@ -47,7 +57,7 @@ public class Fragment4 extends Fragment {
 
     }
 
-    public void startMeeting(final String MeetName,String MeetingTime){
+    public void startMeeting(final String MeetName,String MeetingTime) {
 //        ((MainActivity)getActivity()).startTheCall(MeetName);
         alert = new AlertDialog.Builder(getActivity());
 //        Toast.makeText(getActivity(),MeetingTime,Toast.LENGTH_SHORT).show();
@@ -56,30 +66,31 @@ public class Fragment4 extends Fragment {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
-            for(int i=2;i<split.length;i++)
-                sb.append(split[i]+" ");
+            for (int i = 2; i < split.length; i++)
+                sb.append(split[i] + " ");
             String dat1 = formatter.format(calendar.getTime());
             Date date1 = formatter.parse(dat1);
             String dat2 = sb.toString();
             Date date2 = formatter.parse(dat2);
-            if(date1.compareTo(date2)<0){
-                String timeDifference = printDifference(date1,date2);
-                if(timeDifference.contains(" Hour")){
+            if (date1.compareTo(date2) < 0) {
+                String timeDifference = printDifference(date1, date2);
+                if (timeDifference.contains(" Hour")) {
                     alert.setTitle(timeDifference + " Remaining");
 //                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
-                }else if(timeDifference.contains(" True")){
+                } else if (timeDifference.contains(" True")) {
                     alert.setTitle(timeDifference + " Minutes Remaining");
 //                    Toast.makeText(getActivity(),"Has only minutes",Toast.LENGTH_SHORT).show();
                 }
 
 
-                alert.setMessage("Would You like to join \""+MeetName+"\" Meeting right now");
+                alert.setMessage("Would You like to join \"" + MeetName + "\" Meeting right now");
                 alert.setCancelable(false);
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String meetingName = MeetName.replace(" ","");
+                        String meetingName = MeetName.replace(" ", "");
                         ((MainActivity)getActivity()).startTheCall(meetingName);
+//                        getSinchConferenceDetails();
                     }
                 });
                 alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -89,9 +100,9 @@ public class Fragment4 extends Fragment {
                     }
                 });
 //                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
-            }else if(date1.compareTo(date2)>0){
+            } else if (date1.compareTo(date2) > 0) {
                 alert.setTitle("Meeting over");
-                alert.setMessage("\""+MeetName+"\" is already over");
+                alert.setMessage("\"" + MeetName + "\" is already over");
                 alert.setCancelable(false);
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -101,10 +112,11 @@ public class Fragment4 extends Fragment {
                 });
 //                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
             }
-        }catch (ParseException e){
-            Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+        } catch (ParseException e) {
+            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
         }
         alert.show();
+    }
 /*
         String[] split = MeetingTime.split("\\s+");
         int count = split.length;
@@ -128,6 +140,32 @@ public class Fragment4 extends Fragment {
         }
 */
 
+    private void getSinchConferenceDetails(){
+        final String URL = "https://sfbpush.herokuapp.com/getRequest";
+//        final String Body = "The Conference is being held on " + confTime + " for " + confdur + " minutes ";
+        StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                  Toast.makeText(getActivity(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
+                //  ((SinchMainActivity)getActivity()).goBackToMain();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                 Toast.makeText(getActivity(),error.toString()+"The Server returned error",Toast.LENGTH_SHORT).show();
+                // ((MainActivity)getActivity()).goBackToMain();
+            }
+        }){
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+//                map.put("body",Body);
+                map.put("title","HelloWorld");
+                return map;
+            }
+        };
+        RequestQueue r = Volley.newRequestQueue(getActivity());
+        r.add(sr);
     }
     public String printDifference(Date startDate, Date endDate){
 
