@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHolder>  {
 
     private ArrayList<DataModel1> dataSet;
-
+    Fragment3 myFrag;
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView nick,stat,tit,cat,desc,dt;
+        TextView nick,stat,tit,cat,desc,dt,join;
         public CardView cardView;
 
         public MyViewHolder(View itemView) {
@@ -28,14 +29,21 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
             this.cat = (TextView) itemView.findViewById(R.id.cat);
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
+            this.join = (TextView) itemView.findViewById(R.id.buttoninuserwhocreatesthemeeting);
             cardView = (CardView) itemView.findViewById(R.id.card_view_frag3);
             cardView.setOnClickListener(this);
+            join.setOnClickListener(this);
 
         }
 
         @Override
         public void onClick(View v) {
-
+            if(v.getId() == join.getId()){
+                String x = dataSet.get(getAdapterPosition()).getTit();
+                String y = dataSet.get(getAdapterPosition()).getDt();
+                Toast.makeText(v.getContext(),x, Toast.LENGTH_LONG).show();
+                myFrag.startMeeting(x,y);
+            }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);
          /*  Intent intent = new Intent(v.getContext(),Review.class);
@@ -46,8 +54,9 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
 
     }
 
-    public CustomAdapter3(ArrayList<DataModel1> data) {
+    public CustomAdapter3(ArrayList<DataModel1> data, Fragment3 frag) {
         this.dataSet = data;
+        this.myFrag = frag;
     }
 
     @Override
@@ -71,9 +80,7 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
         TextView cat = holder.cat;
         TextView desc = holder.desc;
         TextView dt= holder.dt;
-
-
-
+        TextView join = holder.join;
         nick.setText(dataSet.get(listPosition).getNick());
         stat.setText(dataSet.get(listPosition).getStat());
         tit.setText(dataSet.get(listPosition).getTit());

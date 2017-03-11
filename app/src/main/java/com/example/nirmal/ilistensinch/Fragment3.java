@@ -1,9 +1,11 @@
 package com.example.nirmal.ilistensinch;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +28,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +47,7 @@ public class Fragment3 extends Fragment {
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
     public String UserName;
-
+    AlertDialog.Builder alert;
     public Fragment3() {
         // TODO Auto-generated constructor stub
     }
@@ -109,7 +115,7 @@ public class Fragment3 extends Fragment {
                         data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
                     }
                     recyclerView.setVisibility(View.VISIBLE);
-                    adapter = new CustomAdapter3(data);
+                    adapter = new CustomAdapter3(data,Fragment3.this);
                     recyclerView.setAdapter(adapter);
 //                    noShow2.setVisibility(View.INVISIBLE);
                     if(jArray.length() == 0){
@@ -134,6 +140,100 @@ public class Fragment3 extends Fragment {
         };
         RequestQueue rs = Volley.newRequestQueue(getActivity());
         rs.add(stringRequest);
+    }
+    public String printDifference(Date startDate, Date endDate){
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
+        /*System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+        System.out.println("different : " + different);
+*/
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+        long elapsedSeconds = different / secondsInMilli;
+        String remaining;
+        if((elapsedDays == 0)&&(elapsedHours == 0)){
+            remaining = String.valueOf(elapsedMinutes)+"True";
+        }else {
+            remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
+        }
+        return remaining;
+        /*System.out.printf(
+                "%d days, %d hours, %d minutes, %d seconds%n",
+                elapsedDays,
+                elapsedHours, elapsedMinutes, elapsedSeconds);*/
+
+    }
+
+    public void startMeeting(final String MeetName,String MeetingTime) {
+//        ((MainActivity)getActivity()).startTheCall(MeetName);
+        alert = new AlertDialog.Builder(getActivity());
+//        Toast.makeText(getActivity(),MeetingTime,Toast.LENGTH_SHORT).show();
+        try {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+            String[] split = MeetingTime.split("\\s+");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 2; i < split.length; i++)
+                sb.append(split[i] + " ");
+            String dat1 = formatter.format(calendar.getTime());
+            Date date1 = formatter.parse(dat1);
+            String dat2 = sb.toString();
+            Date date2 = formatter.parse(dat2);
+            if (date1.compareTo(date2) < 0) {
+                String timeDifference = printDifference(date1, date2);
+                if (timeDifference.contains(" Hour")) {
+                    alert.setTitle(timeDifference + " Remaining");
+//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                } else if (timeDifference.contains(" True")) {
+                    alert.setTitle(timeDifference + " Minutes Remaining");
+//                    Toast.makeText(getActivity(),"Has only minutes",Toast.LENGTH_SHORT).show();
+                }
+
+
+                alert.setMessage("Would You like to join \"" + MeetName + "\" Meeting right now");
+                alert.setCancelable(false);
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String meetingName = MeetName.replace(" ", "");
+                        ((MainActivity)getActivity()).startTheCall(meetingName);
+//                        getSinchConferenceDetails();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
+            } else if (date1.compareTo(date2) > 0) {
+                alert.setTitle("Meeting over");
+                alert.setMessage("\"" + MeetName + "\" is already over");
+                alert.setCancelable(false);
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
+            }
+        } catch (ParseException e) {
+            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        alert.show();
     }
 
 }

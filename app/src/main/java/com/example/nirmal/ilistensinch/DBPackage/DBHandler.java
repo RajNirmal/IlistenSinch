@@ -106,6 +106,16 @@ public class DBHandler extends SQLiteOpenHelper {
         int status = Integer.parseInt(cr.getString(7));
         return (int)status;
     }
+    public MeetingList getMeetingByName(String x){
+        SQLiteDatabase db =this.getReadableDatabase();
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_NAME+" = \'"+ x + "\'",null);
+        MeetingList list;
+        if(cr.moveToFirst())
+            list = new MeetingList(Integer.parseInt(cr.getString(0)), cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4), cr.getString(5), cr.getString(6), Integer.parseInt(cr.getString(7)));
+        else
+            list = null;
+        return list;
+    }
     public MeetingList getMeeting(Integer id){
         SQLiteDatabase db = this.getReadableDatabase();
 //        Cursor cr = db.query(TABLE_NAME,new String[]{KEY_MEETING_KEY,KEY_MEETING_NAME, KEY_CONFERENCE_DESC,KEY_TIME,KEY_DURATION,KEY_CREATE_TIME,KEY_PRESENTER,KEY_MEETING_STATUS},KEY_MEETING_KEY+"=?",new String[]

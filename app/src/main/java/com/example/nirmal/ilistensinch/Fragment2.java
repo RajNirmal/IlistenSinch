@@ -12,9 +12,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -65,16 +68,12 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         alertDialog = new AlertDialog.Builder(getActivity());
-
         // Setting Dialog Title
         alertDialog.setTitle("iListen");
-
         // Setting Dialog Message
         alertDialog.setMessage("Meeting Successfully Created");
-
         // Setting Icon to Dialog
 //        alertDialog.setIcon(R.drawable.tick);
-
         // Setting OK Button
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -113,6 +112,31 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         FinishSettingUpMeeting.setOnClickListener(this);
         meetingDate.setOnClickListener(this);
         meetingTime.setOnClickListener(this);
+        meetingDesc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (keyEvent != null&& (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(textView.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                    // Must return true here to consume event
+                    return true;
+            }else{
+                    return false;
+                }
+            }});
+        meetingTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(textView.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                    // Must return true here to consume event
+                    return true;
+                }else{
+                    return false;
+                }
+            }});
+
         return subView;
     }
     private void setDateTimeField(){
@@ -126,13 +150,8 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                 stringDate = meetingDateString.format(newDate.getTime());
             }
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-        /*timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener(){
-            @Override
-            public void onTimeSet(TimePicker timePicker, int Hour, int Minute) {
-                stringTime = Hour+ " : "+Minute;
-            }
-        },newCalendar.get(Calendar.HOUR_OF_DAY),newCalendar.get(Calendar.MINUTE));*/
     }
+
     AdapterView.OnItemSelectedListener myListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -142,7 +161,6 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             // Showing selected spinner item
 //            Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
         }
-
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
             stringDuration = "10";
@@ -159,6 +177,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         }, 0, 0, true);
         timePickerDialog.show();
     }
+
     private void getSharedPrefsData(){
         SharedPreferences prefs = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
         try{
@@ -168,6 +187,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             Toast.makeText(getActivity(),"Please wait until token initialisation",Toast.LENGTH_SHORT).show();
         }
     }
+
     private void sendPushToAllUsers(final String ConfName , final String confTime, final String confdur){
         final String URL = "https://sfbpush.herokuapp.com/push";
         final String Body = "The Conference is being held on " + confTime + " for " + confdur + " minutes ";
@@ -260,7 +280,6 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         RequestQueue rq = Volley.newRequestQueue(getActivity());
         rq.add(stringreqs);
     }
-
     /*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

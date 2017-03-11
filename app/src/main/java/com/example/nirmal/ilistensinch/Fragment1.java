@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -41,7 +42,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.lang.Object;
 public class Fragment1 extends Fragment {
     private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
     private int MeetingID[],Status[];
@@ -202,8 +203,8 @@ public class Fragment1 extends Fragment {
 //                    String[] split = jsonObject.getString("Time").split("\\s+");
                     try {
                         Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
-                        String dat1 = formatter.format(calendar.getTime());
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+                        String dat1 = formatter.format(new Date());
                         Date date1 = formatter.parse(dat1);
                         String dat2 = jsonObject.getString("Time");
                         Date date2 = formatter.parse(dat2);
@@ -242,6 +243,7 @@ public class Fragment1 extends Fragment {
         };
         requestQueue.add(stringRequestr);
     }
+
     private void getAllMeetingsFromHostingerDB(){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_meetings.php";
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -278,7 +280,11 @@ public class Fragment1 extends Fragment {
                        }
                        for (int i = 0; i < MeetingName.length; i++) {
                            if(!(UserNameInSharedPrefs.equals(Presenter[i])))
-                            data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
+                               if(Status[i] != 1) {
+                                   boolean flag = isTheMeetingOver(Time[i]);
+                                   if (flag)
+                                       data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                               }
                        }
                    }else {
 //                      New data has been found in the server so call the local Db and update it accordingly
@@ -298,13 +304,22 @@ public class Fragment1 extends Fragment {
                         }
                         for (int i = 0; i < MeetingName.length; i++) {
                             if(!(UserNameInSharedPrefs.equals(Presenter[i])))
-                                data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i],MeetingID[i]));
+                                if(Status[i] != 1) {
+                                    boolean flag = isTheMeetingOver(Time[i]);
+                                    if (flag)
+                                        data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                                }
                         }
 
                     }
-                    adapter = new CustomAdapter1(data,Fragment1.this);
-                    recyclerView.setAdapter(adapter);
-                    SinchHolders.lastDataCount = jArray.length();
+                    if(data.isEmpty()){
+                        recyclerView.setVisibility(View.INVISIBLE);
+                        nothingToShow.setVisibility(View.VISIBLE);
+                    }else {
+                        adapter = new CustomAdapter1(data, Fragment1.this);
+                        recyclerView.setAdapter(adapter);
+                        SinchHolders.lastDataCount = jArray.length();
+                    }
               //      Toast.makeText(getActivity().getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
                 }catch (JSONException e){
                     Toast.makeText(getActivity().getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
@@ -316,8 +331,32 @@ public class Fragment1 extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
-
+        sr.setRetryPolicy(new DefaultRetryPolicy(8000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(sr);
+    }
+    public boolean isTheMeetingOver(String MeetingTime){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+        String[] split = MeetingTime.split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 2; i < split.length; i++) {
+            sb.append(split[i] + " ");
+//                Toast.makeText(getActivity(),split[i],Toast.LENGTH_SHORT).show();
+        }
+        try {
+            Date date1, date2;
+            String dat1 = formatter.format(new Date());
+            date1 = formatter.parse(dat1);
+            String MeetingDate = sb.toString();
+            date2 = formatter.parse(MeetingDate);
+            if(date2.before(date1)){
+                return false;
+            }else {
+                return true;
+            }
+
+        }catch (ParseException e){
+            return true;
+        }
     }
 
 }

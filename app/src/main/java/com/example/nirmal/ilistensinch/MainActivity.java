@@ -227,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),MeetID,i,0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 //        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 2000, pendingIntent);
-        Toast.makeText(this, "Alarm set in 1 seconds",Toast.LENGTH_SHORT).show();
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
+        Toast.makeText(this, "Alarm set in "+TimeRemaining+" seconds",Toast.LENGTH_SHORT).show();
     }
     public void startTheCall(String x){
         Intent i = new Intent(MainActivity.this,SinchMainActivity.class);

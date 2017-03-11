@@ -26,7 +26,15 @@
         android:layout_below="@+id/conferencename"
         android:layout_marginTop="26dp"
         android:text="00:15 "/>
-
+    <TextView
+        android:id="@+id/conferenceparticipation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:layout_below="@+id/conferenceduration"
+        android:layout_marginTop="15dp"
+        android:text="Participants : "/>
 
 
 

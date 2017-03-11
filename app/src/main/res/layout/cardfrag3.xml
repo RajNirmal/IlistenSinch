@@ -18,7 +18,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/card"
             android:padding="20dp"
             android:orientation="horizontal"
@@ -145,6 +145,17 @@
                 android:fontFamily="sans-sarif"
                 android:textSize="@dimen/text_small"
                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttoninuserwhocreatesthemeeting"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="25dp"
+                android:textSize="@dimen/text_medium"
+                android:layout_below="@id/line"
+                android:gravity="center_horizontal"
+                android:text="Start Meeting Now"/>
             <!--<TextView
                 android:id="@+id/can"
                 android:layout_width="wrap_content"

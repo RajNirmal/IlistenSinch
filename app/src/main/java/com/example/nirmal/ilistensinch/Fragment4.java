@@ -24,13 +24,20 @@ import com.android.volley.toolbox.Volley;
 import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Fragment4 extends Fragment {
 
@@ -43,6 +50,7 @@ public class Fragment4 extends Fragment {
     private View mRootView;
     private DBHandler db;
     AlertDialog.Builder alert;
+    String MeetingDate;
     public Fragment4() {
         // TODO Auto-generated constructor stub
     }
@@ -62,45 +70,75 @@ public class Fragment4 extends Fragment {
         alert = new AlertDialog.Builder(getActivity());
 //        Toast.makeText(getActivity(),MeetingTime,Toast.LENGTH_SHORT).show();
         try {
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
-            for (int i = 2; i < split.length; i++)
+            for (int i = 2; i < split.length; i++) {
                 sb.append(split[i] + " ");
-            String dat1 = formatter.format(calendar.getTime());
-            Date date1 = formatter.parse(dat1);
-            String dat2 = sb.toString();
-            Date date2 = formatter.parse(dat2);
+//                Toast.makeText(getActivity(),split[i],Toast.LENGTH_SHORT).show();
+            }
+                Date date1,date2;
+                String dat1 = formatter.format(new Date());
+                date1 = formatter.parse(dat1);
+                MeetingDate = sb.toString();
+                date2 = formatter.parse(MeetingDate);
+//                Toast.makeText(getActivity(),"The Meeting date is " + MeetingDate +" The meeting time in DATE is "+String.valueOf(date2) + "The current date is "+ date1,Toast.LENGTH_SHORT).show();
+// The meeting is not yet Over
             if (date1.compareTo(date2) < 0) {
                 String timeDifference = printDifference(date1, date2);
                 if (timeDifference.contains(" Hour")) {
                     alert.setTitle(timeDifference + " Remaining");
 //                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                    alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                    alert.setCancelable(true);
+                    alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            /*String meetingName = MeetName.replace(" ", "");
+                            ((MainActivity)getActivity()).startTheCall(meetingName);*/
+                            dialogInterface.dismiss();
+                        }
+                    });
                 } else if (timeDifference.contains(" True")) {
-                    alert.setTitle(timeDifference + " Minutes Remaining");
-//                    Toast.makeText(getActivity(),"Has only minutes",Toast.LENGTH_SHORT).show();
-                }
+//                  Only some minutes are remaining
+                    String timeArray[] = timeDifference.split(" ");
+                    int x = Integer.valueOf(timeArray[1]);
+                    if(x <= 5){
+                        alert.setTitle(timeDifference + " Minutes Remaining");
+//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                        alert.setCancelable(false);
+                        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                    });
+                        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                                String meetingName = MeetName.replace(" ", "");
+                            ((MainActivity)getActivity()).startTheCall(meetingName);
+    //                        getSinchConferenceDetails();
+                                    }
+                    });
+                    }else{
+                        alert.setTitle(timeDifference + " Minutes Remaining");
+//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                        alert.setCancelable(false);
+                        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
 
-
-                alert.setMessage("Would You like to join \"" + MeetName + "\" Meeting right now");
-                alert.setCancelable(false);
-                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String meetingName = MeetName.replace(" ", "");
-                        ((MainActivity)getActivity()).startTheCall(meetingName);
-//                        getSinchConferenceDetails();
-                    }
-                });
-                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
 //                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
-            } else if (date1.compareTo(date2) > 0) {
+                        }
+                    }}else
+//            The meeting is over already
+            if (date1.compareTo(date2) > 0) {
                 alert.setTitle("Meeting over");
                 alert.setMessage("\"" + MeetName + "\" is already over");
                 alert.setCancelable(false);
@@ -171,11 +209,22 @@ public class Fragment4 extends Fragment {
 
         //milliseconds
         long different = endDate.getTime() - startDate.getTime();
-//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
         /*System.out.println("startDate : " + startDate);
         System.out.println("endDate : "+ endDate);
         System.out.println("different : " + different);
+        DateTimeFormatter format = DateTimeFormat.forPattern("MMM");
+        DateTime instance        = format.withLocale(Locale.ENGLISH).parseDateTime(dates[1]);
+        int month_number         = instance.getMonthOfYear();
+        instance = format.withLocale(Locale.ENGLISH).parseDateTime(dates2[1]);
+        int month_number_2 = instance.getMonthOfYear();
+
 */
+        String StringDate = String.valueOf(startDate);
+        String dates [] = StringDate.split(" ");
+        String StringDate2 = StringDate.valueOf(endDate);
+        String dates2 [] = StringDate2.split(" ");
+        Date date,date2;
+//        long Date = startDate.getMonth();
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;
         long hoursInMilli = minutesInMilli * 60;
@@ -231,13 +280,13 @@ public class Fragment4 extends Fragment {
             MeetingList SingleMeeting =  data.get(i);
             String time = SingleMeeting.getTime();
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
             String[] split = time.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for(int j=2;j<split.length;j++)
                 sb.append(split[j]+" ");
             try {
-                String dat1 = formatter.format(calendar.getTime());
+                String dat1 = formatter.format(new Date());
                 Date date1 = formatter.parse(dat1);
                 String dat2 = sb.toString();
                 Date date2 = formatter.parse(dat2);
