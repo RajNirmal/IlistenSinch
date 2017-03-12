@@ -65,10 +65,93 @@ public class Fragment4 extends Fragment {
 
     }
 
+    public void startMeeting2(final String MeetName,String MeetingTime) {
+        alert = new AlertDialog.Builder(getActivity());
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            String[] split = MeetingTime.split("\\s+");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 2; i < split.length; i++)
+                sb.append(split[i] + " ");
+            String dat1 = formatter.format(new Date());
+            Date date1 = formatter.parse(dat1);
+            String dat2 = sb.toString();
+            Date date2 = formatter.parse(dat2);
+            if (date1.compareTo(date2) < 0) {
+                //The date has not yet arrived so check the time difference between them
+                String timeDifference = printDifference(date1, date2);
+                if (timeDifference.contains(" Hour")) {
+                    //Too much time remaining to start the meeting now
+                    alert.setTitle(timeDifference + " Remaining");
+                    alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                    alert.setCancelable(false);
+                    alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                } else {
+                    if (timeDifference.contains(" True")) {
+                        // Only minutes are remaining
+                        String timeArray[] = timeDifference.split(" ");
+                        Integer x = Integer.parseInt(timeArray[0]);
+                        if (x <= 5) {
+                            //Only 5 Minutes is remaining so allow the user to join the meeting
+                            alert.setTitle(timeArray[0] + " Minutes Remaining");
+                            alert.setMessage("You can join \"" + MeetName + "\" Meeting right now");
+                            alert.setCancelable(false);
+                            alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String meetingName = MeetName.replace(" ", "");
+                                    ((MainActivity) getActivity()).startTheCall(meetingName);
+                                }
+                            });
+                        } else {
+                            //More than 5 minutes remaining so do not allow the user to join the meeting
+                            alert.setTitle(timeArray[0] + " Minutes Remaining");
+                            alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                            alert.setCancelable(false);
+                            alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                        }
+                    }
+                }
+            }else{
+                //The meeting is over already
+                alert.setTitle("Meeting over");
+                alert.setMessage("\"" + MeetName + "\" is already over");
+                alert.setCancelable(false);
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
+            }
+        }catch (ParseException e) {
+            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        alert.show();
+    }
+
+
     public void startMeeting(final String MeetName,String MeetingTime) {
         alert = new AlertDialog.Builder(getActivity());
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for (int i = 2; i < split.length; i++) {
@@ -143,28 +226,6 @@ public class Fragment4 extends Fragment {
         }
         alert.show();
     }
-/*
-        String[] split = MeetingTime.split("\\s+");
-        int count = split.length;
-        int i = count-3;
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        String formattedDate = df.format(c.getTime());
-        String[] currentTime = formattedDate.split(":");
-        for(String x : currentTime)
-            Toast.makeText(getActivity(),x,Toast.LENGTH_SHORT).show();
-        if((Integer.parseInt(currentTime[0]) < Integer.parseInt(split[i]))||(Integer.parseInt(currentTime[0]) > Integer.parseInt(split[i++]))){
-            //Meeting Hour has not reached yet
-            alert.setTitle(MeetName);
-            alert.setMessage("The time has not yet come. Are you sure you want to attend");
-            alert.show();
-        }else if((Integer.parseInt(currentTime[1]) < Integer.parseInt(split[i]))||(Integer.parseInt(currentTime[1]) > Integer.parseInt(split[i++]))){
-            //Meeting Minutes has not been reached yet
-            alert.setTitle(MeetName);
-            alert.setMessage("The time has not yet come. Are you sure you want to attend");
-            alert.show();
-        }
-*/
 
 
     public String printDifference(Date startDate, Date endDate){
@@ -184,7 +245,7 @@ public class Fragment4 extends Fragment {
         long elapsedSeconds = different / secondsInMilli;
         String remaining;
         if((elapsedDays == 0)&&(elapsedHours == 0)){
-            remaining = String.valueOf(elapsedMinutes)+"True";
+            remaining = String.valueOf(elapsedMinutes)+" True";
         }else {
             remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
         }
@@ -223,8 +284,7 @@ public class Fragment4 extends Fragment {
         for(int i = 0; i<data.size() ; i++) {
             MeetingList SingleMeeting =  data.get(i);
             String time = SingleMeeting.getTime();
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
             String[] split = time.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for(int j=2;j<split.length;j++)

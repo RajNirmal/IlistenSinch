@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -45,9 +46,13 @@ public class Fragment3 extends Fragment {
     private static ArrayList<DataModel1> data;
     TextView noShow2;
     public final static String TAG = Fragment1.class.getSimpleName();
+    static int RecyclerViewSize = 0;
     private View mRootView;
     public String UserName;
     AlertDialog.Builder alert;
+    Runnable handlerForParticipantsCount;
+    Handler mHandler;
+
     public Fragment3() {
         // TODO Auto-generated constructor stub
     }
@@ -62,6 +67,20 @@ public class Fragment3 extends Fragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,13 +97,27 @@ public class Fragment3 extends Fragment {
 //        noShow2.setVisibility(View.VISIBLE);
         getSharedPrefsUserName();
         getMeetingsCreatedByUserFromHostinger();
+        handlerForParticipantsCount = new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    getMeetingsCreatedByUserFromHostinger();
+                }finally {
+                    mHandler.postDelayed(handlerForParticipantsCount,5000);
+                }
+            }
+        };
         return mRootView;
     }
+
+
     private void getSharedPrefsUserName(){
         SharedPreferences sp = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
         UserName = sp.getString(SinchHolders.phpUserName,"xyz");
     }
+
     private void getMeetingsCreatedByUserFromHostinger(){
+        data.clear();
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_user.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -100,24 +133,23 @@ public class Fragment3 extends Fragment {
                     Duration = new String[jArray.length()];
                     Presenter = new String[jArray.length()];
                     MeetingID = new int[jArray.length()];
-                    for(int i=0;i<jArray.length();i++){
-                        JSONObject jobj = jArray.getJSONObject(i);
-                        MeetingName[i] = jobj.getString("MeetingName");
-                        ConCategory[i] = jobj.getString("ConCategory");
-                        ConDesc[i] = jobj.getString("ConDesc");
-                        Time[i] = "Time = " + jobj.getString("Time");
-                        Duration[i] = jobj.getString("Duration");
-                        Presenter[i] = jobj.getString("PID");
-                        MeetingID[i] = jobj.getInt("MeetingID");
+                        for (int i = 0; i < jArray.length(); i++) {
+                            JSONObject jobj = jArray.getJSONObject(i);
+                            MeetingName[i] = jobj.getString("MeetingName");
+                            ConCategory[i] = jobj.getString("ConCategory");
+                            ConDesc[i] = jobj.getString("ConDesc");
+                            Time[i] = "Time = " + jobj.getString("Time");
+                            Duration[i] = jobj.getString("Duration");
+                            Presenter[i] = jobj.getString("PID");
+                            MeetingID[i] = jobj.getInt("MeetingID");
 
-                    }
-                    for(int i=0 ; i < MeetingName.length; i++) {
-                        data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
-                    }
-                    recyclerView.setVisibility(View.VISIBLE);
-                    adapter = new CustomAdapter3(data,Fragment3.this);
-                    recyclerView.setAdapter(adapter);
-//                    noShow2.setVisibility(View.INVISIBLE);
+                        }
+                        for (int i = 0; i < MeetingName.length; i++) {
+                            data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                        }
+                        recyclerView.setVisibility(View.VISIBLE);
+                        adapter = new CustomAdapter3(data, Fragment3.this);
+                        recyclerView.setAdapter(adapter);
                     if(jArray.length() == 0){
                         noShow2.setVisibility(View.VISIBLE);
                     }
@@ -145,11 +177,6 @@ public class Fragment3 extends Fragment {
 
         //milliseconds
         long different = endDate.getTime() - startDate.getTime();
-//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
-        /*System.out.println("startDate : " + startDate);
-        System.out.println("endDate : "+ endDate);
-        System.out.println("different : " + different);
-*/
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;
         long hoursInMilli = minutesInMilli * 60;
@@ -163,22 +190,19 @@ public class Fragment3 extends Fragment {
         long elapsedSeconds = different / secondsInMilli;
         String remaining;
         if((elapsedDays == 0)&&(elapsedHours == 0)){
-            remaining = String.valueOf(elapsedMinutes)+"True";
+            remaining = String.valueOf(elapsedMinutes)+" True";
         }else {
             remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
         }
         return remaining;
-        /*System.out.printf(
-                "%d days, %d hours, %d minutes, %d seconds%n",
-                elapsedDays,
-                elapsedHours, elapsedMinutes, elapsedSeconds);*/
+
 
     }
 
     public void startMeeting(final String MeetName,String MeetingTime) {
         alert = new AlertDialog.Builder(getActivity());
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for (int i = 2; i < split.length; i++)
@@ -187,9 +211,12 @@ public class Fragment3 extends Fragment {
             Date date1 = formatter.parse(dat1);
             String dat2 = sb.toString();
             Date date2 = formatter.parse(dat2);
+//            Toast.makeText(getActivity(), "The device date is " + date1 + "The Meeting date is " + date2,Toast.LENGTH_LONG).show();
             if (date1.compareTo(date2) < 0) {
+                //The date has not yet arrived so check the time difference between them
                 String timeDifference = printDifference(date1, date2);
                 if (timeDifference.contains(" Hour")) {
+                    //Too much time remaining to start the meeting now
                     alert.setTitle(timeDifference + " Remaining");
                     alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
                     alert.setCancelable(false);
@@ -199,97 +226,58 @@ public class Fragment3 extends Fragment {
                             dialogInterface.dismiss();
                         }
                     });
-                } else if (timeDifference.contains(" True")) {
-//                  Only some minutes are remaining
-                    String timeArray[] = timeDifference.split(" ");
-                    int x = Integer.valueOf(timeArray[1]);
-                    if(x <= 5){
-                        alert.setTitle(timeDifference + " Minutes Remaining");
-                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
-                        alert.setCancelable(false);
-                        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String meetingName = MeetName.replace(" ", "");
-                                ((MainActivity)getActivity()).startTheCall(meetingName);
-                                //                        getSinchConferenceDetails();
-                            }
-                        });
-                    }else{
-                        alert.setTitle(timeDifference + " Minutes Remaining");
-//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
-                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
-                        alert.setCancelable(false);
-                        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-
-//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
-                    }
-                }}else
-//            The meeting is over already
-                if (date1.compareTo(date2) > 0) {
-                    alert.setTitle("Meeting over");
-                    alert.setMessage("\"" + MeetName + "\" is already over");
-                    alert.setCancelable(false);
-                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
+                } else {
+                    if (timeDifference.contains(" True")) {
+                        // Only minutes are remaining
+                        String timeArray[] = timeDifference.split(" ");
+                        Integer x = Integer.parseInt(timeArray[0]);
+//                        Toast.makeText(getActivity(),x, Toast.LENGTH_SHORT).show();
+                        if (x <= 5) {
+                            //Only 5 Minutes is remaining so allow the user to join the meeting
+                            alert.setTitle(timeArray[0] + " Minutes Remaining");
+                            alert.setMessage("You can join \"" + MeetName + "\" Meeting right now");
+                            alert.setCancelable(false);
+                            alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String meetingName = MeetName.replace(" ", "");
+                                    ((MainActivity) getActivity()).startTheCall(meetingName);
+                                }
+                            });
+                        } else {
+                            //More than 5 minutes remaining so do not allow the user to join the meeting
+                            alert.setTitle(timeArray[0] + " Minutes Remaining");
+                            alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                            alert.setCancelable(false);
+                            alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
                         }
-                    });
+                    }
+                  }
+                }else{
+                            //The meeting is over already
+                            alert.setTitle("Meeting over");
+                            alert.setMessage("\"" + MeetName + "\" is already over");
+                            alert.setCancelable(false);
+                            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
 //                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
                 }
-            /*if (date1.compareTo(date2) < 0) {
-                String timeDifference = printDifference(date1, date2);
-                if (timeDifference.contains(" Hour")) {
-                    alert.setTitle(timeDifference + " Remaining");
-//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
-                } else if (timeDifference.contains(" True")) {
-                    alert.setTitle(timeDifference + " Minutes Remaining");
-//                    Toast.makeText(getActivity(),"Has only minutes",Toast.LENGTH_SHORT).show();
-                }
-
-
-                alert.setMessage("Would You like to join \"" + MeetName + "\" Meeting right now");
-                alert.setCancelable(false);
-                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String meetingName = MeetName.replace(" ", "");
-                        ((MainActivity)getActivity()).startTheCall(meetingName);
-//                        getSinchConferenceDetails();
-                    }
-                });
-                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
-            } else if (date1.compareTo(date2) > 0) {
-                alert.setTitle("Meeting over");
-                alert.setMessage("\"" + MeetName + "\" is already over");
-                alert.setCancelable(false);
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
-            }*/
-        } catch (ParseException e) {
+        }catch (ParseException e) {
             Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
         }
         alert.show();

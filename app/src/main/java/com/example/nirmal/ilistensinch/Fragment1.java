@@ -147,11 +147,6 @@ public class Fragment1 extends Fragment {
 
         //milliseconds
         long different = endDate.getTime() - startDate.getTime();
-//        Toast.makeText(getActivity(),"startDate : " + startDate+"endDate : "+ endDate+"different : " + different,Toast.LENGTH_SHORT).show();
-        /*System.out.println("startDate : " + startDate);
-        System.out.println("endDate : "+ endDate);
-        System.out.println("different : " + different);
-*/
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;
         long hoursInMilli = minutesInMilli * 60;
@@ -165,18 +160,8 @@ public class Fragment1 extends Fragment {
         long elapsedSeconds = different / secondsInMilli;
         long theSecondsRemaining = ((elapsedSeconds * 1000) + (elapsedMinutes * 60000) + (elapsedHours * 60000 * 60) + (elapsedDays * 60000 * 60 * 24));
         return theSecondsRemaining;
-     /*   String remaining;
-        if((elapsedDays == 0)&&(elapsedHours == 0)){
-            remaining = String.valueOf(elapsedMinutes)+"True";
-        }else {
-            remaining = elapsedDays+" Days "+elapsedHours+" Hours "+elapsedMinutes+" Minutes";
-        }
-        System.out.printf(
-                "%d days, %d hours, %d minutes, %d seconds%n",
-                elapsedDays,
-                elapsedHours, elapsedMinutes, elapsedSeconds);
-*/
     }
+
     private void getTheMeetingDataFromHostinger(final int Id){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_id.php";
         StringRequest stringRequestr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -202,8 +187,7 @@ public class Fragment1 extends Fragment {
                     long out = db.updateMeetingStatus(myList);
 //                    String[] split = jsonObject.getString("Time").split("\\s+");
                     try {
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
                         String dat1 = formatter.format(new Date());
                         Date date1 = formatter.parse(dat1);
                         String dat2 = jsonObject.getString("Time");

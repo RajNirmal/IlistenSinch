@@ -46,9 +46,7 @@ public class handleBroadcast extends Activity {
             MeetName = null;
             MeetID = -56;
         }
-
         if (MeetID != -56) {
-//            getTheMeetingDataFromHostinger(MeetID);
             builder.setMessage("Are you sure you want to Join " + MeetName +" ?").setCancelable(false).
                     setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -63,6 +61,8 @@ public class handleBroadcast extends Activity {
                     setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
+                            Intent i = new Intent(handleBroadcast.this,MainActivity.class);
+                            startActivity(i);
                         }
                     });
             AlertDialog alert = builder.create();
@@ -83,45 +83,5 @@ public class handleBroadcast extends Activity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
-    private void getTheMeetingDataFromHostinger(final int Id){
-        final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_id.php";
-        StringRequest stringRequestr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
-                final MeetingList myList ;
-                String tMeetingName,tConCategory,tConDesc,tTime,tDuration,tPresenter;
-                int tMeetingID;
-                try{
-                    JSONObject obj = new JSONObject(response);
-                    JSONArray jsonArray = obj.getJSONArray("result");
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    tMeetingName = jsonObject.getString("MeetingName");
-                    tConCategory = jsonObject.getString("ConCategory");
-                    tConDesc = jsonObject.getString("ConDesc");
-                    tTime = "Time : " + jsonObject.getString("Time");
-                    tDuration = jsonObject.getString("Duration");
-                    tPresenter = jsonObject.getString("PID");
-                    tMeetingID = jsonObject.getInt("MeetingID");
-                }catch (JSONException e){
-                    Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map = new HashMap<>();
-                map.put(SinchHolders.phpMeetingId,String.valueOf(Id));
-                return map;
-            }
-        };
-        RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
-        rq.add(stringRequestr);
     }
 }

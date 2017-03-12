@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         SinchHolders.UserName = sp.getString(SinchHolders.phpUserName,"Randoms");
     }
     public void switchToThirdFragment(){
+        viewPager.setCurrentItem(0,true);
         viewPager.setCurrentItem(2,true);
     }
     class MyAdapter extends FragmentPagerAdapter {
@@ -226,9 +227,8 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(SinchHolders.phpMeetingName, MeetName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),MeetID,i,0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ TimeRemaining, pendingIntent);
-        Toast.makeText(this, "Alarm set in "+TimeRemaining+" seconds",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Alarm set in "+TimeRemaining+" seconds",Toast.LENGTH_SHORT).show();
     }
     public void startTheCall(String x){
         Intent i = new Intent(MainActivity.this,SinchMainActivity.class);

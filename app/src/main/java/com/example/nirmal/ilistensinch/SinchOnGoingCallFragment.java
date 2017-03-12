@@ -65,7 +65,7 @@ public class SinchOnGoingCallFragment extends Fragment {
     Runnable handlerForParticipantsCount;
     Handler mHandler;
     RequestQueue rq ;
-    boolean flag;
+    boolean flag;//set as true if user is mute
     private class UpdateCallDurationTask extends TimerTask {
 
         @Override
@@ -112,18 +112,15 @@ public class SinchOnGoingCallFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 MuteTheParticipants();
-//                muteParticipant();
             }
         });
-        /*Intent i = gUsetIntent();
-        String CallerIdentifier = i.getStringExtra(SinchHolders.CALL_ID);*/
+
         if (!((SinchMainActivity) getActivity()).whatToDo) {
             String CallerIdentifier = ((SinchMainActivity) getActivity()).mainCall.getCallId();
             call = SinchHolders.myClient.getCallClient().getCall(CallerIdentifier);
             CallingUsersName = call.getRemoteUserId();
             UserNameinTextView.setText(CallingUsersName);
             mAudioPlayer.playRingtone();
-//            updateTheView(false);
         } else {
             CallingUsersName = (((SinchMainActivity) getActivity()).getTheUsertoCall());
             try {
@@ -134,10 +131,10 @@ public class SinchOnGoingCallFragment extends Fragment {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{e.getRequiredPermission()}, 0);
             }
             UserNameinTextView.setText(CallingUsersName);
-//            updateTheView(true);
         }
         return subView;
     }
+
     private void updateCallDuration() {
         if (mCallStart > 0) {
             mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
@@ -158,26 +155,8 @@ public class SinchOnGoingCallFragment extends Fragment {
         mAudioPlayer.stopRingtone();
         mAudioPlayer.stopProgressTone();
             ((SinchMainActivity)getActivity()).letsGoBackToMainActivity();
-        /*try {
-            call.answer();
-            acceptButton.setVisibility(View.INVISIBLE);
-        } catch (MissingPermissionException e) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{e.getRequiredPermission()}, 0);
-        }*/
-//        updateTheView(true);
+
         }   });
-
-    }
-
-    private void updateTheView(boolean x){
-        //Send false if to show two buttons and send true to show one button
-
-        if(x) {
-//            acceptButton.setVisibility(View.GONE);
-//            rejectButton.setGravity(Gravity.CENTER);
-        }else{
-//            acceptButton.setVisibility(View.VISIBLE);
-        }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -192,23 +171,15 @@ public class SinchOnGoingCallFragment extends Fragment {
         public void onCallEnded(com.sinch.android.rtc.calling.Call endedCall) {
             //call ended by either party
             CallEndCause cause = endedCall.getDetails().getEndCause();
-//            mp.start();
             mAudioPlayer.stopProgressTone();
             getActivity().setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-//            Toast.makeText(getActivity(),"The tone should not play",Toast.LENGTH_SHORT).show();
-            String endMsg = "Call ended: " + endedCall.getDetails().toString();
-//            Toast.makeText(getActivity(), endMsg, Toast.LENGTH_LONG).show();
             mAudioPlayer.stopProgressTone();
             mHandler.removeCallbacks(handlerForParticipantsCount);
-//            updateTheView(false);
-//            acceptButton.performClick();
         }
         @Override
         public void onCallEstablished(com.sinch.android.rtc.calling.Call establishedCall) {
             //incoming call was picked up
             mp.start();
-//            Toast.makeText(getActivity(),"The tone should play"+mp.isPlaying(),Toast.LENGTH_SHORT).show();
-//            mAudioPlayer.stopProgressTone();
             getTheParticipantCount();
             mCallStart = System.currentTimeMillis();
             mCallDuration.setVisibility(View.VISIBLE);
@@ -219,8 +190,6 @@ public class SinchOnGoingCallFragment extends Fragment {
         public void onCallProgressing(com.sinch.android.rtc.calling.Call progressingCall) {
             //call is ringing
             mp.start();
-//            Toast.makeText(getActivity(),"The call is progressing"+mp.isPlaying(),Toast.LENGTH_SHORT).show();
-//            mAudioPlayer.playProgressTone();
             mCallDuration.setVisibility(View.VISIBLE);
         }
         @Override
@@ -228,12 +197,14 @@ public class SinchOnGoingCallFragment extends Fragment {
             //don't worry about this right now
         }
     }
+
     @Override
     public void onPause() {
         super.onPause();
         mDurationTask.cancel();
         mTimer.cancel();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -241,20 +212,12 @@ public class SinchOnGoingCallFragment extends Fragment {
         mDurationTask = new UpdateCallDurationTask();
         mTimer.schedule(mDurationTask, 0, 500);
     }
+
     public void getTheParticipantCount(){
-//        String appends = URkl.getText().toString().trim();
         String finalURL = URL+CallingUsersName;
-        mConferenceParticipants.setVisibility(View.INVISIBLE);
-//        Toast.makeText(getActivity(),"Hello From Function",Toast.LENGTH_SHORT).show();
         StringRequest sr = new StringRequest(Request.Method.GET, finalURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-//                mConferenceParticipants.setText(response.toString());
-//                post
-                //Here I have to check who the creator is
-                DBHandler db = new DBHandler(getActivity());
-                MeetingList myList = db.getMeetingByName(CallingUsersName);
-                Toast.makeText(getActivity(),myList.getPresenter(),Toast.LENGTH_SHORT).show();
                 try{
                     JSONObject jobj = new JSONObject(response);
                     JSONArray jArray = jobj.getJSONArray("participants");
@@ -263,10 +226,8 @@ public class SinchOnGoingCallFragment extends Fragment {
                         JSONObject jsonObject = jArray.getJSONObject(i);
                         sb.append(jsonObject.toString());
                     }
-                    mConferenceParticipants.setText(sb.toString());
+                    mConferenceParticipants.setText("Participants :" + jArray.length());
                     mConferenceParticipants.setVisibility(View.VISIBLE);
-                    /*mConferenceParticipants.setText("Participants :"+jArray.length());
-                    mConferenceParticipants.setVisibility(View.VISIBLE);*/
                 }catch (JSONException e){
                     Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
                 }
@@ -284,30 +245,26 @@ public class SinchOnGoingCallFragment extends Fragment {
                 String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
                 params.put("Authorization", auth);
                 return params;
-//                return super.getHeaders();
             }
         };
         sr.setRetryPolicy(new DefaultRetryPolicy(8000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(sr);
     }
     public void MuteTheParticipants(){
-//        String appends = URkl.getText().toString().trim();
         String userName = call.getCallId();
         final String muteURL = URL+CallingUsersName+"/"+userName;
 
         StringRequest sr = new StringRequest(Request.Method.PATCH, muteURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-//                mConferenceParticipants.setText(response.toString());
                 if(flag)
-                    Toast.makeText(getActivity(),"You are now Muted",Toast.LENGTH_SHORT).show();
+                    muteButton.setImageResource(R.drawable.microphone);
                 else
-                    Toast.makeText(getActivity(),"You are now UnMuted",Toast.LENGTH_SHORT).show();
+                    muteButton.setImageResource(R.drawable.microphone_off);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                mConferenceParticipants.setText(error.toString());
                 Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
             }
         }){

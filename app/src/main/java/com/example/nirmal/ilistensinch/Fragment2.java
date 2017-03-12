@@ -2,6 +2,7 @@ package com.example.nirmal.ilistensinch;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,13 +37,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import static android.text.InputType.TYPE_NULL;
 
@@ -56,6 +60,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     TimePickerDialog timePicker;
     AlertDialog.Builder alertDialog;
     SimpleDateFormat meetingDateString;
+    ProgressDialog progressDialog;
     public Fragment2() {
         // TODO Auto-generated constructor stub
     }
@@ -68,17 +73,10 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         alertDialog = new AlertDialog.Builder(getActivity());
-        // Setting Dialog Title
         alertDialog.setTitle("iListen");
-        // Setting Dialog Message
         alertDialog.setMessage("Meeting Successfully Created");
-        // Setting Icon to Dialog
-//        alertDialog.setIcon(R.drawable.tick);
-        // Setting OK Button
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // Write your code here to execute after dialog closed
-//                Toast.makeText(getContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -98,6 +96,10 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         FinishSettingUpMeeting = (TextView) subView.findViewById(R.id.submit_meeting);
         meetingDateString = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         meetingDate.setInputType(TYPE_NULL);
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setMessage("Creating Meeting");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgress(0);
         setDateTimeField();
         meetingDuration.setOnItemSelectedListener(myListener);
         List<Integer> categories = new ArrayList<>();
@@ -139,6 +141,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
 
         return subView;
     }
+
     private void setDateTimeField(){
         Calendar newCalendar = Calendar.getInstance();
         datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
@@ -194,14 +197,14 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-              //  Toast.makeText(getActivity(),response.toString()+" returned from node.js server",Toast.LENGTH_SHORT).show();
-                //  ((SinchMainActivity)getActivity()).goBackToMain();
+                progressDialog.dismiss();
+                ((MainActivity)getActivity()).switchToThirdFragment();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-               // Toast.makeText(getActivity(),error.toString()+"The Server returned error",Toast.LENGTH_SHORT).show();
-                // ((MainActivity)getActivity()).goBackToMain();
+                progressDialog.dismiss();
+                ((MainActivity)getActivity()).switchToThirdFragment();
             }
         }){
             @Override
@@ -221,14 +224,14 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         if (view == FinishSettingUpMeeting){
             stringTitle = meetingTitle.getText().toString().trim();
             stringDesc = meetingDesc.getText().toString().trim();
-//            stringDuration = meetingDuration.getText().toString().trim();
             String finalDateandTime = stringDate+" "+stringTime;
-//            Toast.makeText(getActivity(),finalDateandTime,Toast.LENGTH_SHORT).show();
             if((!(stringTitle.isEmpty())&&(!(stringDesc.isEmpty()))&&(!(stringDuration.isEmpty())))){
+                progressDialog.show();
                 getSharedPrefsData();
                 sendTheDataToHostinger(stringTitle, finalDateandTime, stringDuration, stringDesc);
                 sendPushToAllUsers(stringTitle, stringDate, stringDuration);
-                ((MainActivity)getActivity()).switchToThirdFragment();
+                setTheAlarm();
+
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),"Please enter all the details",Toast.LENGTH_LONG).show();
             }
@@ -239,10 +242,47 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         }
     }
 
+    public void setTheAlarm(){
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            String dat1 = formatter.format(new Date());
+            Date date1 = formatter.parse(dat1);
+            String dat2 = stringDate+" "+stringTime;;
+            Date date2 = formatter.parse(dat2);
+            Random r = new Random();
+            int Low = 1000;
+            int High = 5000;
+            int Result = r.nextInt(High-Low) + Low;
+            if(date1.compareTo(date2)<0){
+                long timeRemaining = getDifferenceInMilliSeconds(date1,date2);
+                ((MainActivity)getActivity()).setTheAlarm(Result,timeRemaining,stringTitle);
+//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
+            }
+        }catch (ParseException e){
+            Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+        }
+    }
+    public long getDifferenceInMilliSeconds(Date startDate, Date endDate){
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+        long elapsedSeconds = different / secondsInMilli;
+        long theSecondsRemaining = ((elapsedSeconds * 1000) + (elapsedMinutes * 60000) + (elapsedHours * 60000 * 60) + (elapsedDays * 60000 * 60 * 24));
+        return theSecondsRemaining;
+    }
+
     private void sendTheDataToHostinger(final String confName, final String confTime, final String confDuration, final String confDescription){
         final String HostingerURL = "http://www.mazelon.com/iListen/ilisten_Save_Meeting.php";
-        String putotText = SinchHolders.phpMeetingName+"="+confName +SinchHolders.phpMeetingTime+"="+confTime+SinchHolders.phpMeetingDuration+"="+confDuration+SinchHolders.phpMeetingCategory+"="+Category+
-                SinchHolders.phpMeetingCreator+"="+userName+SinchHolders.phpMeetingDesc+"="+confDescription;
         //TestingMeeting.setText(putotText);
         StringRequest stringreqs = new StringRequest(Request.Method.POST, HostingerURL, new Response.Listener<String>() {
             @Override
@@ -280,29 +320,6 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         RequestQueue rq = Volley.newRequestQueue(getActivity());
         rq.add(stringreqs);
     }
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.listfrag2, container, false);
 
-
-        recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
-        recyclerView.setHasFixedSize(true);
-
-        layoutManager = new LinearLayoutManager(this.getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        data = new ArrayList<DataModel2>();
-        for (int i = 0; i <1; i++) {
-            data.add(new DataModel2( MyData.tit[i], MyData.cat[i], MyData.desc[i], MyData.dt[i]));
-        }
-
-
-        adapter = new CustomAdapter2(data);
-        recyclerView.setAdapter(adapter);
-        return mRootView;
-    }
-*/
 }
 
