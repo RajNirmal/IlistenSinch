@@ -1,13 +1,13 @@
 package com.example.nirmal.ilistensinch;
 
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +23,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
-import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 import com.sinch.android.rtc.MissingPermissionException;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.CallEndCause;
@@ -158,6 +155,7 @@ public class SinchOnGoingCallFragment extends Fragment {
 
         }   });
     }
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getActivity(), "You may now answer the call", Toast.LENGTH_LONG).show();
@@ -166,6 +164,7 @@ public class SinchOnGoingCallFragment extends Fragment {
                     .LENGTH_LONG).show();
         }
     }
+
     class SinchCallListener implements CallListener {
         @Override
         public void onCallEnded(com.sinch.android.rtc.calling.Call endedCall) {
@@ -250,17 +249,19 @@ public class SinchOnGoingCallFragment extends Fragment {
         sr.setRetryPolicy(new DefaultRetryPolicy(8000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(sr);
     }
+
     public void MuteTheParticipants(){
         String userName = call.getCallId();
         final String muteURL = URL+CallingUsersName+"/"+userName;
-
         StringRequest sr = new StringRequest(Request.Method.PATCH, muteURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if(flag)
-                    muteButton.setImageResource(R.drawable.microphone);
+                    muteButton.setBackgroundResource(R.drawable.microphone);
                 else
-                    muteButton.setImageResource(R.drawable.microphone_off);
+                    muteButton.setBackgroundResource(R.drawable.microphone_off
+                    );
+
             }
         }, new Response.ErrorListener() {
             @Override
