@@ -41,7 +41,6 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
             if(v.getId() == join.getId()){
                 String x = dataSet.get(getAdapterPosition()).getTit();
                 String y = dataSet.get(getAdapterPosition()).getDt();
-                Toast.makeText(v.getContext(),x, Toast.LENGTH_LONG).show();
                 myFrag.startMeeting(x,y);
             }
             int position=getAdapterPosition();

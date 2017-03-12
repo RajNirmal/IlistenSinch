@@ -176,21 +176,80 @@ public class Fragment3 extends Fragment {
     }
 
     public void startMeeting(final String MeetName,String MeetingTime) {
-//        ((MainActivity)getActivity()).startTheCall(MeetName);
         alert = new AlertDialog.Builder(getActivity());
-//        Toast.makeText(getActivity(),MeetingTime,Toast.LENGTH_SHORT).show();
         try {
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy hh : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for (int i = 2; i < split.length; i++)
                 sb.append(split[i] + " ");
-            String dat1 = formatter.format(calendar.getTime());
+            String dat1 = formatter.format(new Date());
             Date date1 = formatter.parse(dat1);
             String dat2 = sb.toString();
             Date date2 = formatter.parse(dat2);
             if (date1.compareTo(date2) < 0) {
+                String timeDifference = printDifference(date1, date2);
+                if (timeDifference.contains(" Hour")) {
+                    alert.setTitle(timeDifference + " Remaining");
+                    alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                    alert.setCancelable(false);
+                    alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                } else if (timeDifference.contains(" True")) {
+//                  Only some minutes are remaining
+                    String timeArray[] = timeDifference.split(" ");
+                    int x = Integer.valueOf(timeArray[1]);
+                    if(x <= 5){
+                        alert.setTitle(timeDifference + " Minutes Remaining");
+                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                        alert.setCancelable(false);
+                        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String meetingName = MeetName.replace(" ", "");
+                                ((MainActivity)getActivity()).startTheCall(meetingName);
+                                //                        getSinchConferenceDetails();
+                            }
+                        });
+                    }else{
+                        alert.setTitle(timeDifference + " Minutes Remaining");
+//                    Toast.makeText(getActivity(),"Has hour field",Toast.LENGTH_SHORT).show();
+                        alert.setMessage("You cannot join \"" + MeetName + "\" Meeting right now");
+                        alert.setCancelable(false);
+                        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+
+//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
+                    }
+                }}else
+//            The meeting is over already
+                if (date1.compareTo(date2) > 0) {
+                    alert.setTitle("Meeting over");
+                    alert.setMessage("\"" + MeetName + "\" is already over");
+                    alert.setCancelable(false);
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
+                }
+            /*if (date1.compareTo(date2) < 0) {
                 String timeDifference = printDifference(date1, date2);
                 if (timeDifference.contains(" Hour")) {
                     alert.setTitle(timeDifference + " Remaining");
@@ -229,7 +288,7 @@ public class Fragment3 extends Fragment {
                     }
                 });
 //                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
-            }
+            }*/
         } catch (ParseException e) {
             Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
         }

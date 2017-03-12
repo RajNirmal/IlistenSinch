@@ -44,15 +44,10 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
             if(v.getId() == join.getId()){
                 String x = dataSet.get(getAdapterPosition()).getMeetingName();
                 String y = dataSet.get(getAdapterPosition()).getTime();
-//                Toast.makeText(v.getContext(),x,Toast.LENGTH_LONG).show();
                 myFrag.startMeeting(x,y);
             }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);
-         /*  Intent intent = new Intent(v.getContext(),Review.class);
-            intent.putExtra("pos",pos);
-            v.getContext().startActivity(intent);
-*/
         }
 
     }
