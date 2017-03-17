@@ -10,18 +10,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -47,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 
 import static android.text.InputType.TYPE_NULL;
 
@@ -225,10 +221,21 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             stringTitle = meetingTitle.getText().toString().trim();
             stringDesc = meetingDesc.getText().toString().trim();
             String finalDateandTime = stringDate+" "+stringTime;
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            String formattedDateInGMT;
+            try {
+                Date date1 = simpleFormat.parse(finalDateandTime);
+                simpleFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                formattedDateInGMT = simpleFormat.format(date1);
+//                Toast.makeText(getActivity(), formattedDateInGMT+" is the GMT for "+finalDateandTime, Toast.LENGTH_SHORT).show();
+            }catch (ParseException e ){
+                Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG);
+                formattedDateInGMT = finalDateandTime;
+            }
             if((!(stringTitle.isEmpty())&&(!(stringDesc.isEmpty()))&&(!(stringDuration.isEmpty())))){
                 progressDialog.show();
                 getSharedPrefsData();
-                sendTheDataToHostinger(stringTitle, finalDateandTime, stringDuration, stringDesc);
+                sendTheDataToHostinger(stringTitle, formattedDateInGMT, stringDuration, stringDesc);
                 sendPushToAllUsers(stringTitle, stringDate, stringDuration);
                 setTheAlarm();
 
@@ -262,6 +269,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
         }
     }
+
     public long getDifferenceInMilliSeconds(Date startDate, Date endDate){
 
         //milliseconds

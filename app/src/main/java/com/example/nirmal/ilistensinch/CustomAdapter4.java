@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
@@ -44,7 +43,8 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
             if(v.getId() == join.getId()){
                 String x = dataSet.get(getAdapterPosition()).getMeetingName();
                 String y = dataSet.get(getAdapterPosition()).getTime();
-                myFrag.startMeeting2(x,y);
+                String z = dataSet.get(getAdapterPosition()).getDuration();
+                myFrag.startMeeting2(x,y,z);
             }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);
@@ -82,8 +82,10 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
         cat.setText(Category);
         desc.setText(dataSet.get(listPosition).getConferenceDesc());
         dt.setText(dataSet.get(listPosition).getTime());
-        if((dataSet.get(listPosition).getStatus())==2){
+        if((dataSet.get(listPosition).getStatus()) == 2){
             join.setText("Meeting Over");
+        }else if((dataSet.get(listPosition).getStatus()) == 3){
+            join.setText("Meeting in Progress");
         }
 //        join
 //        part.setText(dataSet.get(listPosition).getPart());

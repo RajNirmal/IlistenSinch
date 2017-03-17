@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,22 +25,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
-import com.rebtel.repackaged.com.google.gson.JsonObject;
-import com.sinch.android.rtc.Sinch;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.Object;
+import java.util.TimeZone;
+
 public class Fragment1 extends Fragment {
     private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
     private int MeetingID[],Status[];
@@ -138,8 +133,6 @@ public class Fragment1 extends Fragment {
     }
     private long writeinLocalDB(int i){
         long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],Status[i]));
-
-//        Toast.makeText(getActivity(),String.valueOf(out),Toast.LENGTH_SHORT).show();
 //        getDBdata(i);
         return out;
    }
@@ -178,34 +171,42 @@ public class Fragment1 extends Fragment {
                     tMeetingName = jsonObject.getString("MeetingName");
                     tConCategory = jsonObject.getString("ConCategory");
                     tConDesc = jsonObject.getString("ConDesc");
-                    tTime = "Time : " + jsonObject.getString("Time");
                     tDuration = jsonObject.getString("Duration");
                     tPresenter = jsonObject.getString("PID");
                     tMeetingID = jsonObject.getInt("MeetingID");
-                    myList = new MeetingList(tMeetingID,tMeetingName,tConDesc,tTime,tDuration,tTime,tPresenter,1);
-                    getDBdata(tMeetingID);
-                    long out = db.updateMeetingStatus(myList);
-//                    String[] split = jsonObject.getString("Time").split("\\s+");
+                    Date date;
                     try {
+                        String DateinGMT = jsonObject.getString("Time");
                         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
-                        String dat1 = formatter.format(new Date());
-                        Date date1 = formatter.parse(dat1);
-                        String dat2 = jsonObject.getString("Time");
-                        Date date2 = formatter.parse(dat2);
+                        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        Date GMTDate = formatter.parse(DateinGMT);
+                        formatter.setTimeZone(TimeZone.getDefault());
+                        String LocalDateString = formatter.format(GMTDate);
+                        Date LocalDate = formatter.parse(LocalDateString);
+                        formatter.setTimeZone(TimeZone.getDefault());
+                        Date date2 = LocalDate;
+                        date = LocalDate;
+                        String dat2 = formatter.format(new Date());
+                        Date date1 = formatter.parse(dat2);
                         if(date1.compareTo(date2)<0){
                             alertDialog.setTitle("Meeting Scheduled");
                             alertDialog.setMessage("You can attend \""+tMeetingName+"\" Meeting");
                             long timeRemaining = getDifferenceInMilliSeconds(date1,date2);
                             ((MainActivity)getActivity()).setTheAlarm(Id,timeRemaining,tMeetingName);
-//                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
                         }else if(date1.compareTo(date2)>0){
                             alertDialog.setTitle("Meeting over");
                             alertDialog.setMessage("\""+tMeetingName+"\" is already over");
-//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
                         }
                     }catch (ParseException e){
-                        Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_SHORT).show();
+                        date = null;
+                        Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
+                    int years = ((date.getYear())%100)+2000;
+                    String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+                    tTime = "Time : "+ shert;
+                    myList = new MeetingList(tMeetingID,tMeetingName,tConDesc,tTime,tDuration,tTime,tPresenter,1);
+                    getDBdata(tMeetingID);
+                    long out = db.updateMeetingStatus(myList);
                     getDBdata(tMeetingID);
                     alertDialog.show();
                 }catch (JSONException e){
@@ -256,7 +257,24 @@ public class Fragment1 extends Fragment {
                            MeetingName[i] = jobj.getString("MeetingName");
                            ConCategory[i] = jobj.getString("ConCategory");
                            ConDesc[i] = jobj.getString("ConDesc");
-                           Time[i] = "Time : " + jobj.getString("Time");
+                           Date date;
+                           try {
+                               String DateinGMT = jobj.getString("Time");
+                               SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+                               formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+                               Date GMTDate = formatter.parse(DateinGMT);
+                               formatter.setTimeZone(TimeZone.getDefault());
+                               String LocalDateString = formatter.format(GMTDate);
+                               Date LocalDate = formatter.parse(LocalDateString);
+                               formatter.setTimeZone(TimeZone.getDefault());
+                               date = LocalDate;
+                           }catch (ParseException e){
+                               date = null;
+                               Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                           }
+                           int years = ((date.getYear())%100)+2000;
+                           String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+                           Time[i] = "Time : " + shert;
                            Duration[i] = jobj.getString("Duration");
                            Presenter[i] = jobj.getString("PID");
                            MeetingID[i] = jobj.getInt("MeetingID");
@@ -278,7 +296,24 @@ public class Fragment1 extends Fragment {
                             MeetingName[i] = jobj.getString("MeetingName");
                             ConCategory[i] = jobj.getString("ConCategory");
                             ConDesc[i] = jobj.getString("ConDesc");
-                            Time[i] = "Time : " + jobj.getString("Time");
+                            Date date;
+                            try {
+                                String DateinGMT = jobj.getString("Time");
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+                                formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+                                Date GMTDate = formatter.parse(DateinGMT);
+                                formatter.setTimeZone(TimeZone.getDefault());
+                                String LocalDateString = formatter.format(GMTDate);
+                                Date LocalDate = formatter.parse(LocalDateString);
+                                formatter.setTimeZone(TimeZone.getDefault());
+                                date = LocalDate;
+                            }catch (ParseException e){
+                                date = null;
+                                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                            int years = ((date.getYear())%100)+2000;
+                            String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+                            Time[i] = "Time : " + shert;
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
@@ -319,7 +354,7 @@ public class Fragment1 extends Fragment {
         requestQueue.add(sr);
     }
     public boolean isTheMeetingOver(String MeetingTime){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh : mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
         String[] split = MeetingTime.split("\\s+");
         StringBuilder sb = new StringBuilder();
         for (int i = 2; i < split.length; i++) {
@@ -332,9 +367,12 @@ public class Fragment1 extends Fragment {
             date1 = formatter.parse(dat1);
             String MeetingDate = sb.toString();
             date2 = formatter.parse(MeetingDate);
+//            Toast.makeText(getActivity(),"The current date is "+date1+" The Meeting date is "+date2,Toast.LENGTH_LONG).show();
             if(date2.before(date1)){
+//                Toast.makeText(getActivity(), "The date now is "+date2+" False", Toast.LENGTH_SHORT).show();
                 return false;
             }else {
+//                Toast.makeText(getActivity(), "The date now is "+date2+" True", Toast.LENGTH_SHORT).show();
                 return true;
             }
 

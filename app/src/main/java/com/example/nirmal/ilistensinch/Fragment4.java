@@ -13,31 +13,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
 import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
 
 public class Fragment4 extends Fragment {
 
@@ -65,7 +47,7 @@ public class Fragment4 extends Fragment {
 
     }
 
-    public void startMeeting2(final String MeetName,String MeetingTime) {
+    public void startMeeting2(final String MeetName,String MeetingTime, String Duration) {
         alert = new AlertDialog.Builder(getActivity());
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -73,10 +55,23 @@ public class Fragment4 extends Fragment {
             StringBuilder sb = new StringBuilder();
             for (int i = 2; i < split.length; i++)
                 sb.append(split[i] + " ");
-            String dat1 = formatter.format(new Date());
-            Date date1 = formatter.parse(dat1);
-            String dat2 = sb.toString();
-            Date date2 = formatter.parse(dat2);
+            String dat1 = sb.toString();
+           /* formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date GMTDate = formatter.parse(dat1);
+            formatter.setTimeZone(TimeZone.getDefault());
+            String LocalDateString = formatter.format(GMTDate);
+            Date LocalDate = formatter.parse(LocalDateString);
+            formatter.setTimeZone(TimeZone.getDefault());
+            Date date2 = LocalDate;
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            String dat2 = formatter1.format(new Date());
+            Date date1 = formatter1.parse(dat2);
+           */
+            Date date2 = formatter.parse(dat1);
+            String dat2 = formatter.format(new Date());
+            Date date1 = formatter.parse(dat2);
+//            Toast.makeText(getActivity(), "The date for meeting is "+date2+" The current date is "+date1, Toast.LENGTH_SHORT).show();
+            String Difference = printDifference(date1, date2);
             if (date1.compareTo(date2) < 0) {
                 //The date has not yet arrived so check the time difference between them
                 String timeDifference = printDifference(date1, date2);
@@ -96,7 +91,8 @@ public class Fragment4 extends Fragment {
                         // Only minutes are remaining
                         String timeArray[] = timeDifference.split(" ");
                         Integer x = Integer.parseInt(timeArray[0]);
-                        if (x <= 5) {
+//                        Toast.makeText(getActivity(),x, Toast.LENGTH_SHORT).show();
+                        if (x <= 5)  {
                             //Only 5 Minutes is remaining so allow the user to join the meeting
                             alert.setTitle(timeArray[0] + " Minutes Remaining");
                             alert.setMessage("You can join \"" + MeetName + "\" Meeting right now");
@@ -129,22 +125,42 @@ public class Fragment4 extends Fragment {
                     }
                 }
             }else{
-                //The meeting is over already
-                alert.setTitle("Meeting over");
-                alert.setMessage("\"" + MeetName + "\" is already over");
-                alert.setCancelable(false);
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-//                            Toast.makeText(getActivity(),"Time has Passed",Toast.LENGTH_SHORT).show();
-            }
+                long differenceLong = date1.getTime() - date2.getTime();
+                Integer dur = Integer.parseInt(Duration);
+                if( (differenceLong/60000) <=  dur){
+                    alert.setTitle(" Meeting is going on");
+                    alert.setMessage("You can join \"" + MeetName + "\" Meeting right now");
+                    alert.setCancelable(false);
+                    alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String meetingName = MeetName.replace(" ", "");
+                            ((MainActivity) getActivity()).startTheCall(meetingName);
+                        }
+                    });
+                }else {
+                    //The meeting is over already
+                    alert.setTitle("Meeting over");
+                    alert.setMessage("\"" + MeetName + "\" is already over");
+                    alert.setCancelable(false);
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                }
+                            }
+            alert.show();
         }catch (ParseException e) {
-            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), e.toString()+"From start meeting", Toast.LENGTH_SHORT).show();
         }
-        alert.show();
     }
 
 
@@ -267,6 +283,7 @@ public class Fragment4 extends Fragment {
         getAllMeetings();
         return mRootView;
     }
+
     public void getAllMeetings(){
         data = db.getAllMeetings();
         if(data.isEmpty()){
@@ -281,8 +298,10 @@ public class Fragment4 extends Fragment {
 
     private void setTheTimings(){
         data = db.getAllMeetings();
+        String Duration;
         for(int i = 0; i<data.size() ; i++) {
             MeetingList SingleMeeting =  data.get(i);
+            Duration = SingleMeeting.getDuration();
             String time = SingleMeeting.getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
             String[] split = time.split("\\s+");
@@ -294,8 +313,18 @@ public class Fragment4 extends Fragment {
                 Date date1 = formatter.parse(dat1);
                 String dat2 = sb.toString();
                 Date date2 = formatter.parse(dat2);
+//                Toast.makeText(getActivity(),"The Current date is "+date1+" The meeting time is "+date2+" The string from DB is "+dat2,Toast.LENGTH_LONG).show();
                 if(date1.compareTo(date2)>0){
-                    MeetingList myList = new MeetingList(SingleMeeting.getId(),SingleMeeting.getMeetingName(),SingleMeeting.getConferenceDesc(),SingleMeeting.getTime(),SingleMeeting.getDuration(),SingleMeeting.getTime(),SingleMeeting.getPresenter(),2);
+                    long differenceLong = date1.getTime() - date2.getTime();
+                    Integer dur = Integer.parseInt(Duration);
+                    MeetingList myList;
+                    if( (differenceLong/60000) <=  dur){
+//                        Toast.makeText(getActivity(),"3 is executing"+" The time left is"+ (differenceLong/60000)+"Meeting duration is "+differenceLong,Toast.LENGTH_LONG).show();
+                        myList = new MeetingList(SingleMeeting.getId(),SingleMeeting.getMeetingName(),SingleMeeting.getConferenceDesc(),SingleMeeting.getTime(),SingleMeeting.getDuration(),SingleMeeting.getTime(),SingleMeeting.getPresenter(),3);
+                    }else {
+//                        Toast.makeText(getActivity(),"2 is executing",Toast.LENGTH_LONG).show();
+                        myList = new MeetingList(SingleMeeting.getId(), SingleMeeting.getMeetingName(), SingleMeeting.getConferenceDesc(), SingleMeeting.getTime(), SingleMeeting.getDuration(), SingleMeeting.getTime(), SingleMeeting.getPresenter(), 2);
+                    }
                     db.updateMeetingStatus(myList);
                 }
             }catch (ParseException e){

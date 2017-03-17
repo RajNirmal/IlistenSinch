@@ -5,10 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  * Created by nirmal on 29/1/17.
@@ -75,7 +73,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<MeetingList> getAllMeetings(){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<MeetingList> allMeetings = new ArrayList<>();
-        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_STATUS+" = 1 OR "+ KEY_MEETING_STATUS+ " = 2",null);
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME+ " where "+KEY_MEETING_STATUS+" = 1 OR "+ KEY_MEETING_STATUS+ " = 2 OR "+KEY_MEETING_STATUS+ " = 3",null);
         try{
             while(cr.moveToNext())
                 allMeetings.add(new MeetingList(Integer.parseInt(cr.getString(0)), cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4), cr.getString(5), cr.getString(6), Integer.parseInt(cr.getString(7))));
