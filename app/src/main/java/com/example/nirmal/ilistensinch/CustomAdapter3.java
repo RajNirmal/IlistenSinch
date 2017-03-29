@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -41,7 +40,8 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
             if(v.getId() == join.getId()){
                 String x = dataSet.get(getAdapterPosition()).getTit();
                 String y = dataSet.get(getAdapterPosition()).getDt();
-                myFrag.startMeeting(x,y);
+                Integer z = dataSet.get(getAdapterPosition()).getMeetId();
+                myFrag.startMeeting(x,y,z);
             }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);

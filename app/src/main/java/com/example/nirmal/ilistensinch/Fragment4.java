@@ -1,6 +1,10 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -47,7 +51,7 @@ public class Fragment4 extends Fragment {
 
     }
 
-    public void startMeeting2(final String MeetName,String MeetingTime, String Duration) {
+    public void startMeeting2(final String MeetName,String MeetingTime, String Duration, final Integer MeetId) {
         alert = new AlertDialog.Builder(getActivity());
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -106,6 +110,18 @@ public class Fragment4 extends Fragment {
                             alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent dumValue = new Intent((MainActivity)getActivity(),myBroadcastReceiver.class);
+                                    dumValue.putExtra(SinchHolders.phpMeetingId,MeetId);
+                                    dumValue.putExtra(SinchHolders.phpMeetingName, MeetName);
+                                    PendingIntent pi = PendingIntent.getBroadcast(getActivity(),MeetId,dumValue,PendingIntent.FLAG_NO_CREATE);
+                                    AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+                                    if(pi != null) {
+                                        am.cancel(pi);
+//                                        Toast.makeText(getActivity(),"Intent found",Toast.LENGTH_SHORT).show();
+                                    }else{
+//                                        Toast.makeText(getActivity(),"Intent not found",Toast.LENGTH_SHORT).show();
+                                    }
+
                                     String meetingName = MeetName.replace(" ", "");
                                     ((MainActivity) getActivity()).startTheCall(meetingName);
                                 }

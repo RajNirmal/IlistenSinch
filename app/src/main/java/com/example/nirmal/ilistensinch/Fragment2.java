@@ -1,5 +1,6 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -47,7 +48,7 @@ import java.util.TimeZone;
 import static android.text.InputType.TYPE_NULL;
 
 public class Fragment2 extends Fragment implements View.OnClickListener{
-
+    Integer MeetId;
     EditText meetingTitle,meetingDesc,meetingDate,meetingTime;
     Spinner meetingDuration;
     TextView FinishSettingUpMeeting;
@@ -140,7 +141,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
 
     private void setDateTimeField(){
         Calendar newCalendar = Calendar.getInstance();
-        datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+        datePicker = new DatePickerDialog(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -149,6 +150,9 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                 stringDate = meetingDateString.format(newDate.getTime());
             }
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 1);
+        datePicker.getDatePicker().setMinDate(calendar.getTimeInMillis());
     }
 
     AdapterView.OnItemSelectedListener myListener = new AdapterView.OnItemSelectedListener() {
@@ -167,13 +171,14 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     };
 
     private void setTimeField(){
-        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),  AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 stringTime = hourOfDay+ " : "+minute;
                 meetingTime.setText(stringTime);
             }
         }, 0, 0, true);
+
         timePickerDialog.show();
     }
 
@@ -217,38 +222,52 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        if (view == FinishSettingUpMeeting){
+        if (view == FinishSettingUpMeeting) {
             stringTitle = meetingTitle.getText().toString().trim();
             stringDesc = meetingDesc.getText().toString().trim();
-            String finalDateandTime = stringDate+" "+stringTime;
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd-MM-yyyy HH : mm");
-            String formattedDateInGMT;
             try {
-                Date date1 = simpleFormat.parse(finalDateandTime);
-                simpleFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                formattedDateInGMT = simpleFormat.format(date1);
+                if ((!(stringDate.isEmpty())) && (!(stringTime.isEmpty()))) {
+                    String finalDateandTime = stringDate + " " + stringTime;
+                    SimpleDateFormat simpleFormat = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+                    String formattedDateInGMT;
+                    try {
+                        Date date1 = simpleFormat.parse(finalDateandTime);
+                        simpleFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        formattedDateInGMT = simpleFormat.format(date1);
 //                Toast.makeText(getActivity(), formattedDateInGMT+" is the GMT for "+finalDateandTime, Toast.LENGTH_SHORT).show();
-            }catch (ParseException e ){
-                Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG);
-                formattedDateInGMT = finalDateandTime;
+                    } catch (ParseException e) {
+                        Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_LONG);
+                        formattedDateInGMT = finalDateandTime;
+                    }
+                    if (!(stringTitle.isEmpty()) && (!(stringDesc.isEmpty()))) {
+                        progressDialog.show();
+                        getSharedPrefsData();
+                        sendTheDataToHostinger(stringTitle, formattedDateInGMT, stringDuration, stringDesc);
+                        sendPushToAllUsers(stringTitle, stringDate, stringDuration);
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Please enter all the details", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Please enter all the details", Toast.LENGTH_SHORT).show();
+                }
+            }catch(NullPointerException e){
+                Toast.makeText(getActivity().getApplicationContext(), "Please enter all the details", Toast.LENGTH_SHORT).show();
             }
-            if((!(stringTitle.isEmpty())&&(!(stringDesc.isEmpty()))&&(!(stringDuration.isEmpty())))){
-                progressDialog.show();
-                getSharedPrefsData();
-                sendTheDataToHostinger(stringTitle, formattedDateInGMT, stringDuration, stringDesc);
-                sendPushToAllUsers(stringTitle, stringDate, stringDuration);
-                setTheAlarm();
-
-            }else{
-                Toast.makeText(getActivity().getApplicationContext(),"Please enter all the details",Toast.LENGTH_LONG).show();
-            }
-        }else if (view == meetingDate){
+        }else if (view == meetingDate) {
             datePicker.show();
-        }else if(view == meetingTime){
+        }else if (view == meetingTime) {
+            hideKeyboard(Fragment2.this);
             setTimeField();
         }
     }
+    public void hideKeyboard(Fragment frag) {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = frag.getView().getRootView();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
 
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
     public void setTheAlarm(){
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -262,7 +281,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
             int Result = r.nextInt(High-Low) + Low;
             if(date1.compareTo(date2)<0){
                 long timeRemaining = getDifferenceInMilliSeconds(date1,date2);
-                ((MainActivity)getActivity()).setTheAlarm(Result,timeRemaining,stringTitle);
+                ((MainActivity)getActivity()).setTheAlarm(MeetId,timeRemaining,stringTitle);
 //                            Toast.makeText(getActivity(),"Time has not arrived",Toast.LENGTH_SHORT).show();
             }
         }catch (ParseException e){
@@ -295,16 +314,14 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         StringRequest stringreqs = new StringRequest(Request.Method.POST, HostingerURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-//                Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
-                if(response.toString().trim().equals("Success")){
-//                    Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_SHORT).show();
+                    MeetId = Integer.parseInt(response);
+//                    Toast.makeText(getActivity(), MeetId+"", Toast.LENGTH_SHORT).show();
                     meetingDate.setText("");
                     meetingTime.setText("");
                     meetingTitle.setText("");
-//                    meetingDuration.setText("");
                     meetingDesc.setText("");
-                    alertDialog.show();
-                }
+//                    alertDialog.show();
+                    setTheAlarm();
             }
         }, new Response.ErrorListener() {
             @Override

@@ -44,7 +44,8 @@ public class CustomAdapter4 extends RecyclerView.Adapter<CustomAdapter4.MyViewHo
                 String x = dataSet.get(getAdapterPosition()).getMeetingName();
                 String y = dataSet.get(getAdapterPosition()).getTime();
                 String z = dataSet.get(getAdapterPosition()).getDuration();
-                myFrag.startMeeting2(x,y,z);
+                Integer a = dataSet.get(getAdapterPosition()).getId();
+                myFrag.startMeeting2(x,y,z,a);
             }
             int position=getAdapterPosition();
             String pos=String.valueOf(position);

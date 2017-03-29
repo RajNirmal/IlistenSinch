@@ -142,6 +142,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="center_vertical"
                     android:layout_below="@+id/line4"
+                    android:focusable="false"
                     android:hint="Time"
                     android:drawableLeft="@drawable/clock"
                     android:drawablePadding="5dp"

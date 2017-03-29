@@ -297,6 +297,8 @@ public class Fragment1 extends Fragment {
                             ConCategory[i] = jobj.getString("ConCategory");
                             ConDesc[i] = jobj.getString("ConDesc");
                             Date date;
+                            int years;
+                            String shert;
                             try {
                                 String DateinGMT = jobj.getString("Time");
                                 SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -307,12 +309,14 @@ public class Fragment1 extends Fragment {
                                 Date LocalDate = formatter.parse(LocalDateString);
                                 formatter.setTimeZone(TimeZone.getDefault());
                                 date = LocalDate;
+                                years = ((date.getYear())%100)+2000;
+                                shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+
                             }catch (ParseException e){
                                 date = null;
                                 Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                                shert = "Some error occured try again later";
                             }
-                            int years = ((date.getYear())%100)+2000;
-                            String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
                             Time[i] = "Time : " + shert;
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
@@ -347,7 +351,7 @@ public class Fragment1 extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity().getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity().getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
         sr.setRetryPolicy(new DefaultRetryPolicy(8000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

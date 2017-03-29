@@ -1,7 +1,10 @@
 package com.example.nirmal.ilistensinch;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -178,7 +181,7 @@ public class Fragment3 extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
@@ -218,7 +221,7 @@ public class Fragment3 extends Fragment {
 
     }
 
-    public void startMeeting(final String MeetName,String MeetingTime) {
+    public void startMeeting(final String MeetName,String MeetingTime,final Integer MeetId) {
         String mDuration;
         int i = Arrays.asList(MeetingName).indexOf(MeetName);
         mDuration = Duration[i];
@@ -268,8 +271,22 @@ public class Fragment3 extends Fragment {
                             alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Meeting is accepted so cancel the alarm
+                                    Intent dumValue = new Intent((MainActivity)getActivity(),myBroadcastReceiver.class);
+                                    dumValue.putExtra(SinchHolders.phpMeetingId,MeetId);
+                                    dumValue.putExtra(SinchHolders.phpMeetingName, MeetName);
+                                    PendingIntent pi = PendingIntent.getBroadcast(getActivity(),MeetId,dumValue,PendingIntent.FLAG_NO_CREATE);
+                                    AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+                                    if(pi != null) {
+                                        am.cancel(pi);
+//                                        Toast.makeText(getActivity(),"Intent found",Toast.LENGTH_SHORT).show();
+                                    }else{
+//                                        Toast.makeText(getActivity(),"Intent not found",Toast.LENGTH_SHORT).show();
+                                    }
+
                                     String meetingName = MeetName.replace(" ", "");
                                     ((MainActivity) getActivity()).startTheCall(meetingName);
+
                                 }
                             });
                         } else {
@@ -302,8 +319,9 @@ public class Fragment3 extends Fragment {
                             alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                                String meetingName = MeetName.replace(" ", "");
-                                ((MainActivity) getActivity()).startTheCall(meetingName);
+                            //Meeting is accepted but no need to cancel the alarm because the time has already passed and the alarm has rung already
+                            String meetingName = MeetName.replace(" ", "");
+                            ((MainActivity) getActivity()).startTheCall(meetingName);
                                 }
                     });
                     }else {

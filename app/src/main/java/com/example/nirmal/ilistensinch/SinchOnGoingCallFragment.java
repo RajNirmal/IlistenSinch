@@ -1,5 +1,6 @@
 package com.example.nirmal.ilistensinch;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -56,13 +57,14 @@ public class SinchOnGoingCallFragment extends Fragment {
     final String URL ="https://callingapi.sinch.com/v1/conferences/id/" ;
     final String AppKey = "762e9944-0918-4a8a-9f64-efbbbd93f0c1";
     final String AppSecretKey = "WFzBgsADy0uFHmkGDwXqDQ==";
-    ImageButton acceptButton,muteButton;
+    ImageButton acceptButton,muteButton,speakerButton;
     private long mCallStart = 0;
     AudioPlayer mAudioPlayer;
     Runnable handlerForParticipantsCount;
     Handler mHandler;
     RequestQueue rq ;
     boolean flag;//set as true if user is mute
+    boolean speakerFlag = false;//set as true if speaker phone is on
     private class UpdateCallDurationTask extends TimerTask {
 
         @Override
@@ -85,6 +87,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         UserNameinTextView = (TextView) subView.findViewById(R.id.conferencename);
         acceptButton = (ImageButton) subView.findViewById(R.id.rejectconferencebutton);
         muteButton = (ImageButton)subView.findViewById(R.id.button3);
+        speakerButton = (ImageButton)subView.findViewById(R.id.button4);
 //        rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
         mCallDuration = (TextView) subView.findViewById(R.id.conferenceduration);
         mCallDuration.setVisibility(View.INVISIBLE);
@@ -101,7 +104,7 @@ public class SinchOnGoingCallFragment extends Fragment {
                 try{
                     getTheParticipantCount();
                 }finally {
-                    mHandler.postDelayed(handlerForParticipantsCount,20000);
+                    mHandler.postDelayed(handlerForParticipantsCount,2000);
                 }
             }
         };
@@ -109,6 +112,13 @@ public class SinchOnGoingCallFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 MuteTheParticipants();
+            }
+        });
+
+        speakerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speakerPhone();
             }
         });
 
@@ -137,12 +147,29 @@ public class SinchOnGoingCallFragment extends Fragment {
             mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
         }
     }
+
+    public void speakerPhone(){
+        AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setMode(AudioManager.MODE_IN_CALL);
+        if(!speakerFlag) {
+            audioManager.setSpeakerphoneOn(true);
+            speakerFlag = true;
+            Toast.makeText(getActivity(),"Speaker should be on now",Toast.LENGTH_SHORT).show();
+        }else {
+            speakerFlag = false;
+            audioManager.setSpeakerphoneOn(false);
+
+            Toast.makeText(getActivity(),"Speaker should be off now",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private String formatTimespan(long timespan) {
         long totalSeconds = timespan / 1000;
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
         return String.format(Locale.US, "%02d:%02d", minutes, seconds);
     }
+
     private void setTheOnClickListeners() {
         acceptButton.setOnClickListener(new View.OnClickListener(){
         @Override
@@ -169,7 +196,9 @@ public class SinchOnGoingCallFragment extends Fragment {
         @Override
         public void onCallEnded(com.sinch.android.rtc.calling.Call endedCall) {
             //call ended by either party
+            AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
             CallEndCause cause = endedCall.getDetails().getEndCause();
+            audioManager.setMode(AudioManager.MODE_NORMAL); //Deactivate loudspeaker
             mAudioPlayer.stopProgressTone();
             getActivity().setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             mAudioPlayer.stopProgressTone();
