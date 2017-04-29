@@ -1,9 +1,9 @@
 package com.example.nirmal.ilistensinch;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,10 +17,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.sinch.android.rtc.ClientRegistration;
@@ -35,7 +35,6 @@ import com.sinch.android.rtc.calling.CallClientListener;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_SECRET;
 import static com.example.nirmal.ilistensinch.SinchHolders.ENVIRONMENT;
-import static com.example.nirmal.ilistensinch.SinchHolders.SharedPrefName;
 import static com.example.nirmal.ilistensinch.SinchHolders.myClient;
 
 
@@ -138,19 +137,32 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (menuItem.getItemId() == R.id.help) {
-                    viewPager.setCurrentItem(0,true);
+//                    viewPager.setCurrentItem(0,true);
                     /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
+                    String Title = "Contact Us";
+                    String Body = "ilisten@mazelon.com";
+                    AlertBuilder(Title,Body);
 
                 }
 
                 if (menuItem.getItemId() == R.id.exit) {
-                    viewPager.setCurrentItem(0,true);
+//                    viewPager.setCurrentItem(0,true);
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    finish();
+                    startActivity(intent);
                     /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
 
                 }
 
+                if(menuItem.getItemId() == R.id.terms){
+                    String Title = "Terms and Conditions";
+                    String Body = getString(R.string.t1)+"\n"+getString(R.string.t2)+"\n"+getString(R.string.t3)+"\n"+getString(R.string.t4)+"\n"+getString(R.string.t5)+"\n"+getString(R.string.t6)+"\n";
+                    AlertBuilder(Title,Body);
+                }
                 return false;
             }
 
@@ -162,6 +174,20 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+    }
+    public void AlertBuilder(String AlertTitle, String AlertBody){
+        final AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        alert.setTitle(AlertTitle);
+        alert.setMessage(AlertBody);
+        alert.setCancelable(false);
+        alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Close the app.
+
+            }
+        });
+        alert.show();
     }
     public void getSharedfs(){
         SharedPreferences sp = getApplicationContext().getSharedPreferences(SinchHolders.SharedPrefName,MODE_PRIVATE);
@@ -238,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
     }
+
     private void buildClient(String x){
         showSpinner();
         myClient = Sinch.getSinchClientBuilder().context(this).userId(x).applicationKey(APP_KEY).applicationSecret(APP_SECRET).environmentHost(ENVIRONMENT).build();
@@ -276,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
         });
         myClient.start();
     }
+
     private void showSpinner(){
         spinnerLog = new ProgressDialog(MainActivity.this);
         spinnerLog.setTitle("Trying to log in");
@@ -289,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
     public void hideActionBar(){
         getSupportActionBar().hide();
     }
+
     class SinchIncomingCallListener implements CallClientListener {
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
@@ -305,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);*/
         }
     }
+
     public void setTheUsertoCall(String x){
         theUsertoCall = x;
         whatToDo = true;
@@ -312,12 +342,14 @@ public class MainActivity extends AppCompatActivity {
         hideActionBar();
         makeaCall.replace(mainFragmentHolder,new SinchOnGoingCallFragment()).commit();
     }
+
     public void goBackToMain(){
         Intent i = new Intent(MainActivity.this,MainActivity.class);
         Toast.makeText(getApplicationContext(),"Conference Successfully setup",Toast.LENGTH_SHORT).show();
         startActivity(i);
 
     }
+
     public String getTheUsertoCall(){return theUsertoCall;}
 
 

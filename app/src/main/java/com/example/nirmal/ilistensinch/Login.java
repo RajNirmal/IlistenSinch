@@ -32,9 +32,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.rebtel.repackaged.com.google.gson.JsonObject;
-import com.sinch.android.rtc.Sinch;
-import android.app.Activity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,14 +55,12 @@ public class Login extends AppCompatActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_layout);
-		updateToken();
+//		updateToken();
         checkIfDataAlreadyexists();
 		initViews();
 		setListeners();
 	}
-	private void updateToken(){
 
-	}
     private void showSpinner(){
         spinnerLog = new ProgressDialog(Login.this);
         spinnerLog.setTitle("Trying to log in");
@@ -155,8 +150,71 @@ public class Login extends AppCompatActivity {
 		forgotPassword.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
-				Intent intent = new Intent(getApplicationContext(), Forgot.class);
-				startActivity(intent);
+                //Get the User password and show it in alert
+                final AlertDialog.Builder alert = new AlertDialog.Builder(Login.this);
+                final String userName = emailid.getText().toString();
+                if(userName.isEmpty()){
+                    alert.setTitle("Invalid Details");
+                    alert.setMessage("Enter a Username");
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    alert.show();
+                }else{
+                    final String URL = "http://www.mazelon.com/iListen/ilisten_login_script.php";
+                    StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            int length = response.length();
+                            StringBuilder sb = new StringBuilder();
+                            for(int i=0;i<length;i++){
+                                if((i==0)||(i==length-1))
+                                    sb.append(i);
+                                else
+                                    sb.append('*');
+                            }
+                            String hint = sb.toString();
+                            alert.setTitle("Password Hint");
+                            alert.setMessage(hint);
+                            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            alert.show();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            alert.setTitle("Invalid details");
+                            alert.setMessage("User Name not found. Please try to sign in");
+                            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            alert.show();
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String,String> maps = new HashMap<String, String>();
+                            maps.put(SinchHolders.phpUserName,userName);
+                            maps.put(SinchHolders.phpUserPassword,"theUserPassword");
+                            return maps;
+                        }
+                    };
+                    RequestQueue requestQ = Volley.newRequestQueue(getApplicationContext());
+                    requestQ.add(sr);
+                }
+
+//				Intent intent = new Intent(getApplicationContext(), Forgot.class);
+//				startActivity(intent);
 			}
 		});
 
@@ -277,7 +335,7 @@ public class Login extends AppCompatActivity {
     private void changeActivity(){
 //        Toast.makeText(getApplicationContext(),"Inside Activity Change",Toast.LENGTH_SHORT).show();
         spinnerLog.dismiss();
-        Intent i = new Intent(Login.this,MainActivity.class);
+        Intent i = new Intent(Login.this,Terms.class);
         startActivity(i);
     }
 	// Set Listeners

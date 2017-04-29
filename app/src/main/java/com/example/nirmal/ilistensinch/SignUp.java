@@ -16,8 +16,7 @@ import android.widget.TextView;
 
 public class SignUp extends AppCompatActivity implements OnClickListener {
 
-	 EditText fullName, emailId, mobileNumber, location,
-			password, confirmPassword;
+	 EditText fullName, emailId, mobileNumber, location,password, confirmPassword;
 	TextView login;
 	Button signUpButton;
 	CheckBox terms_conditions;

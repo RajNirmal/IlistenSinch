@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,13 +42,14 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class Fragment3 extends Fragment {
-    private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
+    private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[],TimeinString[];
     private int MeetingID[];
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
     private static ArrayList<DataModel1> data;
     TextView noShow2;
+    ImageView con;
     public final static String TAG = Fragment1.class.getSimpleName();
     static int RecyclerViewSize = 0;
     private View mRootView;
@@ -89,8 +91,10 @@ public class Fragment3 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.listfrag3, container, false);
         noShow2 = (TextView) mRootView.findViewById(R.id.nothingtoshowfrag3);
+        con=(ImageView)mRootView.findViewById(R.id.con);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
         noShow2.setVisibility(View.INVISIBLE);
+        con.setVisibility(View.INVISIBLE);
         recyclerView.setHasFixedSize(false);
         data = new ArrayList<DataModel1>();
         layoutManager = new LinearLayoutManager(this.getActivity());
@@ -133,6 +137,7 @@ public class Fragment3 extends Fragment {
                     ConCategory = new String[jArray.length()];
                     ConDesc = new String[jArray.length()];
                     Time = new String[jArray.length()];
+                    TimeinString = new String[jArray.length()];
                     Duration = new String[jArray.length()];
                     Presenter = new String[jArray.length()];
                     MeetingID = new int[jArray.length()];
@@ -158,21 +163,25 @@ public class Fragment3 extends Fragment {
                             }
                             int years = ((date.getYear())%100)+2000;
                             String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
-//                            Toast.makeText(getActivity(), shert, Toast.LENGTH_SHORT).show();
+                            String monthInString = returnmonthString(date.getMonth()+1);
+                            String shert1 = date.getDate()+"-"+(monthInString)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+//                            Toast.makeText(getActivity(), shert1, Toast.LENGTH_SHORT).show();
                             Time[i] = "Time : " + shert;
+                            TimeinString[i] = "Time : " + shert1;
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
 
                         }
                         for (int i = 0; i < MeetingName.length; i++) {
-                            data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                            data.add(new DataModel1(Presenter[i], "Active", MeetingName[i], ConCategory[i], ConDesc[i], TimeinString[i], MeetingID[i]));
                         }
                         recyclerView.setVisibility(View.VISIBLE);
                         adapter = new CustomAdapter3(data, Fragment3.this);
                         recyclerView.setAdapter(adapter);
                     if(jArray.length() == 0){
                         noShow2.setVisibility(View.VISIBLE);
+                        con.setVisibility(View.VISIBLE);
                     }
                 }catch (JSONException e){
                     Toast.makeText(getActivity(),"Try again after some time",Toast.LENGTH_SHORT).show();
@@ -227,7 +236,7 @@ public class Fragment3 extends Fragment {
         mDuration = Duration[i];
         alert = new AlertDialog.Builder(getActivity());
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for (int j = 2; j < split.length; j++)
@@ -343,6 +352,53 @@ public class Fragment3 extends Fragment {
             Toast.makeText(getActivity(), e.toString()+"From start meeting", Toast.LENGTH_SHORT).show();
         }
 //        alert.show();
+    }
+
+    public String returnmonthString(int monthNumber){
+        String monthName;
+        switch(monthNumber){
+            case 1:
+                monthName = "Jan";
+                break;
+            case 2:
+                monthName = "Feb";
+                break;
+            case 3:
+                monthName = "Mar";
+                break;
+            case 4:
+                monthName = "Apr";
+                break;
+            case 5:
+                monthName = "May";
+                break;
+            case 6:
+                monthName = "Jun";
+                break;
+            case 7:
+                monthName = "Jul";
+                break;
+            case 8:
+                monthName = "Aug";
+                break;
+            case 9:
+                monthName = "Sep";
+                break;
+            case 10:
+                monthName = "Oct";
+                break;
+            case 11:
+                monthName = "Nov";
+                break;
+            case 12:
+                monthName = "Dec";
+                break;
+            default:
+                monthName = "Invalid month";
+                break;
+        }
+//        Toast.makeText(getActivity(),monthName,Toast.LENGTH_LONG).show();
+        return monthName;
     }
 
 }

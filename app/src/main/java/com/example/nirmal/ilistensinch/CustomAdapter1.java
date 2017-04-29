@@ -1,6 +1,5 @@
 package com.example.nirmal.ilistensinch;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -8,13 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nirmal.ilistensinch.DBPackage.DBHandler;
-import com.example.nirmal.ilistensinch.DBPackage.MeetingList;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 
 public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHolder>  {
@@ -42,6 +38,11 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
 //            butReject.setOnClickListener(this);
             db = new DBHandler(itemView.getContext());
         }
+        
+        public void updateList(ArrayList<DataModel1> list){
+            dataSet = list;
+            notifyDataSetChanged();
+        }
 
         @Override
         public void onClick(View v) {
@@ -62,6 +63,7 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
             v.getContext().startActivity(intent);
 */
         }
+
 
     }
 
@@ -97,7 +99,6 @@ public class CustomAdapter1 extends RecyclerView.Adapter<CustomAdapter1.MyViewHo
             holder.butAccept.setTextColor(Color.parseColor("#00e676"));
         }
     }
-
 
     @Override
     public int getItemCount() {

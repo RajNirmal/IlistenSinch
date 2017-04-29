@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ public class Fragment4 extends Fragment {
     private static RecyclerView recyclerView;
     private static ArrayList<MeetingList> data;
     TextView noShow4;
+    ImageView con;
     public final static String TAG = Fragment1.class.getSimpleName();
     private View mRootView;
     private DBHandler db;
@@ -54,7 +56,7 @@ public class Fragment4 extends Fragment {
     public void startMeeting2(final String MeetName,String MeetingTime, String Duration, final Integer MeetId) {
         alert = new AlertDialog.Builder(getActivity());
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH : mm");
             String[] split = MeetingTime.split("\\s+");
             StringBuilder sb = new StringBuilder();
             for (int i = 2; i < split.length; i++)
@@ -285,10 +287,12 @@ public class Fragment4 extends Fragment {
 
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.listfrag4, container, false);
         noShow4 = (TextView) mRootView.findViewById(R.id.nothingtoshowfrag4);
+        con=(ImageView)mRootView.findViewById(R.id.con);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
         db = new DBHandler(getActivity());
@@ -301,15 +305,97 @@ public class Fragment4 extends Fragment {
     }
 
     public void getAllMeetings(){
+        ArrayList<MeetingList> modifiedData = new ArrayList<>();
         data = db.getAllMeetings();
         if(data.isEmpty()){
             noShow4.setVisibility(View.VISIBLE);
+            con.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
         }else {
-            adapter = new CustomAdapter4(data,Fragment4.this);
+            for(MeetingList singleMeeting : data){
+                String time = singleMeeting.getTime();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+                String[] split = time.split("\\s+");
+                StringBuilder sb = new StringBuilder();
+                for(int j=2;j<split.length;j++) {
+                    if(j==2){
+                        String mid = split[2];
+                        String monArray[] = mid.split("-");
+                        int counter = 0;
+                        for(String x : monArray) {
+//                            Toast.makeText(getActivity(), x, Toast.LENGTH_SHORT).show();
+                            String appender;
+                            if(counter==1){
+                                appender = returnmonthString(Integer.parseInt(x));
+                            }else{
+                                appender = x;
+                            }
+                            sb.append(appender);
+                            if(counter!=2)
+                                sb.append("-");
+                            else
+                                sb.append(" ");
+                            counter++;
+                        }
+                    }else{
+                        sb.append(split[j] + " ");
+                    }
+
+                }
+                String dateandTime = "Time : "+sb.toString();
+                MeetingList dataWithModifiedValues = new MeetingList(singleMeeting.getId(),singleMeeting.getMeetingName(),singleMeeting.getConferenceDesc(),dateandTime,singleMeeting.getDuration(),singleMeeting.getTime(),singleMeeting.getPresenter(),singleMeeting.getStatus());
+                modifiedData.add(dataWithModifiedValues);
+            }
+            adapter = new CustomAdapter4(modifiedData,Fragment4.this);
             recyclerView.setAdapter(adapter);
         }
 //        Toast.makeText(getActivity(),meetingsList.toString(),Toast.LENGTH_SHORT).show();
+    }
+    public String returnmonthString(int monthNumber){
+        String monthName;
+        switch(monthNumber){
+            case 1:
+                monthName = "Jan";
+                break;
+            case 2:
+                monthName = "Feb";
+                break;
+            case 3:
+                monthName = "Mar";
+                break;
+            case 4:
+                monthName = "Apr";
+                break;
+            case 5:
+                monthName = "May";
+                break;
+            case 6:
+                monthName = "Jun";
+                break;
+            case 7:
+                monthName = "Jul";
+                break;
+            case 8:
+                monthName = "Aug";
+                break;
+            case 9:
+                monthName = "Sep";
+                break;
+            case 10:
+                monthName = "Oct";
+                break;
+            case 11:
+                monthName = "Nov";
+                break;
+            case 12:
+                monthName = "Dec";
+                break;
+            default:
+                monthName = "Invalid month";
+                break;
+        }
+//        Toast.makeText(getActivity(),monthName,Toast.LENGTH_LONG).show();
+        return monthName;
     }
 
     private void setTheTimings(){

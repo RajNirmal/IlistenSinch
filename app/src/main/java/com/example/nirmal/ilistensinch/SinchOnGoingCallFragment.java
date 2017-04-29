@@ -57,7 +57,8 @@ public class SinchOnGoingCallFragment extends Fragment {
     final String URL ="https://callingapi.sinch.com/v1/conferences/id/" ;
     final String AppKey = "762e9944-0918-4a8a-9f64-efbbbd93f0c1";
     final String AppSecretKey = "WFzBgsADy0uFHmkGDwXqDQ==";
-    ImageButton acceptButton,muteButton,speakerButton;
+    ImageButton muteButton,speakerButton;
+    Button acceptButton;
     private long mCallStart = 0;
     AudioPlayer mAudioPlayer;
     Runnable handlerForParticipantsCount;
@@ -77,6 +78,7 @@ public class SinchOnGoingCallFragment extends Fragment {
             });
         }
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         rq = Volley.newRequestQueue(getActivity(),new okhttpstack());
         View subView = inflater.inflate(R.layout.sinch_conference_fragment, container, false);
         UserNameinTextView = (TextView) subView.findViewById(R.id.conferencename);
-        acceptButton = (ImageButton) subView.findViewById(R.id.rejectconferencebutton);
+        acceptButton = (Button) subView.findViewById(R.id.rejectconferencebutton);
         muteButton = (ImageButton)subView.findViewById(R.id.button3);
         speakerButton = (ImageButton)subView.findViewById(R.id.button4);
 //        rejectButton = (Button) subView.findViewById(R.id.rejectthecall);
@@ -158,7 +160,6 @@ public class SinchOnGoingCallFragment extends Fragment {
         }else {
             speakerFlag = false;
             audioManager.setSpeakerphoneOn(false);
-
             Toast.makeText(getActivity(),"Speaker should be off now",Toast.LENGTH_SHORT).show();
         }
     }
@@ -226,6 +227,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
@@ -285,11 +287,11 @@ public class SinchOnGoingCallFragment extends Fragment {
         StringRequest sr = new StringRequest(Request.Method.PATCH, muteURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(flag)
-                    muteButton.setBackgroundResource(R.drawable.microphone);
+             /*  if(flag)
+                    muteButton.setBackgroundResource(R.drawable.mic);
                 else
-                    muteButton.setBackgroundResource(R.drawable.microphone_off
-                    );
+                    muteButton.setBackgroundResource(R.drawable.mic_off
+                    );*/
 
             }
         }, new Response.ErrorListener() {

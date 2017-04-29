@@ -1,20 +1,14 @@
 package com.example.nirmal.ilistensinch;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager;
 import android.content.Intent;
-import android.media.AudioManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import android.view.View;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
 import com.sinch.android.rtc.ClientRegistration;
-import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
 import com.sinch.android.rtc.SinchClientListener;
@@ -22,10 +16,6 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
-import com.sinch.android.rtc.calling.CallEndCause;
-import com.sinch.android.rtc.calling.CallListener;
-
-import java.util.List;
 
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_KEY;
 import static com.example.nirmal.ilistensinch.SinchHolders.APP_SECRET;
@@ -45,6 +35,12 @@ public class SinchMainActivity extends FragmentActivity {
     AudioPlayer mAudioPlayer;
     Bundle extra;
     public boolean whatToDo = false;//set to true if I am making a call else set to false for incoming call
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Toast.makeText(getApplicationContext(),"This functionality is not available during a call",Toast.LENGTH_LONG).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

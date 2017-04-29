@@ -22,10 +22,17 @@
         <menu>
 
             <item android:id="@+id/help" android:icon="@drawable/nd5"
-                android:title="Help" />
+                android:title="Support" />
+
+            <item android:id="@+id/terms" android:icon="@drawable/accountalert"
+                android:title="Terms and Conditions" />
 
             <item android:id="@+id/exit" android:icon="@drawable/nd6"
                 android:title="Exit" />
+
+
+
+
 
         </menu>
 

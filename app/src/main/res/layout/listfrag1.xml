@@ -3,15 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".Fragment1">
 
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primary"
+    android:background="#90a4ae"
     android:id="@+id/r"
     android:elevation="5dp">
-<TextView
+<!--<TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textColor="@color/white"
@@ -22,18 +24,18 @@
     android:layout_marginBottom="10dp"
     android:text="Filter Request By"
     android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true" />
+    android:layout_alignParentLeft="true" />-->
 
-    <TextView
-        android:layout_width="wrap_content"
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:text="Categories(multiselections)"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
+        android:hint="Meeting Name"
         android:gravity="center"
         android:textSize="10dp"
+        android:windowSoftInputMode="stateHidden"
+        android:id="@+id/searchmeetings"
+        android:drawableLeft="@drawable/user"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"/>
 </RelativeLayout>
@@ -45,14 +47,24 @@
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/con"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/confer"
+        android:tint="@color/colorhint"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"
+       />
     <TextView
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nothingtoshow"
-        android:text="No Meetings to show"
+        android:text="You have no new meetings"
         android:textColor="#757575"
         android:gravity="center"
-        android:layout_marginTop="250dp"
+       android:layout_below="@+id/con"
         android:layout_gravity="center"
         android:visibility="invisible"
         android:textSize="@dimen/text_huge"/>

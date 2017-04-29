@@ -29,7 +29,7 @@ public class CustomAdapter3 extends RecyclerView.Adapter<CustomAdapter3.MyViewHo
             this.desc = (TextView) itemView.findViewById(R.id.desc);
             this.dt = (TextView) itemView.findViewById(R.id.dt);
             this.join = (TextView) itemView.findViewById(R.id.buttoninuserwhocreatesthemeeting);
-            cardView = (CardView) itemView.findViewById(R.id.card_view_frag3);
+            cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
             join.setOnClickListener(this);
 

@@ -9,9 +9,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,10 +43,12 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class Fragment1 extends Fragment {
-    private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[];
+    private String MeetingName[],ConCategory[],ConDesc[], Time[],Duration[],Presenter[],TimeinString[];
     private int MeetingID[],Status[];
     public String UserNameInSharedPrefs;
     private TextView nothingToShow;
+    private ImageView con;
+    private EditText searchBar;
     private static int flag = 0;
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -76,6 +82,8 @@ public class Fragment1 extends Fragment {
         mRootView = inflater.inflate(R.layout.listfrag1, container, false);
         recyclerView = (RecyclerView) mRootView.findViewById(R.id.my_recycler_view);
         nothingToShow = (TextView)mRootView.findViewById(R.id.nothingtoshow);
+        con=(ImageView)mRootView.findViewById(R.id.con);
+        searchBar = (EditText)mRootView.findViewById(R.id.searchmeetings);
         recyclerView.setHasFixedSize(false);
         db = new DBHandler(getActivity());
         layoutManager = new LinearLayoutManager(this.getActivity());
@@ -100,8 +108,40 @@ public class Fragment1 extends Fragment {
             uName = "UserName";
         }
         flag =1;
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                filter(editable.toString());
+            }
+        });
         return mRootView;
     }
+    public void filter(String text){
+        ArrayList<DataModel1> temp = new ArrayList();
+        for(DataModel1 d: data){
+            //or use .contains(text)
+            if(d.getTit().contains(text)){
+                temp.add(d);
+            }
+        }
+
+        //update recyclerview
+        adapter = new CustomAdapter1(temp, Fragment1.this);
+        recyclerView.setAdapter(adapter);
+//        adapter.updateList(temp);
+    }
+
     /*private void checkTheAcceptStatus(int x){
         int status = db.getMeetingStatus(x);
         Toast.makeText(getActivity(),String.valueOf(status),Toast.LENGTH_SHORT).show();
@@ -121,21 +161,20 @@ public class Fragment1 extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-//        getHostingerData();
+///        getHostingerData();
     }
     public void showToast(String x){
         Integer MeetId = Integer.parseInt(x);
         getTheMeetingDataFromHostinger(MeetId);
 
     }
-    private void setTheAlarmForTheUser(){
-//        Intent i = new Intent((MainActivity)getActivity().this)
-    }
+
     private long writeinLocalDB(int i){
         long out = db.addMeeting(new MeetingList(MeetingID[i],MeetingName[i],ConDesc[i],Time[i],Duration[i],Time[i],Presenter[i],Status[i]));
 //        getDBdata(i);
         return out;
    }
+
     public long getDifferenceInMilliSeconds(Date startDate, Date endDate){
 
         //milliseconds
@@ -231,6 +270,7 @@ public class Fragment1 extends Fragment {
 
     private void getAllMeetingsFromHostingerDB(){
         final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_meetings.php";
+//        final String URL = "http://www.mazelon.com/iListen/ilisten_get_all_meetings_by_category.php";
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -241,12 +281,14 @@ public class Fragment1 extends Fragment {
                     ConCategory = new String[jArray.length()];
                     ConDesc = new String[jArray.length()];
                     Time = new String[jArray.length()];
+                    TimeinString = new String[jArray.length()];
                     Duration = new String[jArray.length()];
                     Presenter = new String[jArray.length()];
                     MeetingID = new int[jArray.length()];
                     Status = new int[jArray.length()];
                    if(jArray.length()==0){
 //                       Toast.makeText(getActivity().getApplicationContext(),"Length is 0",Toast.LENGTH_SHORT).show();
+                       con.setVisibility(View.VISIBLE);
                         nothingToShow.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.INVISIBLE);
                     }else if(jArray.length() == SinchHolders.lastDataCount){
@@ -268,25 +310,26 @@ public class Fragment1 extends Fragment {
                                Date LocalDate = formatter.parse(LocalDateString);
                                formatter.setTimeZone(TimeZone.getDefault());
                                date = LocalDate;
+                               int years = ((date.getYear())%100)+2000;
+                               String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+                               Time[i] = "Time : " + shert;
+                               Duration[i] = jobj.getString("Duration");
+                               Presenter[i] = jobj.getString("PID");
+                               MeetingID[i] = jobj.getInt("MeetingID");
+                               Status[i] = db.getMeetingStatus(MeetingID[i]);
                            }catch (ParseException e){
-                               date = null;
                                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                            }
-                           int years = ((date.getYear())%100)+2000;
-                           String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
-                           Time[i] = "Time : " + shert;
-                           Duration[i] = jobj.getString("Duration");
-                           Presenter[i] = jobj.getString("PID");
-                           MeetingID[i] = jobj.getInt("MeetingID");
-                           Status[i] = db.getMeetingStatus(MeetingID[i]);
+
                        }
-                       for (int i = 0; i < MeetingName.length; i++) {
+                       for (int i = (MeetingName.length-1); i >= 0 ;i--) {
                            if(!(UserNameInSharedPrefs.equals(Presenter[i])))
-                               if(Status[i] != 1) {
-                                   boolean flag = isTheMeetingOver(Time[i]);
-                                   if (flag)
-                                       data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
-                               }
+                               if(!Time[i].isEmpty())
+                                if(Status[i] != 1) {
+                                       boolean flag = isTheMeetingOver(Time[i]);
+                                       if (flag)
+                                           data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                                }
                        }
                    }else {
 //                      New data has been found in the server so call the local Db and update it accordingly
@@ -298,7 +341,7 @@ public class Fragment1 extends Fragment {
                             ConDesc[i] = jobj.getString("ConDesc");
                             Date date;
                             int years;
-                            String shert;
+                            String shert,shert1;
                             try {
                                 String DateinGMT = jobj.getString("Time");
                                 SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -310,14 +353,17 @@ public class Fragment1 extends Fragment {
                                 formatter.setTimeZone(TimeZone.getDefault());
                                 date = LocalDate;
                                 years = ((date.getYear())%100)+2000;
+                                String monthInString = returnmonthString(date.getMonth()+1);
                                 shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
-
+                                shert1 = date.getDate()+"-"+monthInString+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
                             }catch (ParseException e){
                                 date = null;
                                 Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                                 shert = "Some error occured try again later";
+                                shert1 = "Some error occured try again later";
                             }
                             Time[i] = "Time : " + shert;
+                            TimeinString[i] = "Time : " + shert1;
                             Duration[i] = jobj.getString("Duration");
                             Presenter[i] = jobj.getString("PID");
                             MeetingID[i] = jobj.getInt("MeetingID");
@@ -325,19 +371,22 @@ public class Fragment1 extends Fragment {
                             Status[i] = db.getMeetingStatus(MeetingID[i]);
 //                            Toast.makeText(getActivity(),String.valueOf(SuccessorNot),Toast.LENGTH_SHORT).show();
                         }
-                        for (int i = 0; i < MeetingName.length; i++) {
+
+                       for (int i = (MeetingName.length-1); i >= 0 ;i--) {
                             if(!(UserNameInSharedPrefs.equals(Presenter[i])))
                                 if(Status[i] != 1) {
                                     boolean flag = isTheMeetingOver(Time[i]);
                                     if (flag)
-                                        data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                                        data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], TimeinString[i], MeetingID[i]));
                                 }
                         }
+
 
                     }
                     if(data.isEmpty()){
                         recyclerView.setVisibility(View.INVISIBLE);
                         nothingToShow.setVisibility(View.VISIBLE);
+                        con.setVisibility(View.VISIBLE);
                     }else {
                         adapter = new CustomAdapter1(data, Fragment1.this);
                         recyclerView.setAdapter(adapter);
@@ -353,10 +402,25 @@ public class Fragment1 extends Fragment {
             public void onErrorResponse(VolleyError error) {
 //                Toast.makeText(getActivity().getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                SharedPreferences prefs = getActivity().getSharedPreferences(SinchHolders.SharedPrefName,Context.MODE_PRIVATE);
+                String userExpertField;
+                try{
+                    userExpertField = prefs.getString(SinchHolders.phpUserexpertise,"xyz");
+                }catch (NullPointerException e){
+                    userExpertField = "xyz";
+                }
+                map.put(SinchHolders.phpUserexpertise,userExpertField);
+                return map;
+            }
+        };
         sr.setRetryPolicy(new DefaultRetryPolicy(8000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(sr);
     }
+
     public boolean isTheMeetingOver(String MeetingTime){
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
         String[] split = MeetingTime.split("\\s+");
@@ -383,6 +447,53 @@ public class Fragment1 extends Fragment {
         }catch (ParseException e){
             return true;
         }
+    }
+
+    public String returnmonthString(int monthNumber){
+        String monthName;
+        switch(monthNumber){
+            case 1:
+                monthName = "Jan";
+                break;
+            case 2:
+                monthName = "Feb";
+                break;
+            case 3:
+                monthName = "Mar";
+                break;
+            case 4:
+                monthName = "Apr";
+                break;
+            case 5:
+                monthName = "May";
+                break;
+            case 6:
+                monthName = "Jun";
+                break;
+            case 7:
+                monthName = "Jul";
+                break;
+            case 8:
+                monthName = "Aug";
+                break;
+            case 9:
+                monthName = "Sep";
+                break;
+            case 10:
+                monthName = "Oct";
+                break;
+            case 11:
+                monthName = "Nov";
+                break;
+            case 12:
+                monthName = "Dec";
+                break;
+            default:
+                monthName = "Invalid month";
+                break;
+        }
+//        Toast.makeText(getActivity(),monthName,Toast.LENGTH_LONG).show();
+        return monthName;
     }
 
 }

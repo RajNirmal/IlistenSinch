@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/text_small"
-
-    android:textColor="@color/white"
+    android:textColor="@color/colortext"
     android:padding="3dp"
-    android:drawableLeft="@drawable/timer"
+    android:text="Duration"
     android:drawablePadding="5dp"
     />

@@ -2,90 +2,109 @@
 
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/btnbord"
+    android:background="@drawable/signup"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="50dp"
+    android:layout_above="@+id/button3"
+    android:background="#626562">
     <TextView
         android:id="@+id/conferencename"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:text="Vijay"
+        android:textSize="30sp"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/white"
-        android:layout_marginTop="43dp"
-        android:text="Vijay" />
+        android:gravity="center"
+        android:textColor="#fff"
+        android:padding="30dp"
+        />
 
     <TextView
         android:id="@+id/conferenceduration"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/conferencename"
-        android:layout_alignStart="@+id/conferencename"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:gravity="center"
         android:textColor="@color/white"
         android:layout_below="@+id/conferencename"
-        android:layout_marginTop="26dp"
         android:text="00:15 "/>
     <TextView
         android:id="@+id/conferenceparticipation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:gravity="center"
         android:textColor="@color/white"
         android:layout_below="@+id/conferenceduration"
-        android:layout_marginTop="15dp"
         android:text="Participants : "/>
 
+</RelativeLayout>
+<!--
+<ImageButton
+    android:id="@+id/button5"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/call4"
+    android:layout_marginBottom="47dp"
+    android:layout_above="@+id/rejectconferencebutton"
+    android:layout_alignLeft="@+id/button3"
+    android:layout_alignStart="@+id/button3" />
 
-    <!--
-    <ImageButton
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/call4"
-        android:layout_marginBottom="47dp"
-        android:layout_above="@+id/rejectconferencebutton"
-        android:layout_alignLeft="@+id/button3"
-        android:layout_alignStart="@+id/button3" />
-
-    <ImageButton
-        android:id="@+id/button6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/call5"
-        android:layout_alignTop="@+id/button5"
-        android:layout_toRightOf="@+id/conferenceduration"
-        android:layout_toEndOf="@+id/conferenceduration" />
+<ImageButton
+    android:id="@+id/button6"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/call5"
+    android:layout_alignTop="@+id/button5"
+    android:layout_toRightOf="@+id/conferenceduration"
+    android:layout_toEndOf="@+id/conferenceduration" />
 -->
 
-    <ImageButton
-        android:id="@+id/rejectconferencebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/call1"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+<Button
+    android:id="@+id/rejectconferencebutton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="50dp"
+    android:text="End"
+    android:fontFamily="sans-serif-smallcaps"
+    android:textColor="#fff"
+    android:background="#d57177"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true" />
 
-    <ImageButton
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/call3"
-        android:layout_marginRight="42dp"
-        android:layout_marginEnd="42dp"
-        android:layout_alignBottom="@+id/rejectconferencebutton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+<ImageView
+    android:id="@+id/ButtonSeperator"
+    android:layout_width="1pt"
+    android:layout_height="1pt"
+    android:layout_centerHorizontal="true"/>
 
-    <ImageButton
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/microphone_off"
-        android:layout_alignBottom="@+id/rejectconferencebutton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="38dp"
-        android:layout_marginStart="38dp" />
+<ImageButton
+    android:id="@+id/button4"
+    android:layout_width="130dp"
+    android:layout_height="100dp"
+    android:layout_toRightOf="@+id/ButtonSeperator"
+    android:background="#626562"
+    android:src="@drawable/loud"
+    android:tint="#fff"
+    android:layout_above="@+id/rejectconferencebutton"
+    android:layout_centerHorizontal="true"
+    />
+
+<ImageButton
+    android:id="@+id/button3"
+    android:layout_width="130dp"
+    android:layout_height="100dp"
+    android:background="#626562"
+    android:layout_toLeftOf="@+id/ButtonSeperator"
+    android:src="@drawable/mic"
+    android:tint="#fff"
+    android:layout_above="@+id/rejectconferencebutton"
+    android:layout_centerHorizontal="true"
+    />
 </RelativeLayout>
+

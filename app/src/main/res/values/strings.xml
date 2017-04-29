@@ -37,6 +37,9 @@
     <string name="t1">1. User must accept T&amp;C any time the app is updated or T&amp;C is updated</string>
     <string name="t2">2. Failed to accept T&amp;C, app must close immediately. User is not allowed to use the app till T&amp;C is accepted.</string>
     <string name="t3">3. Users are limited to 50 participations, 10 requests a month.</string>
+    <string name="t4">4. User must accept T&amp;C any time the app is updated or T&amp;C is updated</string>
+    <string name="t5">5. Failed to accept T&amp;C, app must close immediately. User is not allowed to use the app till T&amp;C is accepted.</string>
+    <string name="t6">6. Users are limited to 50 participations, 10 requests a month.</string>
     <string-array name="userchoices">
         <item>Technology</item>
         <item>Politics</item>
