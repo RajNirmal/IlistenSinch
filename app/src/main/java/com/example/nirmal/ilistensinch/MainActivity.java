@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(0,true);
                     /*FragmentTransaction xfragmentTransaction = fragmentManager.beginTransaction();
                     xfragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
+
                 }
 
                 if (menuItem.getItemId() == R.id.save_orders) {
