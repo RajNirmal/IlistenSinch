@@ -4,7 +4,7 @@
     <color name="colorPrimary">#465568</color>
     <color name="colorPrimaryDark">#2f3f4c</color>
     <color name="background_color">#465568</color>
-
+    <color name="primaryColor">#27384c</color>
     <color name="light">#2f3f4c</color>
     <color name="lightblue">#8bddf1</color>
     <color name="lightgrey">#9eb3c4</color>
@@ -33,4 +33,7 @@
     <color name="colorhint">#a9aaac</color>
     <color name="test">#009a9a</color>
     <color name="drawtint">#4799E8</color>
+    <color name="iconblue">#0071BC</color>
+    <color name="iconorange">#F15A24</color>
+    <color name="icongreen">#22B573</color>
 </resources>

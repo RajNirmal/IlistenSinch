@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -50,6 +51,7 @@ public class SinchOnGoingCallFragment extends Fragment {
     public com.sinch.android.rtc.calling.Call call;
     String CallingUsersName;
     private UpdateCallDurationTask mDurationTask;
+    MaterialDialog spinnerMaterial;
     private Timer mTimer;
     TextView UserNameinTextView,mCallDuration,mConferenceParticipants;
     Button rejectButton;
@@ -79,6 +81,17 @@ public class SinchOnGoingCallFragment extends Fragment {
         }
     }
 
+    private void showSpinner() {
+        MaterialDialog.Builder spinnerMaterialBuilder;
+        spinnerMaterialBuilder = new MaterialDialog.Builder(getActivity());
+        spinnerMaterialBuilder.title("Connecting to Conference");
+        spinnerMaterialBuilder.content("Please Wait");
+//        spinnerMaterialBuilder.progressIndeterminateStyle(true);
+        spinnerMaterialBuilder.progress(true, 0);
+        spinnerMaterialBuilder.cancelable(false);
+        spinnerMaterial = spinnerMaterialBuilder.build();
+        spinnerMaterial.show();
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,6 +111,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         mHandler = new Handler();
 //        String whatUserToCall = (((SinchMainActivity) getActivity()).getTheUsertoCall());
         mAudioPlayer = new AudioPlayer(getActivity());
+        showSpinner();
         setTheOnClickListeners();
         mCallStart = System.currentTimeMillis();
         handlerForParticipantsCount = new Runnable() {
@@ -156,11 +170,11 @@ public class SinchOnGoingCallFragment extends Fragment {
         if(!speakerFlag) {
             audioManager.setSpeakerphoneOn(true);
             speakerFlag = true;
-            Toast.makeText(getActivity(),"Speaker should be on now",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"Speaker is on now",Toast.LENGTH_SHORT).show();
         }else {
             speakerFlag = false;
             audioManager.setSpeakerphoneOn(false);
-            Toast.makeText(getActivity(),"Speaker should be off now",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"Speaker is off now",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -208,6 +222,7 @@ public class SinchOnGoingCallFragment extends Fragment {
         @Override
         public void onCallEstablished(com.sinch.android.rtc.calling.Call establishedCall) {
             //incoming call was picked up
+            spinnerMaterial.dismiss();
             mp.start();
             getTheParticipantCount();
             mCallStart = System.currentTimeMillis();
@@ -287,11 +302,11 @@ public class SinchOnGoingCallFragment extends Fragment {
         StringRequest sr = new StringRequest(Request.Method.PATCH, muteURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-             /*  if(flag)
-                    muteButton.setBackgroundResource(R.drawable.mic);
+               if(flag)
+                    muteButton.setImageResource(R.drawable.mic);
                 else
-                    muteButton.setBackgroundResource(R.drawable.mic_off
-                    );*/
+                    muteButton.setImageResource(R.drawable.mic_off
+                    );
 
             }
         }, new Response.ErrorListener() {

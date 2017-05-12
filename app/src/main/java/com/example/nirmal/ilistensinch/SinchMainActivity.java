@@ -38,7 +38,7 @@ public class SinchMainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
         Toast.makeText(getApplicationContext(),"This functionality is not available during a call",Toast.LENGTH_LONG).show();
     }
 
@@ -69,6 +69,7 @@ public class SinchMainActivity extends FragmentActivity {
     }
     public void letsGoBackToMainActivity(){
         Intent i = new Intent(SinchMainActivity.this,MainActivity.class);
+        finish();
         startActivity(i);
     }
     private void buildClient(){

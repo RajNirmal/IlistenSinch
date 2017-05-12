@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,6 +35,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import static android.text.InputType.TYPE_NULL;
 
@@ -57,6 +62,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
     String stringTitle,stringDesc,stringDuration,stringDate,userName,Category,stringTime,stringDateandTime;
     DatePickerDialog datePicker;
     TimePickerDialog timePicker;
+    MaterialDialog spinnerMaterial;
     AlertDialog.Builder alertDialog;
     SimpleDateFormat meetingDateString;
     ProgressDialog progressDialog;
@@ -84,6 +90,19 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
 
         // Showing Alert Message
 
+    }
+
+
+    private void showSpinner() {
+        MaterialDialog.Builder spinnerMaterialBuilder;
+        spinnerMaterialBuilder = new MaterialDialog.Builder(getActivity());
+        spinnerMaterialBuilder.title("Creating Meeting");
+        spinnerMaterialBuilder.content("Please Wait");
+//        spinnerMaterialBuilder.progressIndeterminateStyle(true);
+        spinnerMaterialBuilder.progress(true, 0);
+        spinnerMaterialBuilder.cancelable(false);
+        spinnerMaterial = spinnerMaterialBuilder.build();
+        spinnerMaterial.show();
     }
 
     @Nullable
@@ -207,6 +226,72 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
 //        timePickerDialog.setMin(hour,hminute);
         timePickerDialog.show();
     }
+    Date Times[];
+    int Duration[];
+    public boolean isMeetingPossible(){
+        getSharedPrefsData();
+        final String URL = "http://www.mazelon.com/iListen/ilisten_get_meetings_by_user.php";
+        StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                int count;
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    JSONArray jArray = obj.getJSONArray("result");
+                    Times = new Date[jArray.length()];
+                    count = jArray.length();
+                    Duration = new int[jArray.length()];
+                    for(int i=0;i<jArray.length();i++){
+                        JSONObject jobj = jArray.getJSONObject(i);
+                        String curTime = jobj.getString("Time");
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+                        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        Date GMTDate = (Date)formatter.parse(curTime);
+                        formatter.setTimeZone(TimeZone.getDefault());
+                        String currentDateString = formatter.format(GMTDate);
+                        Times[i] = formatter.parse(currentDateString);
+                        Duration[i] = Integer.valueOf(jobj.getString("Duration"));
+                    }
+                }catch (Exception e){
+                    count =0 ;
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> maps = new HashMap<>();
+                maps.put(SinchHolders.phpUserName,userName);
+                return maps;
+            }
+        };
+        RequestQueue rs = Volley.newRequestQueue(getActivity());
+        rs.add(sr);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
+        Date meetingSetDate;
+        try {
+            meetingSetDate = formatter.parse(stringDateandTime);
+        }catch (ParseException e){
+            meetingSetDate = new Date();
+        }
+        for(int i=0;i<Times.length;i++){
+            long difference = Math.abs(meetingSetDate.getTime() - Times[i].getTime());
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(difference);
+            if((minutes<=Duration[i])) {
+//                Toast.makeText(getActivity(), meetingSetDate.toString()+"is clashing", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+//        Toast.makeText(getActivity(), "No clashing", Toast.LENGTH_SHORT).show();
+//        spinnerMaterial.dismiss();
+        return false;
+
+    }
 
     private void getSharedPrefsData(){
         SharedPreferences prefs = getActivity().getSharedPreferences(SinchHolders.SharedPrefName, Context.MODE_PRIVATE);
@@ -224,13 +309,15 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         StringRequest sr = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
+                spinnerMaterial.dismiss();
                 ((MainActivity)getActivity()).switchToThirdFragment();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
+                spinnerMaterial.dismiss();
                 ((MainActivity)getActivity()).switchToThirdFragment();
             }
         }){
@@ -272,6 +359,21 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
         }
 
     }
+
+    public void Alerts(){
+        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle("Cannot create meeting");
+        alert.setMessage("You have already scheduled a meeting in this time. Please select another time");
+        alert.setCancelable(false);
+        alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Close the app.
+
+            }
+        });
+        alert.show();
+    }
     @Override
     public void onClick(View view) {
 //        boolean checkFlag = checkDate();
@@ -297,8 +399,13 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                     }
                     if (!(stringTitle.isEmpty()) && (!(stringDesc.isEmpty()))) {
                         boolean checkFlag = checkDate();
+                        boolean checkOtherMeetingFlag = isMeetingPossible();
+                        if(checkOtherMeetingFlag){
+                            Alerts();
+                        }else
                         if (checkFlag) {
-                            progressDialog.show();
+//                            progressDialog.show();
+                            showSpinner();
                             getSharedPrefsData();
                             sendTheDataToHostinger(stringTitle, formattedDateInGMT, stringDuration, stringDesc);
                             sendPushToAllUsers(stringTitle, stringDate, stringDuration);
@@ -322,7 +429,8 @@ public class Fragment2 extends Fragment implements View.OnClickListener{
                     Toast.makeText(getActivity().getApplicationContext(), "Please enter all the details", Toast.LENGTH_SHORT).show();
                 }
             } catch (NullPointerException e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Please enter all the details", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Please enter a correct date", Toast.LENGTH_SHORT).show();
+                meetingDate.setText("");
             }
         }
         else if (view == meetingDate) {

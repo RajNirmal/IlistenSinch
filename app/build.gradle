@@ -11,11 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        multiDexEnabled false
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
         }
@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+//    compile fileTree(include: ['*.jar'], dir: 'libs')
     /*androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
                             exclude group: 'com.android.support', module: 'support-annotations'
                         })*/
@@ -39,9 +39,10 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.5'
+    compile 'com.afollestad.material-dialogs:core:0.8.6.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.okio:okio:1.8.0'
-    compile 'joda-time:joda-time:2.9.7'
+//    compile 'joda-time:joda-time:2.9.7'
     compile 'com.github.florent37:singledateandtimepicker:1.1.0'
 
 }

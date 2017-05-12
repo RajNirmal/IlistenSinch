@@ -274,6 +274,7 @@ public class Fragment1 extends Fragment {
         StringRequest sr =new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+//                Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_SHORT).show();
                 try {
                     JSONObject obj = new JSONObject(response);
                     JSONArray jArray = obj.getJSONArray("result");
@@ -300,6 +301,8 @@ public class Fragment1 extends Fragment {
                            ConCategory[i] = jobj.getString("ConCategory");
                            ConDesc[i] = jobj.getString("ConDesc");
                            Date date;
+                           String shert,shert1;
+                           int years;
                            try {
                                String DateinGMT = jobj.getString("Time");
                                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH : mm");
@@ -310,25 +313,31 @@ public class Fragment1 extends Fragment {
                                Date LocalDate = formatter.parse(LocalDateString);
                                formatter.setTimeZone(TimeZone.getDefault());
                                date = LocalDate;
-                               int years = ((date.getYear())%100)+2000;
-                               String shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
-                               Time[i] = "Time : " + shert;
-                               Duration[i] = jobj.getString("Duration");
-                               Presenter[i] = jobj.getString("PID");
-                               MeetingID[i] = jobj.getInt("MeetingID");
-                               Status[i] = db.getMeetingStatus(MeetingID[i]);
+                               years = ((date.getYear())%100)+2000;
+                               String monthInString = returnmonthString(date.getMonth()+1);
+                               shert = date.getDate()+"-"+(date.getMonth()+1)+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
+                               shert1 = date.getDate()+"-"+monthInString+"-"+years+" "+date.getHours()+" : "+date.getMinutes();
                            }catch (ParseException e){
+                               shert = "Some error occured try again later";
+                               shert1 = "Some error occured try again later";
                                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                            }
+                           Time[i] = "Time : " + shert;
+                           TimeinString[i] = "Time : " + shert1;
+                           Duration[i] = jobj.getString("Duration");
+                           Presenter[i] = jobj.getString("PID");
+                           MeetingID[i] = jobj.getInt("MeetingID");
+//                           writeinLocalDB(i);
+                           Status[i] = db.getMeetingStatus(MeetingID[i]);
 
                        }
-                       for (int i = (MeetingName.length-1); i >= 0 ;i--) {
+                       for (int i = 0;i<(MeetingName.length-1);i++) {
                            if(!(UserNameInSharedPrefs.equals(Presenter[i])))
                                if(!Time[i].isEmpty())
                                 if(Status[i] != 1) {
                                        boolean flag = isTheMeetingOver(Time[i]);
                                        if (flag)
-                                           data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], Time[i], MeetingID[i]));
+                                           data.add(new DataModel1(Presenter[i], String.valueOf(Status[i]), MeetingName[i], ConCategory[i], ConDesc[i], TimeinString[i], MeetingID[i]));
                                 }
                        }
                    }else {
@@ -372,7 +381,7 @@ public class Fragment1 extends Fragment {
 //                            Toast.makeText(getActivity(),String.valueOf(SuccessorNot),Toast.LENGTH_SHORT).show();
                         }
 
-                       for (int i = (MeetingName.length-1); i >= 0 ;i--) {
+                       for (int i = 0;i<(MeetingName.length-1);i++){
                             if(!(UserNameInSharedPrefs.equals(Presenter[i])))
                                 if(Status[i] != 1) {
                                     boolean flag = isTheMeetingOver(Time[i]);

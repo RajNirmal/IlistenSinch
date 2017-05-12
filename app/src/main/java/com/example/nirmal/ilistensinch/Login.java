@@ -172,7 +172,7 @@ public class Login extends AppCompatActivity {
                             StringBuilder sb = new StringBuilder();
                             for(int i=0;i<length;i++){
                                 if((i==0)||(i==length-1))
-                                    sb.append(i);
+                                    sb.append(response.charAt(i));
                                 else
                                     sb.append('*');
                             }

@@ -9,7 +9,7 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#27384c"
+        android:background="@color/iconblue"
         android:id="@+id/toolbar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:weightSum="1">
@@ -21,8 +21,8 @@
         android:id="@+id/tabs"
         app:tabGravity="fill"
         app:tabMode="fixed"
-        android:background="#27384c"
-        app:tabIndicatorColor="@color/white"
+        android:background="@color/iconblue"
+        app:tabIndicatorColor="@color/iconorange"
         app:tabSelectedTextColor="@color/white"
         app:tabTextColor="#d9e5f3"
         android:layout_width="match_parent"

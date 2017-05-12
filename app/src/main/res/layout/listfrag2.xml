@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:text="Create New Meetings"
                     android:fontFamily="sans-serif-smallcaps"
-                    android:textColor="#4799E8"
+                    android:textColor="@color/iconblue"
                     android:textSize="25dp"
                     android:gravity="center"
                     />
@@ -78,7 +78,7 @@
 
                     <EditText
                         android:id="@+id/title_meeting"
-                        android:textSize="12dp"
+                        android:textSize="@dimen/text_small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Title"
@@ -122,7 +122,7 @@
                     </FrameLayout>
                     <EditText
                         android:id="@+id/desc_meeting"
-                        android:textSize="12dp"
+                        android:textSize="@dimen/text_small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Description"
@@ -170,7 +170,7 @@
 
                     <EditText
                         android:id="@+id/dt_meeting"
-                        android:textSize="12dp"
+                        android:textSize="@dimen/text_small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Date&amp;time"
@@ -195,7 +195,7 @@
 
                 <EditText
                     android:id="@+id/time_meeting"
-                    android:textSize="12dp"
+                    android:textSize="@dimen/text_small"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:fontFamily="sans-serif"
@@ -227,7 +227,7 @@
                     </FrameLayout>
                     <Spinner
                         android:id="@+id/duration_meeting"
-                        android:textSize="12dp"
+                        android:textSize="12sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Date&amp;time"
@@ -254,7 +254,7 @@
                 android:id="@+id/submit_meeting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary2"
+                android:background="@color/iconorange"
                 android:text="Submit"
                 android:textSize="16dp"
                 android:textColor="#fff"

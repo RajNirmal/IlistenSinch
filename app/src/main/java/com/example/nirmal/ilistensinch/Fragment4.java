@@ -62,17 +62,7 @@ public class Fragment4 extends Fragment {
             for (int i = 2; i < split.length; i++)
                 sb.append(split[i] + " ");
             String dat1 = sb.toString();
-           /* formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-            Date GMTDate = formatter.parse(dat1);
-            formatter.setTimeZone(TimeZone.getDefault());
-            String LocalDateString = formatter.format(GMTDate);
-            Date LocalDate = formatter.parse(LocalDateString);
-            formatter.setTimeZone(TimeZone.getDefault());
-            Date date2 = LocalDate;
-            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy HH : mm");
-            String dat2 = formatter1.format(new Date());
-            Date date1 = formatter1.parse(dat2);
-           */
+
             Date date2 = formatter.parse(dat1);
             String dat2 = formatter.format(new Date());
             Date date1 = formatter.parse(dat2);

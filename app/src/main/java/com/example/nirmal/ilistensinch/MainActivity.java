@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public int mainFragmentHolder;
     ProgressDialog spinnerLog;
     public FragmentManager fragmentManager;
+    MaterialDialog spinnerMaterial;
     FragmentTransaction mFragmentTransaction;
     android.support.v7.widget.Toolbar toolbar;
     String theUsertoCall;
@@ -90,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         updateTheTokeninHostinger();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.shitstuff) ;
-//        mainFragmentHolder = R.id.containerView;
         /**
          * Lets inflate the very first fragment
          * Here , we are inflating the TabFragment as the first Fragment
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     /*FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();*/
                     String Title = "Contact Us";
-                    String Body = "ilisten@mazelon.com";
+                    String Body = "communication@confers.com";
                     AlertBuilder(Title,Body);
 
                 }
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClientStarted(SinchClient sinchClient) {
                 // Toast.makeText(getApplicationContext(),"Client is connected",Toast.LENGTH_SHORT).show();
-                spinnerLog.dismiss();
+                spinnerMaterial.dismiss();
                 /*Intent i = new Intent(SinchLoginActivity.this,MainActivity.class);
                 startActivity(i);*/
             }
@@ -306,10 +307,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showSpinner(){
-        spinnerLog = new ProgressDialog(MainActivity.this);
-        spinnerLog.setTitle("Trying to log in");
-        spinnerLog.setMessage("Please Wait");
-        spinnerLog.show();
+        MaterialDialog.Builder spinnerMaterialBuilder;
+        spinnerMaterialBuilder = new MaterialDialog.Builder(MainActivity.this);
+        spinnerMaterialBuilder.title("Trying to log in");
+        spinnerMaterialBuilder.content("Please Wait");
+//        spinnerMaterialBuilder.progressIndeterminateStyle(true);
+        spinnerMaterialBuilder.progress(true,0);
+        spinnerMaterialBuilder.cancelable(false);
+        spinnerMaterial = spinnerMaterialBuilder.build();
+        spinnerMaterial.show();
+//        spinnerLog = new ProgressDialog(MainActivity.this);
+//        spinnerLog.setIndeterminate(true);
+//        spinnerLog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//        spinnerLog.setTitle("Trying to log in");
+//        spinnerLog.setMessage("Please Wait");
+//        spinnerLog.show();
     }
 
     public void showActionBar(){
@@ -379,7 +391,13 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		if (doubleBackToExitPressedOnce) {
-			super.onBackPressed();
+//			super.onBackPressed();
+
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            finish();
+            startActivity(intent);
 			return;
 		}
 

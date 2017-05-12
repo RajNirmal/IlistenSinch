@@ -32,10 +32,10 @@
         android:textColor="@color/white"
         android:hint="Meeting Name"
         android:gravity="center"
-        android:textSize="10dp"
+        android:textSize="10sp"
         android:windowSoftInputMode="stateHidden"
         android:id="@+id/searchmeetings"
-        android:drawableLeft="@drawable/user"
+        android:drawableLeft="@drawable/magnify"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"/>
 </RelativeLayout>

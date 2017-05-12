@@ -4,13 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.android.volley.toolbox.StringRequest;
 import com.sinch.android.rtc.SinchClient;
-import com.sinch.android.rtc.calling.Call;
-import com.sinch.android.rtc.calling.CallClient;
-import com.sinch.android.rtc.calling.CallClientListener;
 
 /**
  * Created by nirmal on 24/12/16.
@@ -43,22 +38,22 @@ public class SinchHolders extends Service{
     public static final String phpMeetingCategory = "concategory";
     public static final String phpMeetingDesc = "condesc";
     public static final String phpMeetingId = "MeetingId";
-    static final String TAG = SinchService.class.getSimpleName();
+//    static final String TAG = SinchService.class.getSimpleName();
     public void setUpIncomingClient(){
-        myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
+//        myClient.getCallClient().addCallClientListener(new SinchCallClientListenerMine());
     }
-    public class SinchCallClientListenerMine implements CallClientListener {
-        @Override
-        public void onIncomingCall(CallClient callClient, Call call) {
-            Log.d(TAG, "Incoming call");
-            Intent intent = new Intent(SinchHolders.this, IncomingCallScreenActivity.class);
-            intent.putExtra(CALL_ID, call.getCallId());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            SinchHolders.this.startActivity(intent);
-        }
-    }
-
-    private SinchService.StartFailedListener mListener;
+//    public class SinchCallClientListenerMine implements CallClientListener {
+//        @Override
+//        public void onIncomingCall(CallClient callClient, Call call) {
+//            Log.d(TAG, "Incoming call");
+//            Intent intent = new Intent(SinchHolders.this, IncomingCallScreenActivity.class);
+//            intent.putExtra(CALL_ID, call.getCallId());
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            SinchHolders.this.startActivity(intent);
+//        }
+//    }
+//
+//    private SinchService.StartFailedListener mListener;
 
     @Nullable
     @Override
